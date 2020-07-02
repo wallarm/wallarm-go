@@ -1,0 +1,150 @@
+package wallarm
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/url"
+)
+
+// TriggerFilters is used to specify params for Trigger["Filters"] which is used as a slice
+type TriggerFilters struct {
+	ID       string        `json:"id"`
+	Operator string        `json:"operator"`
+	Values   []interface{} `json:"values"`
+}
+
+// TriggerActions is used to specify params for Trigger["Actions"] which is used as a slice
+type TriggerActions struct {
+	ID     string `json:"id"`
+	Params struct {
+		IntegrationIds []int `json:"integration_ids,omitempty"`
+		LockTime       int   `json:"lock_time,omitempty"`
+	} `json:"params"`
+}
+
+// TriggerThreshold is used to specify params for Trigger["Threshold"]
+type TriggerThreshold struct {
+	Period           int      `json:"period"`
+	Operator         string   `json:"operator"`
+	AllowedOperators []string `json:"allowed_operators"`
+	Count            int      `json:"count"`
+}
+
+// Trigger is used to specify params for TriggerCreate
+type Trigger struct {
+	Filters    *[]TriggerFilters `json:"filters"`
+	Actions    *[]TriggerActions `json:"actions"`
+	TemplateID string            `json:"template_id"`
+	Threshold  *TriggerThreshold `json:"threshold"`
+	Enabled    bool              `json:"enabled"`
+	Name       string            `json:"name,omitempty"`
+	Comment    string            `json:"comment,omitempty"`
+}
+
+// TriggerCreate is used to define JSON body for create action
+type TriggerCreate struct {
+	Trigger *Trigger `json:"trigger"`
+}
+
+// TriggerRead is the response which contains information about all the created Triggers within an account
+type TriggerRead struct {
+	Triggers []struct {
+		ID        int           `json:"id"`
+		Name      string        `json:"name"`
+		Comment   interface{}   `json:"comment"`
+		Enabled   bool          `json:"enabled"`
+		ClientID  int           `json:"client_id"`
+		Filters   []interface{} `json:"filters"`
+		Threshold struct {
+			Operator string `json:"operator"`
+			Period   int    `json:"period"`
+			Count    int    `json:"count"`
+		} `json:"threshold"`
+		Actions []struct {
+			ID     string `json:"id"`
+			Params struct {
+				IntegrationIds []int `json:"integration_ids"`
+			} `json:"params"`
+		} `json:"actions"`
+		Template struct {
+			ID      string `json:"id"`
+			Filters []struct {
+				ID               string        `json:"id"`
+				Required         bool          `json:"required"`
+				Values           []interface{} `json:"values"`
+				AllowedOperators []string      `json:"allowed_operators"`
+				Operator         string        `json:"operator"`
+			} `json:"filters"`
+			Threshold struct {
+				AllowedOperators []string `json:"allowed_operators"`
+				Operator         string   `json:"operator"`
+				Period           int      `json:"period"`
+				Count            int      `json:"count"`
+			} `json:"threshold"`
+			Actions []struct {
+				ID     string `json:"id"`
+				Params struct {
+					Notification     string   `json:"notification"`
+					IntegrationTypes []string `json:"integration_types"`
+					Subject          string   `json:"subject"`
+				} `json:"params"`
+			} `json:"actions"`
+		} `json:"template"`
+	} `json:"triggers"`
+}
+
+// TriggerRead is used to return Trigger response that is used to distinguish distinct Trigger ID of the trigger.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) TriggerRead(clientID int) (*TriggerRead, error) {
+
+	uri := fmt.Sprintf("/v2/clients/%d/triggers", clientID)
+	q := url.Values{}
+	q.Add("denormalize", "true")
+	query := q.Encode()
+	respBody, err := api.makeRequest("GET", uri, "trigger", query)
+	if err != nil {
+		return nil, err
+	}
+	var t TriggerRead
+	if err = json.Unmarshal(respBody, &t); err != nil {
+		return nil, err
+	}
+	return &t, nil
+}
+
+// TriggerCreate creates Trigger with the parameteres in JSON body.
+// For example, define filters and thresholds which trigger actions.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) error {
+
+	uri := fmt.Sprintf("/v2/clients/%d/triggers", clientID)
+	_, err := api.makeRequest("POST", uri, "trigger", triggerBody)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TriggerDelete deletes Trigger defined by distinct ID.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) TriggerDelete(clientID, triggerID int) error {
+
+	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
+	_, err := api.makeRequest("DELETE", uri, "trigger", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// TriggerUpdate updates existing trigger using unique ID.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) error {
+
+	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
+	_, err := api.makeRequest("PUT", uri, "trigger", triggerBody)
+	if err != nil {
+		return err
+	}
+	return nil
+}

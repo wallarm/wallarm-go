@@ -72,4 +72,4 @@ The reference to the godoc API description of the package
 
 # License
 
-MIT licensed.
+[MIT](LICENSE) licensed.

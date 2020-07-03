@@ -45,28 +45,79 @@ type ActionRead struct {
 	Offset int           `json:"offset"`
 }
 
-// ActionCreateResp is a response of just created Rule.
+// ActionBody is an inner body for Action and Hint responses.
+type ActionBody struct {
+	ID       int `json:"id"`
+	Actionid int `json:"actionid"`
+	Clientid int `json:"clientid"`
+	Action   []struct {
+		Type  string        `json:"type"`
+		Point []interface{} `json:"point"`
+		Value string        `json:"value"`
+	} `json:"action"`
+	CreateTime   int         `json:"create_time"`
+	CreateUserid int         `json:"create_userid"`
+	Validated    bool        `json:"validated"`
+	System       bool        `json:"system"`
+	RegexID      interface{} `json:"regex_id"`
+	UpdatedAt    int         `json:"updated_at"`
+	Type         string      `json:"type"`
+	Point        []string    `json:"point"`
+	AttackType   string      `json:"attack_type"`
+}
+
+// ActionCreateResp is the response of just created Rule.
 type ActionCreateResp struct {
-	Status int `json:"status"`
-	Body   struct {
-		ID       int `json:"id"`
-		Actionid int `json:"actionid"`
-		Clientid int `json:"clientid"`
-		Action   []struct {
-			Type  string        `json:"type"`
-			Point []interface{} `json:"point"`
-			Value string        `json:"value"`
-		} `json:"action"`
-		CreateTime   int         `json:"create_time"`
-		CreateUserid int         `json:"create_userid"`
-		Validated    bool        `json:"validated"`
-		System       bool        `json:"system"`
-		RegexID      interface{} `json:"regex_id"`
-		UpdatedAt    int         `json:"updated_at"`
-		Type         string      `json:"type"`
-		Point        []string    `json:"point"`
-		AttackType   string      `json:"attack_type"`
-	} `json:"body"`
+	Status int         `json:"status"`
+	Body   *ActionBody `json:"body"`
+}
+
+// HintReadResp is the response of filtered rules by Action ID.
+type HintReadResp struct {
+	Status int           `json:"status"`
+	Body   *[]ActionBody `json:"body"`
+}
+
+// HintRead is used to define whether action of the rule exists.
+type HintRead struct {
+	Filter    *HintFilter `json:"filter"`
+	OrderBy   string      `json:"order_by"`
+	OrderDesc bool        `json:"order_desc"`
+	Limit     int         `json:"limit"`
+	Offset    int         `json:"offset"`
+}
+
+// HintFilter is used as a filter by Action ID.
+type HintFilter struct {
+	Clientid []int `json:"clientid"`
+	Actionid []int `json:"actionid"`
+}
+
+// HintDelete is used for removal of Rule by Hint ID.
+type HintDelete struct {
+	Filter *HintDeleteFilter `json:"filter"`
+}
+
+// HintDeleteFilter is used as a filter by Hint ID.
+type HintDeleteFilter struct {
+	Clientid []int `json:"clientid"`
+	ID       int   `json:"id"`
+}
+
+// HintRead reads the Rules defined by Action ID.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) HintRead(hintBody *HintRead) (*HintReadResp, error) {
+
+	uri := "/v1/objects/hint"
+	respBody, err := api.makeRequest("POST", uri, "hint", hintBody)
+	if err != nil {
+		return nil, err
+	}
+	var h HintReadResp
+	if err = json.Unmarshal(respBody, &h); err != nil {
+		return nil, err
+	}
+	return &h, nil
 }
 
 // RuleRead reads the Rules defined by a filter.
@@ -103,6 +154,18 @@ func (api *API) RuleDelete(actionID int) error {
 
 	uri := fmt.Sprintf("/v2/action/%d", actionID)
 	_, err := api.makeRequest("DELETE", uri, "rule", nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// HintDelete deletes the Rule defined by the unique Hint ID.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) HintDelete(hintbody *HintDelete) error {
+
+	uri := "/v1/objects/hint/delete"
+	_, err := api.makeRequest("POST", uri, "hint", hintbody)
 	if err != nil {
 		return err
 	}

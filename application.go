@@ -43,6 +43,24 @@ type AppReadResp struct {
 	} `json:"body"`
 }
 
+// AppUpdate is a request body to update Fields in the existing Application defined by Filter.
+type AppUpdate struct {
+	Filter *AppUpdateFilter `json:"filter"`
+	Fields *AppUpdateFields `json:"fields"`
+}
+
+// AppUpdateFilter is used as a filter with ID of the Application.
+type AppUpdateFilter struct {
+	Clientid []int `json:"clientid"`
+	ID       int   `json:"id"`
+}
+
+// AppUpdateFields is used as identificator what should be changed in Application.
+// Only Name is supported.
+type AppUpdateFields struct {
+	Name string `json:"name"`
+}
+
 // AppRead reads Applications and returns params of the Application.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) AppRead(appBody *AppRead) (*AppReadResp, error) {
@@ -75,6 +93,18 @@ func (api *API) AppCreate(appBody *AppCreate) error {
 func (api *API) AppDelete(appBody *AppDelete) error {
 
 	uri := "/v1/objects/pool/delete"
+	_, err := api.makeRequest("POST", uri, "app", appBody)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// AppUpdate returns nothing if the Application has been updated succesfully, otherwise error.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *API) AppUpdate(appBody *AppUpdate) error {
+
+	uri := "/v1/objects/pool/update"
 	_, err := api.makeRequest("POST", uri, "app", appBody)
 	if err != nil {
 		return err

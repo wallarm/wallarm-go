@@ -82,9 +82,9 @@ func (api *API) ScannerCreate(scannerBody *ScannerCreate) (*ScannerCreateBody, e
 
 // ScannerDelete deletes resources which have been created previously.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) ScannerDelete(scannerBody *ScannerDelete) error {
+func (api *API) ScannerDelete(scannerBody *ScannerDelete, resType string) error {
 
-	uri := "/v2/scope/ip/bulk"
+	uri := fmt.Sprintf("/v2/scope/%s/bulk", resType)
 	_, err := api.makeRequest("POST", uri, "", scannerBody)
 	if err != nil {
 		return err

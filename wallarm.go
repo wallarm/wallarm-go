@@ -166,7 +166,7 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 	case resp.StatusCode == http.StatusBadRequest && (reqType == "node" || reqType == "app") && string(respBody) == `{"status":400,"body":"Already exists"}`:
 		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
 		return nil, err
-	case resp.StatusCode == http.StatusConflict && strInList(specificResourceProcessing, reqType):
+	case resp.StatusCode == http.StatusConflict && Contains(specificResourceProcessing, reqType):
 		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
 		return nil, err
 	default:
@@ -195,7 +195,7 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 
 	methods := []string{"POST", "PUT"}
 
-	if req.Header.Get("Content-Type") == "" && strInList(methods, method) && reqType != "userdetails" {
+	if req.Header.Get("Content-Type") == "" && Contains(methods, method) && reqType != "userdetails" {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
@@ -214,6 +214,20 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 	return resp, nil
 }
 
+// Contains wraps methods to check if List contains an element.
+func Contains(a interface{}, x interface{}) bool {
+	switch x.(type) {
+	case int:
+		group := a.([]int)
+		return intInList(group, x.(int))
+	case string:
+		group := a.([]string)
+		return strInList(group, x.(string))
+	default:
+		return false
+	}
+}
+
 func strInList(a []string, x string) bool {
 	for _, n := range a {
 		if x == n {
@@ -230,19 +244,4 @@ func intInList(a []int, x int) bool {
 		}
 	}
 	return false
-}
-
-func appendMap(united, b map[string]int) map[string]int {
-	for k, v := range b {
-		united[k] = v
-	}
-	return united
-}
-
-func reverseMap(m map[string]int) map[int]string {
-	n := make(map[int]string)
-	for k, v := range m {
-		n[v] = k
-	}
-	return n
 }

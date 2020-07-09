@@ -162,7 +162,7 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 		resp.StatusCode == 522,
 		resp.StatusCode == 523,
 		resp.StatusCode == 524:
-		return nil, errors.Errorf("HTTP status %d: service failure", resp.StatusCode)
+		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
 	case resp.StatusCode == http.StatusBadRequest && (reqType == "node" || reqType == "app") && string(respBody) == `{"status":400,"body":"Already exists"}`:
 		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
 		return nil, err
@@ -170,11 +170,7 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
 		return nil, err
 	default:
-		var s string
-		if respBody != nil {
-			s = string(respBody)
-		}
-		return nil, errors.Errorf("HTTP status %d: content %q", resp.StatusCode, s)
+		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
 	}
 
 	return respBody, nil

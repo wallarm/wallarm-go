@@ -19,33 +19,8 @@ type NodeCreate struct {
 // Used to get specific parameters of the created Node such as
 // time of last syncronisation along with relevant LOM and Proton files.
 type NodeCreateResp struct {
-	Status int `json:"status"`
-	Body   struct {
-		Type              string      `json:"type"`
-		ID                int         `json:"id"`
-		UUID              string      `json:"uuid"`
-		IP                interface{} `json:"ip"`
-		Hostname          string      `json:"hostname"`
-		LastActivity      interface{} `json:"last_activity"`
-		Enabled           bool        `json:"enabled"`
-		Clientid          int         `json:"clientid"`
-		LastAnalytic      interface{} `json:"last_analytic"`
-		CreateTime        int         `json:"create_time"`
-		CreateFrom        string      `json:"create_from"`
-		ProtondbVersion   interface{} `json:"protondb_version"`
-		LomVersion        interface{} `json:"lom_version"`
-		ProtondbUpdatedAt interface{} `json:"protondb_updated_at"`
-		LomUpdatedAt      interface{} `json:"lom_updated_at"`
-		NodeEnvParams     struct {
-			Packages struct {
-			} `json:"packages"`
-		} `json:"node_env_params"`
-		Active              bool   `json:"active"`
-		InstanceCount       int    `json:"instance_count"`
-		ActiveInstanceCount int    `json:"active_instance_count"`
-		Token               string `json:"token"`
-		Secret              string `json:"secret"`
-	} `json:"body"`
+	Status int         `json:"status"`
+	Body   GetNodeBody `json:"body"`
 }
 
 // GetNodeBodyPOST is used as an additional response on the GET
@@ -104,6 +79,7 @@ type GetNodeBody struct {
 	ActiveInstanceCount int    `json:"active_instance_count"`
 	Token               string `json:"token"`
 	RequestsAmount      int    `json:"requests_amount"`
+	Secret              string `json:"secret"`
 }
 
 // GetNode represents a root object of the fetching action for Nodes.
@@ -113,20 +89,20 @@ type GetNode struct {
 	Body   *[]GetNodeBody `json:"body"`
 }
 
-// GetNodeReadPOSTFilter is a filter object to convey for the Node request
-type GetNodeReadPOSTFilter struct {
+// NodeFilter is a filter object to convey for the Node request
+type NodeFilter struct {
 	UUID     string `json:"uuid,omitempty"`
 	IP       string `json:"ip,omitempty"`
 	Hostname string `json:"hostname,omitempty"`
 }
 
-// GetNodeReadPOST is used to fetch Nodes by POST method using filter by UUID/IP/Hostname
-type GetNodeReadPOST struct {
-	Filter    *GetNodeReadPOSTFilter `json:"filter"`
-	Limit     int                    `json:"limit"`
-	Offset    int                    `json:"offset"`
-	OrderBy   string                 `json:"order_by,omitempty"`
-	OrderDesc bool                   `json:"order_desc,omitempty"`
+// GetNodeReadByFilter is used to fetch Nodes by POST method using filter by UUID/IP/Hostname
+type GetNodeReadByFilter struct {
+	Filter    *NodeFilter `json:"filter"`
+	Limit     int         `json:"limit"`
+	Offset    int         `json:"offset"`
+	OrderBy   string      `json:"order_by,omitempty"`
+	OrderDesc bool        `json:"order_desc,omitempty"`
 }
 
 // NodeCreate returns the info about just created Node
@@ -188,9 +164,9 @@ func (api *API) GetNodeRead(clientID int, typeNode string) (*GetNode, error) {
 	return &n, nil
 }
 
-// GetNodeReadPOST returns settings of the Node specified by body with a filter.
+// GetNodeReadByFilter returns settings of the Node specified by body with a filter.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) GetNodeReadPOST(getNodeBody *GetNodeReadPOST) (*GetNodePOST, error) {
+func (api *API) GetNodeReadByFilter(getNodeBody *GetNodeReadByFilter) (*GetNodePOST, error) {
 
 	uri := "/v1/objects/node"
 	respBody, err := api.makeRequest("POST", uri, "", getNodeBody)

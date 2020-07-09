@@ -118,7 +118,7 @@ type UserFilter struct {
 
 // UserDelete is utilised to Delete Users
 type UserDelete struct {
-	*UserFilter `json:"filter"`
+	Filter *UserFilter `json:"filter"`
 }
 
 // UserFields represents fields of the Users for Update function
@@ -174,7 +174,7 @@ type UserUpdate struct {
 func (api *API) UserRead(userBody *UserGet) (*UserRead, error) {
 
 	uri := "/v1/objects/user"
-	respBody, err := api.makeRequest("POST", uri, "user", nil)
+	respBody, err := api.makeRequest("POST", uri, "user", userBody)
 	if err != nil {
 		return nil, err
 	}

@@ -55,7 +55,7 @@ type IntegrationCreate struct {
 	Clientid int                  `json:"clientid,omitempty"`
 }
 
-// IntegrationCreate returns nothing if Integration has been created succesfully, otherwise Error.
+// IntegrationCreate returns nothing if Integration has been created successfully, otherwise Error.
 // It accepts a body with defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) IntegrationCreate(integrationBody *IntegrationCreate) error {
@@ -147,7 +147,7 @@ type IntegrationWithAPICreate struct {
 	Clientid int                       `json:"clientid,omitempty"`
 }
 
-// IntegrationWithAPICreate returns nothing if Integration has been created succesfully, otherwise - error.
+// IntegrationWithAPICreate returns nothing if Integration has been created successfully, otherwise - error.
 // It accepts defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) IntegrationWithAPICreate(integrationBody *IntegrationWithAPICreate) error {
@@ -185,7 +185,7 @@ type EmailIntegrationCreate struct {
 	Clientid int                  `json:"clientid,omitempty"`
 }
 
-// EmailIntegrationCreate returns nothing if the `email` Integration has been created succesfully, otherwise - error.
+// EmailIntegrationCreate returns nothing if the `email` Integration has been created successfully, otherwise - error.
 // It accepts defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) EmailIntegrationCreate(emailBody *EmailIntegrationCreate) error {

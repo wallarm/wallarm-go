@@ -1,6 +1,12 @@
 # wallarm-go
 
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5673AF.svg?style=flat-square)](https://godoc.org/github.com/416e64726579/wallarm-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
+
+## Table of Contents
+- [Install](#Install)
+- [Getting Started](#GettingStarted)
+- [License](#License)
 
 > **Note**: This library is in active development and highly suggested to use carefully.
 

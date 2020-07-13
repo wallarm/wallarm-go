@@ -4,9 +4,9 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
 
 ## Table of Contents
-- [Install](#Install)
-- [Getting Started](#GettingStarted)
-- [License](#License)
+- [Install](#install)
+- [Getting Started](#getting-started)
+- [License](#license)
 
 > **Note**: This library is in active development and highly suggested to use carefully.
 

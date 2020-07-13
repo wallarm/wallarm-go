@@ -17,17 +17,73 @@ type UserCreate struct {
 
 // UserRead is used as a response for the Read function for the User endpoints
 type UserRead struct {
-	Body []struct {
-		ID          int      `json:"id"`
-		UUID        string   `json:"uuid"`
-		Clientid    int      `json:"clientid"`
-		Permissions []string `json:"permissions"`
-		Enabled     bool     `json:"enabled"`
-		Validated   bool     `json:"validated"`
-		Username    string   `json:"username"`
-		Realname    string   `json:"realname"`
-		Email       string   `json:"email"`
-	} `json:"body"`
+	Status int          `json:"status"`
+	Body   []UserParams `json:"body"`
+}
+
+// UserParams wraps the entire parameters of the User entity
+type UserParams struct {
+	ID                int         `json:"id"`
+	UUID              string      `json:"uuid"`
+	Clientid          int         `json:"clientid"`
+	Permissions       []string    `json:"permissions"`
+	ActualPermissions []string    `json:"actual_permissions"`
+	MfaEnabled        bool        `json:"mfa_enabled"`
+	CreateBy          int64       `json:"create_by"`
+	CreateAt          int         `json:"create_at"`
+	CreateFrom        string      `json:"create_from"`
+	Enabled           bool        `json:"enabled"`
+	Validated         bool        `json:"validated"`
+	Username          string      `json:"username"`
+	Realname          string      `json:"realname"`
+	Email             string      `json:"email"`
+	Phone             interface{} `json:"phone"`
+	PasswordChanged   int         `json:"password_changed"`
+	LoginHistory      []struct {
+		Time int    `json:"time"`
+		IP   string `json:"ip"`
+	} `json:"login_history"`
+	Timezone        string      `json:"timezone"`
+	ResultsPerPage  int         `json:"results_per_page"`
+	DefaultPool     string      `json:"default_pool"`
+	DefaultPoolid   interface{} `json:"default_poolid"`
+	LastReadNewsID  int         `json:"last_read_news_id"`
+	SearchTemplates struct {
+	} `json:"search_templates"`
+	Notifications struct {
+		ReportDaily struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"report_daily"`
+		ReportWeekly struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"report_weekly"`
+		ReportMonthly struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"report_monthly"`
+		Vuln struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"vuln"`
+		Scope struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"scope"`
+		System struct {
+			Email bool `json:"email"`
+			Sms   bool `json:"sms"`
+		} `json:"system"`
+	} `json:"notifications"`
+	Components               []string    `json:"components"`
+	Language                 string      `json:"language"`
+	LastLoginTime            int         `json:"last_login_time"`
+	DateFormat               string      `json:"date_format"`
+	TimeFormat               string      `json:"time_format"`
+	JobTitle                 interface{} `json:"job_title"`
+	AvailableAuthentications []string    `json:"available_authentications"`
+	FrontendURL              string      `json:"frontend_url"`
 }
 
 // UserGet is used for Read function purposes (to request Users by a GET method)
@@ -41,70 +97,8 @@ type UserGet struct {
 // UserDetails is used as a response for request about the specific User.
 // For example, it may be used to find out a parameter (Client ID) for the current user which auth params are used
 type UserDetails struct {
-	Status int `json:"status"`
-	Body   struct {
-		ID                int         `json:"id"`
-		UUID              string      `json:"uuid"`
-		Clientid          int         `json:"clientid"`
-		Permissions       []string    `json:"permissions"`
-		ActualPermissions []string    `json:"actual_permissions"`
-		MfaEnabled        bool        `json:"mfa_enabled"`
-		CreateBy          int64       `json:"create_by"`
-		CreateAt          int         `json:"create_at"`
-		CreateFrom        string      `json:"create_from"`
-		Enabled           bool        `json:"enabled"`
-		Validated         bool        `json:"validated"`
-		Username          string      `json:"username"`
-		Realname          string      `json:"realname"`
-		Email             string      `json:"email"`
-		Phone             interface{} `json:"phone"`
-		PasswordChanged   int         `json:"password_changed"`
-		LoginHistory      []struct {
-			Time int    `json:"time"`
-			IP   string `json:"ip"`
-		} `json:"login_history"`
-		Timezone        string      `json:"timezone"`
-		ResultsPerPage  int         `json:"results_per_page"`
-		DefaultPool     string      `json:"default_pool"`
-		DefaultPoolid   interface{} `json:"default_poolid"`
-		LastReadNewsID  int         `json:"last_read_news_id"`
-		SearchTemplates struct {
-		} `json:"search_templates"`
-		Notifications struct {
-			ReportDaily struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"report_daily"`
-			ReportWeekly struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"report_weekly"`
-			ReportMonthly struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"report_monthly"`
-			Vuln struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"vuln"`
-			Scope struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"scope"`
-			System struct {
-				Email bool `json:"email"`
-				Sms   bool `json:"sms"`
-			} `json:"system"`
-		} `json:"notifications"`
-		Components               []string    `json:"components"`
-		Language                 string      `json:"language"`
-		LastLoginTime            int         `json:"last_login_time"`
-		DateFormat               string      `json:"date_format"`
-		TimeFormat               string      `json:"time_format"`
-		JobTitle                 interface{} `json:"job_title"`
-		AvailableAuthentications []string    `json:"available_authentications"`
-		FrontendURL              string      `json:"frontend_url"`
-	} `json:"body"`
+	Status int        `json:"status"`
+	Body   UserParams `json:"body"`
 }
 
 // UserFilter is intended to filter Users for the Delete purpose
@@ -187,14 +181,18 @@ func (api *API) UserRead(userBody *UserGet) (*UserRead, error) {
 
 // UserCreate demonstrates the function to create a new user
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) UserCreate(userBody *UserCreate) error {
+func (api *API) UserCreate(userBody *UserCreate) (*UserDetails, error) {
 
 	uri := "/v1/objects/user/create"
-	_, err := api.makeRequest("POST", uri, "user", userBody)
+	respBody, err := api.makeRequest("POST", uri, "user", userBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var u UserDetails
+	if err = json.Unmarshal(respBody, &u); err != nil {
+		return nil, err
+	}
+	return &u, nil
 }
 
 // UserDelete is due to delete Users defined by filter, for example, `email`

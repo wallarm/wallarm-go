@@ -193,6 +193,8 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 
 	if req.Header.Get("Content-Type") == "" && Contains(methods, method) && reqType != "userdetails" {
 		req.Header.Set("Content-Type", "application/json")
+	} else if method == "GET" {
+		req.Header.Del("Content-Type")
 	}
 
 	if query != nil {
@@ -210,7 +212,7 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 	return resp, nil
 }
 
-// Contains wraps methods to check if List contains an element.
+// Contains wraps methods (for string and int) to check if List contains the element.
 func Contains(a interface{}, x interface{}) bool {
 	switch x.(type) {
 	case int:

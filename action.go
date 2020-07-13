@@ -5,34 +5,37 @@ import (
 	"fmt"
 )
 
-// Action defines the Action of how to parse the request.
+// ActionDetails defines the Action of how to parse the request.
 // Point represents a part of the request where the condition should be satisfied.
-type Action struct {
-	Value string        `json:"value,omitempty"`
+// ActionDetails is used to define the particular assets of the Action field.
+type ActionDetails struct {
 	Type  string        `json:"type,omitempty"`
 	Point []interface{} `json:"point,omitempty"`
+	Value string        `json:"value,omitempty"`
 }
 
 // ActionCreate is a creation skeleton for the Rule.
 type ActionCreate struct {
-	Type       string     `json:"type"`
-	Actions    *[]Action  `json:"action,omitempty"`
-	Clientid   int        `json:"clientid,omitempty"`
-	Validated  bool       `json:"validated,omitempty"`
-	Point      [][]string `json:"point,omitempty"`
-	Rules      []string   `json:"rules,omitempty"`
-	AttackType string     `json:"attack_type,omitempty"`
-	Mode       string     `json:"mode,omitempty"`
-	Regex      string     `json:"regex,omitempty"`
-	RegexID    int        `json:"regex_id,omitempty"`
-	Enabled    *bool      `json:"enabled,omitempty"`
-	Name       string     `json:"name,omitempty"`
-	Values     []string   `json:"values,omitempty"`
+	Type       string           `json:"type"`
+	Action     *[]ActionDetails `json:"action,omitempty"`
+	Clientid   int              `json:"clientid,omitempty"`
+	Validated  bool             `json:"validated,omitempty"`
+	Point      [][]string       `json:"point,omitempty"`
+	Rules      []string         `json:"rules,omitempty"`
+	AttackType string           `json:"attack_type,omitempty"`
+	Mode       string           `json:"mode,omitempty"`
+	Regex      string           `json:"regex,omitempty"`
+	RegexID    int              `json:"regex_id,omitempty"`
+	Enabled    *bool            `json:"enabled,omitempty"`
+	Name       string           `json:"name,omitempty"`
+	Values     []string         `json:"values,omitempty"`
 }
 
 // ActionFilter is the specific filter for getting the rules.
 // This is an inner structure.
 type ActionFilter struct {
+	ID         []int           `json:"id"`
+	NotID      []int           `json:"!id"`
 	Clientid   []int           `json:"clientid"`
 	HintsCount [][]interface{} `json:"hints_count"`
 	HintType   []string        `json:"hint_type"`
@@ -45,25 +48,21 @@ type ActionRead struct {
 	Offset int           `json:"offset"`
 }
 
-// ActionBody is an inner body for Action and Hint responses.
+// ActionBody is an inner body for the Action and Hint responses.
 type ActionBody struct {
-	ID       int `json:"id"`
-	Actionid int `json:"actionid"`
-	Clientid int `json:"clientid"`
-	Action   []struct {
-		Type  string        `json:"type"`
-		Point []interface{} `json:"point"`
-		Value string        `json:"value"`
-	} `json:"action"`
-	CreateTime   int         `json:"create_time"`
-	CreateUserid int         `json:"create_userid"`
-	Validated    bool        `json:"validated"`
-	System       bool        `json:"system"`
-	RegexID      interface{} `json:"regex_id"`
-	UpdatedAt    int         `json:"updated_at"`
-	Type         string      `json:"type"`
-	Point        []string    `json:"point"`
-	AttackType   string      `json:"attack_type"`
+	ID           int             `json:"id"`
+	Actionid     int             `json:"actionid"`
+	Clientid     int             `json:"clientid"`
+	Action       []ActionDetails `json:"action"`
+	CreateTime   int             `json:"create_time"`
+	CreateUserid int             `json:"create_userid"`
+	Validated    bool            `json:"validated"`
+	System       bool            `json:"system"`
+	RegexID      interface{}     `json:"regex_id"`
+	UpdatedAt    int             `json:"updated_at"`
+	Type         string          `json:"type"`
+	Point        []string        `json:"point"`
+	AttackType   string          `json:"attack_type"`
 }
 
 // ActionCreateResp is the response of just created Rule.

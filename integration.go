@@ -90,7 +90,7 @@ func (api *API) IntegrationRead(clientID int, name, IntType string) (*Integratio
 	q := url.Values{}
 	q.Add("clientid", strconv.Itoa(clientID))
 	query := q.Encode()
-	respBody, err := api.makeRequest("GET", uri, "trigger", query)
+	respBody, err := api.makeRequest("GET", uri, "integration", query)
 	if err != nil {
 		return nil, err
 	}

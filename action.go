@@ -11,7 +11,7 @@ import (
 type ActionDetails struct {
 	Type  string        `json:"type,omitempty"`
 	Point []interface{} `json:"point,omitempty"`
-	Value string        `json:"value,omitempty"`
+	Value interface{}   `json:"value,omitempty"`
 }
 
 // ActionCreate is a creation skeleton for the Rule.
@@ -61,8 +61,16 @@ type ActionBody struct {
 	RegexID      interface{}     `json:"regex_id"`
 	UpdatedAt    int             `json:"updated_at"`
 	Type         string          `json:"type"`
+	Enabled      bool            `json:"enabled"`
+	Mode         string          `json:"mode"`
+	Regex        string          `json:"regex"`
 	Point        []string        `json:"point"`
 	AttackType   string          `json:"attack_type"`
+	Rules        []string        `json:"rules"`
+	// Headers for the Set Response Headers Rule
+	// are defined by these two parameters.
+	Name   string        `json:"name"`
+	Values []interface{} `json:"values"`
 }
 
 // ActionCreateResp is the response of just created Rule.

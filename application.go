@@ -76,7 +76,7 @@ func (api *API) AppRead(appBody *AppRead) (*AppReadResp, error) {
 	return &a, nil
 }
 
-// AppCreate returns nothing if Application has been created successfully, otherwise error.
+// AppCreate returns nothing if Application has been created succesfully, otherwise error.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) AppCreate(appBody *AppCreate) error {
 
@@ -88,7 +88,7 @@ func (api *API) AppCreate(appBody *AppCreate) error {
 	return nil
 }
 
-// AppDelete returns nothing if Application has been deleted successfully, otherwise error.
+// AppDelete returns nothing if Application has been deleted succesfully, otherwise error.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) AppDelete(appBody *AppDelete) error {
 
@@ -100,7 +100,7 @@ func (api *API) AppDelete(appBody *AppDelete) error {
 	return nil
 }
 
-// AppUpdate returns nothing if the Application has been updated successfully, otherwise error.
+// AppUpdate returns nothing if the Application has been updated succesfully, otherwise error.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) AppUpdate(appBody *AppUpdate) error {
 

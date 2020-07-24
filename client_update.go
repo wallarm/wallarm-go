@@ -4,8 +4,9 @@ import "encoding/json"
 
 // ClientFields defines fields which are subject to update.
 type ClientFields struct {
-	Mode        string `json:"mode,omitempty"`
-	ScannerMode string `json:"scanner_mode,omitempty"`
+	Mode                string `json:"mode,omitempty"`
+	ScannerMode         string `json:"scanner_mode,omitempty"`
+	AttackRecheckerMode string `json:"attack_rechecker_mode,omitempty"`
 }
 
 // ClientFilter is used for filtration.

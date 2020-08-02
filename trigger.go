@@ -112,7 +112,7 @@ func (api *API) TriggerRead(clientID int) (*TriggerRead, error) {
 	return &t, nil
 }
 
-// TriggerCreate creates Trigger with the parameteres in JSON body.
+// TriggerCreate creates Trigger with the parameters in JSON body.
 // For example, define filters and thresholds which trigger actions.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) error {

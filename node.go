@@ -49,8 +49,8 @@ type GetNodeBodyPOST struct {
 
 // GetNodePOST represents a root object of the fetching of Nodes.
 type GetNodePOST struct {
-	Status int                `json:"status"`
-	Body   *[]GetNodeBodyPOST `json:"body"`
+	Status int               `json:"status"`
+	Body   []GetNodeBodyPOST `json:"body"`
 }
 
 // GetNodeBody is used to find out configurations and parameters of one specific Node.
@@ -85,8 +85,8 @@ type GetNodeBody struct {
 // GetNode represents a root object of the fetching action for Nodes.
 // It allows to iterate over several Nodes.
 type GetNode struct {
-	Status int            `json:"status"`
-	Body   *[]GetNodeBody `json:"body"`
+	Status int           `json:"status"`
+	Body   []GetNodeBody `json:"body"`
 }
 
 // NodeFilter is a filter object to convey for the Node request

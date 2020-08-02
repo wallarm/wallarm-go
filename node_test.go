@@ -11,7 +11,7 @@ import (
 var (
 	expectedGetNode = GetNode{
 		Status: 200,
-		Body: &[]GetNodeBody{
+		Body: []GetNodeBody{
 			{
 				Type:                "cloud_node",
 				ID:                  10101019292,
@@ -370,7 +370,7 @@ func TestGetNodesByFilter(t *testing.T) {
 	mux.HandleFunc("/v1/objects/node", handler)
 	expectedGetNodeByFilter := GetNodePOST{
 		Status: 200,
-		Body: &[]GetNodeBodyPOST{
+		Body: []GetNodeBodyPOST{
 			{
 				Type:              "cloud_node",
 				ID:                "13ef5fsde-01ca-0000-85ac-78aaf987",

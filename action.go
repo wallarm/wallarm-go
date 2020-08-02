@@ -19,8 +19,8 @@ type ActionCreate struct {
 	Type       string           `json:"type"`
 	Action     *[]ActionDetails `json:"action,omitempty"`
 	Clientid   int              `json:"clientid,omitempty"`
-	Validated  bool             `json:"validated,omitempty"`
-	Point      [][]string       `json:"point,omitempty"`
+	Validated  bool             `json:"validated"`
+	Point      [][]interface{}  `json:"point,omitempty"`
 	Rules      []string         `json:"rules,omitempty"`
 	AttackType string           `json:"attack_type,omitempty"`
 	Mode       string           `json:"mode,omitempty"`
@@ -34,11 +34,11 @@ type ActionCreate struct {
 // ActionFilter is the specific filter for getting the rules.
 // This is an inner structure.
 type ActionFilter struct {
-	ID         []int           `json:"id"`
-	NotID      []int           `json:"!id"`
-	Clientid   []int           `json:"clientid"`
-	HintsCount [][]interface{} `json:"hints_count"`
-	HintType   []string        `json:"hint_type"`
+	ID         []int           `json:"id,omitempty"`
+	NotID      []int           `json:"!id,omitempty"`
+	Clientid   []int           `json:"clientid,omitempty"`
+	HintsCount [][]interface{} `json:"hints_count,omitempty"`
+	HintType   []string        `json:"hint_type,omitempty"`
 }
 
 // ActionRead is used as a filter to fetch the rules.
@@ -48,10 +48,25 @@ type ActionRead struct {
 	Offset int           `json:"offset"`
 }
 
+// ActionFetch is a response struct which portrays
+// all conditions set for requests of filtered type.
+type ActionFetch struct {
+	Status int `json:"status"`
+	Body   []struct {
+		ID                int           `json:"id"`
+		Clientid          int           `json:"clientid"`
+		Name              interface{}   `json:"name"`
+		Conditions        []interface{} `json:"conditions"`
+		Hints             int           `json:"hints"`
+		GroupedHintsCount int           `json:"grouped_hints_count"`
+		UpdatedAt         int           `json:"updated_at"`
+	} `json:"body"`
+}
+
 // ActionBody is an inner body for the Action and Hint responses.
 type ActionBody struct {
 	ID           int             `json:"id"`
-	Actionid     int             `json:"actionid"`
+	ActionID     int             `json:"actionid"`
 	Clientid     int             `json:"clientid"`
 	Action       []ActionDetails `json:"action"`
 	CreateTime   int             `json:"create_time"`
@@ -64,7 +79,7 @@ type ActionBody struct {
 	Enabled      bool            `json:"enabled"`
 	Mode         string          `json:"mode"`
 	Regex        string          `json:"regex"`
-	Point        []string        `json:"point"`
+	Point        []interface{}   `json:"point"`
 	AttackType   string          `json:"attack_type"`
 	Rules        []string        `json:"rules"`
 	// Headers for the Set Response Headers Rule
@@ -96,8 +111,17 @@ type HintRead struct {
 
 // HintFilter is used as a filter by Action ID.
 type HintFilter struct {
-	Clientid []int `json:"clientid"`
-	Actionid []int `json:"actionid"`
+	Clientid        []int    `json:"clientid,omitempty"`
+	ActionID        []int    `json:"actionid,omitempty"`
+	ID              []int    `json:"id,omitempty"`
+	NotID           []int    `json:"!id,omitempty"`
+	NotActionID     []int    `json:"!actionid,omitempty"`
+	CreateUserid    []int    `json:"create_userid,omitempty"`
+	NotCreateUserid []int    `json:"!create_userid,omitempty"`
+	CreateTime      [][]int  `json:"create_time,omitempty"`
+	NotCreateTime   [][]int  `json:"!create_time,omitempty"`
+	System          bool     `json:"system,omitempty"`
+	Type            []string `json:"type,omitempty"`
 }
 
 // HintDelete is used for removal of Rule by Hint ID.
@@ -129,19 +153,23 @@ func (api *API) HintRead(hintBody *HintRead) (*HintReadResp, error) {
 
 // RuleRead reads the Rules defined by a filter.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) RuleRead(ruleBody *ActionRead) error {
+func (api *API) RuleRead(ruleBody *ActionRead) (*ActionFetch, error) {
 
 	uri := "/v1/objects/action"
-	_, err := api.makeRequest("POST", uri, "rule", ruleBody)
+	respBody, err := api.makeRequest("POST", uri, "rule", ruleBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var a ActionFetch
+	if err = json.Unmarshal(respBody, &a); err != nil {
+		return nil, err
+	}
+	return &a, nil
 }
 
-// RuleCreate creates Rules in Wallarm Cloud.
+// HintCreate creates Rules in Wallarm Cloud.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) RuleCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
+func (api *API) HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
 
 	uri := "/v1/objects/hint/create"
 	respBody, err := api.makeRequest("POST", uri, "rule", ruleBody)

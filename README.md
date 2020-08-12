@@ -1,5 +1,6 @@
 # wallarm-go
-![Test](https://github.com/416e64726579/wallarm-go/workflows/Test/badge.svg)
+
+[![build](https://github.com/416e64726579/wallarm-go/workflows/Go/badge.svg)](https://github.com/416e64726579/wallarm-go/actions?query=workflow%3AGo)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5673AF.svg?style=flat-square)](https://godoc.org/github.com/416e64726579/wallarm-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/416e64726579/wallarm-go/blob/main/LICENSE)

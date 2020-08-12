@@ -1,7 +1,8 @@
 # wallarm-go
-
+![Test](https://github.com/416e64726579/wallarm-go/workflows/Test/badge.svg)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5673AF.svg?style=flat-square)](https://godoc.org/github.com/416e64726579/wallarm-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/416e64726579/wallarm-go/blob/main/LICENSE)
 
 ## Table of Contents
 - [Install](#install)
@@ -24,7 +25,7 @@ A Go library for interacting with
 
 ## Install
 
-You need a working Go environment.
+You need a working Go environment
 
 ```sh
 go get github.com/416e64726579/wallarm-go
@@ -55,21 +56,24 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Print user details
+	// Print user specific data
 	fmt.Println(u)
 
-	// Change global WAF mode to default (per node)
-	mode := ClientUpdateCreate{
+	// Change global WAF mode to monitoring
+	mode := ClientUpdate{
 		Filter: &ClientFilter{
 			ID: 1,
 		},
 		Fields: &ClientFields{
-			Mode: "default",
+			Mode: "monitoring",
 		},
 	}
-	if err := api.ClientUpdateCreate(&mode); err != nil {
+	c, err := api.ClientUpdate(&mode)
+	if err != nil {
 		log.Fatal(err)
 	}
+	// Print client data
+	fmt.Println(c)
 }
 ```
 
@@ -78,4 +82,4 @@ The reference to the godoc API description of the package
 
 # License
 
-[MIT](LICENSE) licensed.
+[MIT](LICENSE) licensed

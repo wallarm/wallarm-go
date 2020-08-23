@@ -55,36 +55,67 @@ type IntegrationCreate struct {
 	Clientid int                  `json:"clientid,omitempty"`
 }
 
-// IntegrationCreate returns nothing if Integration has been created succesfully, otherwise Error.
+// IntegrationCreateResp represents successful creating of
+// an integration entity with the associative parameters.
+type IntegrationCreateResp struct {
+	Body struct {
+		Result string `json:"result"`
+		Object struct {
+			ID        int         `json:"id"`
+			Active    bool        `json:"active"`
+			Name      string      `json:"name"`
+			Type      string      `json:"type"`
+			CreatedAt int         `json:"created_at"`
+			CreatedBy string      `json:"created_by"`
+			Target    interface{} `json:"target"`
+			Events    []struct {
+				Event  string `json:"event"`
+				Active bool   `json:"active"`
+			} `json:"events"`
+		} `json:"object"`
+	} `json:"body"`
+}
+
+// IntegrationCreate returns create object if Integration
+// has been created successfully, otherwise - error.
 // It accepts a body with defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) IntegrationCreate(integrationBody *IntegrationCreate) error {
+func (api *API) IntegrationCreate(integrationBody *IntegrationCreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	_, err := api.makeRequest("POST", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }
 
 // IntegrationUpdate is used to Update existing resources.
 // It utilises the same format of body as the Create function.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) IntegrationUpdate(integrationBody *IntegrationCreate, integrationID int) error {
+func (api *API) IntegrationUpdate(integrationBody *IntegrationCreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	_, err := api.makeRequest("PUT", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }
 
 // IntegrationRead is used to read existing integrations.
 // It returns the list of Integrations
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) IntegrationRead(clientID int, name, IntType string) (*IntegrationObject, error) {
+func (api *API) IntegrationRead(clientID int, id int) (*IntegrationObject, error) {
 
 	uri := "/v2/integration"
 	q := url.Values{}
@@ -99,7 +130,7 @@ func (api *API) IntegrationRead(clientID int, name, IntType string) (*Integratio
 		return nil, err
 	}
 	for _, obj := range *i.Body.Object {
-		if obj.Name == name && obj.Type == IntType {
+		if obj.ID == id {
 			return &obj, nil
 		}
 	}
@@ -147,30 +178,41 @@ type IntegrationWithAPICreate struct {
 	Clientid int                       `json:"clientid,omitempty"`
 }
 
-// IntegrationWithAPICreate returns nothing if Integration has been created succesfully, otherwise - error.
+// IntegrationWithAPICreate returns created object if an integration
+//  has been created successfully, otherwise - error.
 // It accepts defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) IntegrationWithAPICreate(integrationBody *IntegrationWithAPICreate) error {
+func (api *API) IntegrationWithAPICreate(integrationBody *IntegrationWithAPICreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	_, err := api.makeRequest("POST", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }
 
-// IntegrationWithAPIUpdate is used to Update existing resources.
+// IntegrationWithAPIUpdate is used to Update existing API integration resources.
 // It utilises the same format of body as the Create function.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICreate, integrationID int) error {
+func (api *API) IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	_, err := api.makeRequest("PUT", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }
 
 // EmailIntegrationCreate is a root object of `Create` action for the `email` integration.
@@ -185,28 +227,39 @@ type EmailIntegrationCreate struct {
 	Clientid int                  `json:"clientid,omitempty"`
 }
 
-// EmailIntegrationCreate returns nothing if the `email` Integration has been created succesfully, otherwise - error.
+// EmailIntegrationCreate returns created object if the `email` Integration
+// has been created successfully, otherwise - error.
 // It accepts defined settings namely Event types, Name, Target.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) EmailIntegrationCreate(emailBody *EmailIntegrationCreate) error {
+func (api *API) EmailIntegrationCreate(emailBody *EmailIntegrationCreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	_, err := api.makeRequest("POST", uri, "email", emailBody)
+	respBody, err := api.makeRequest("POST", uri, "email", emailBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }
 
 // EmailIntegrationUpdate is used to Update existing resources.
 // It utilises the same format of body as the Create function.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, integrationID int) error {
+func (api *API) EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	_, err := api.makeRequest("PUT", uri, "email", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
 }

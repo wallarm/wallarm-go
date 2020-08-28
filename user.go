@@ -23,10 +23,10 @@ type UserRead struct {
 
 // UserParams wraps the entire parameters of the User entity
 type UserParams struct {
+	*UserCreate
+	Phone             interface{} `json:"phone"`
 	ID                int         `json:"id"`
 	UUID              string      `json:"uuid"`
-	Clientid          int         `json:"clientid"`
-	Permissions       []string    `json:"permissions"`
 	ActualPermissions []string    `json:"actual_permissions"`
 	MfaEnabled        bool        `json:"mfa_enabled"`
 	CreateBy          int64       `json:"create_by"`
@@ -34,10 +34,6 @@ type UserParams struct {
 	CreateFrom        string      `json:"create_from"`
 	Enabled           bool        `json:"enabled"`
 	Validated         bool        `json:"validated"`
-	Username          string      `json:"username"`
-	Realname          string      `json:"realname"`
-	Email             string      `json:"email"`
-	Phone             interface{} `json:"phone"`
 	PasswordChanged   int         `json:"password_changed"`
 	LoginHistory      []struct {
 		Time int    `json:"time"`
@@ -97,8 +93,8 @@ type UserGet struct {
 // UserDetails is used as a response for request about the specific User.
 // For example, it may be used to find out a parameter (Client ID) for the current user which auth params are used
 type UserDetails struct {
-	Status int        `json:"status"`
-	Body   UserParams `json:"body"`
+	Status int         `json:"status"`
+	Body   *UserParams `json:"body"`
 }
 
 // UserFilter is intended to filter Users for the Delete purpose

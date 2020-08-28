@@ -28,16 +28,15 @@ type Logger interface {
 // API holds the configuration for the current API client. A client should not
 // be modified concurrently.
 type API struct {
-	baseURL        string
-	apiSecret      string
-	apiUUID        string
-	ClientID       int
-	UserAgent      string
-	headers        http.Header
-	httpClient     *http.Client
-	retryPolicy    RetryPolicy
-	logger         Logger
-	IgnoreExisting bool
+	baseURL     string
+	apiSecret   string
+	apiUUID     string
+	ClientID    int
+	UserAgent   string
+	headers     http.Header
+	httpClient  *http.Client
+	retryPolicy RetryPolicy
+	logger      Logger
 }
 
 // HTTPClient accepts a custom *http.Client for making API calls.
@@ -84,15 +83,6 @@ func UsingRetryPolicy(maxRetries int, minRetryDelaySecs int, maxRetryDelaySecs i
 func UsingLogger(logger Logger) Option {
 	return func(api *API) error {
 		api.logger = logger
-		return nil
-	}
-}
-
-// IgnoreExistingResources can be set if you want to skip errors on existing resources
-// By default it raises an error
-func IgnoreExistingResources() Option {
-	return func(api *API) error {
-		api.IgnoreExisting = true
 		return nil
 	}
 }

@@ -23,8 +23,8 @@ type GetVulnFilter struct {
 
 // GetVulnReadResp is used to get `Vulnerabilities` by filter in a body
 type GetVulnReadResp struct {
-	Status int `json:"status"`
-	Body   []struct {
+	GetVulnFilter
+	Body []struct {
 		ValidateTime   int         `json:"validate_time"`
 		InvalidateTime interface{} `json:"invalidate_time"`
 		LastCheck      interface{} `json:"last_check"`

@@ -19,8 +19,8 @@ type NodeCreate struct {
 // Used to get specific parameters of the created Node such as
 // time of last syncronisation along with relevant LOM and Proton files.
 type NodeCreateResp struct {
-	Status int         `json:"status"`
-	Body   GetNodeBody `json:"body"`
+	Status int          `json:"status"`
+	Body   *GetNodeBody `json:"body"`
 }
 
 // GetNodeBodyPOST is used as an additional response on the GET
@@ -55,31 +55,19 @@ type GetNodePOST struct {
 
 // GetNodeBody is used to find out configurations and parameters of one specific Node.
 type GetNodeBody struct {
-	Type              string      `json:"type"`
-	ID                int         `json:"id"`
-	UUID              string      `json:"uuid"`
-	IP                interface{} `json:"ip"`
-	Hostname          string      `json:"hostname"`
-	LastActivity      interface{} `json:"last_activity"`
-	Enabled           bool        `json:"enabled"`
-	Clientid          int         `json:"clientid"`
-	LastAnalytic      interface{} `json:"last_analytic"`
-	CreateTime        int         `json:"create_time"`
-	CreateFrom        string      `json:"create_from"`
-	ProtondbVersion   interface{} `json:"protondb_version"`
-	LomVersion        interface{} `json:"lom_version"`
-	ProtondbUpdatedAt interface{} `json:"protondb_updated_at"`
-	LomUpdatedAt      interface{} `json:"lom_updated_at"`
-	NodeEnvParams     struct {
-		Packages struct {
-		} `json:"packages"`
-	} `json:"node_env_params"`
-	Active              bool   `json:"active"`
-	InstanceCount       int    `json:"instance_count"`
-	ActiveInstanceCount int    `json:"active_instance_count"`
-	Token               string `json:"token"`
-	RequestsAmount      int    `json:"requests_amount"`
-	Secret              string `json:"secret"`
+	GetNodeBodyPOST
+	ID                  int         `json:"id"`
+	UUID                string      `json:"uuid"`
+	IP                  interface{} `json:"ip"`
+	LastActivity        interface{} `json:"last_activity"`
+	LastAnalytic        interface{} `json:"last_analytic"`
+	ProtondbVersion     interface{} `json:"protondb_version"`
+	LomVersion          interface{} `json:"lom_version"`
+	InstanceCount       int         `json:"instance_count"`
+	ActiveInstanceCount int         `json:"active_instance_count"`
+	Token               string      `json:"token"`
+	RequestsAmount      int         `json:"requests_amount"`
+	Secret              string      `json:"secret"`
 }
 
 // GetNode represents a root object of the fetching action for Nodes.

@@ -4,20 +4,19 @@ import "encoding/json"
 
 // AppCreate is a request body to set ID and Name for the App.
 type AppCreate struct {
-	ID       int    `json:"id"`
-	Name     string `json:"name"`
-	Clientid int    `json:"clientid"`
+	*AppFilter
+	Name string `json:"name"`
 }
 
-// AppDeleteFilter is a deleting filter of the App.
-type AppDeleteFilter struct {
+// AppFilter is used to filter applications by ID and ClientID.
+type AppFilter struct {
 	ID       int `json:"id"`
 	Clientid int `json:"clientid"`
 }
 
 // AppDelete is a root object for deleting filter.
 type AppDelete struct {
-	Filter *AppDeleteFilter `json:"filter"`
+	Filter *AppFilter `json:"filter"`
 }
 
 // AppReadFilter is a filter by Client ID.
@@ -36,10 +35,8 @@ type AppRead struct {
 type AppReadResp struct {
 	Status int `json:"status"`
 	Body   []struct {
-		ID       int    `json:"id"`
-		Clientid int    `json:"clientid"`
-		Name     string `json:"name"`
-		Deleted  bool   `json:"deleted"`
+		*AppCreate
+		Deleted bool `json:"deleted"`
 	} `json:"body"`
 }
 
@@ -51,8 +48,8 @@ type AppUpdate struct {
 
 // AppUpdateFilter is used as a filter with ID of the Application.
 type AppUpdateFilter struct {
-	Clientid []int `json:"clientid"`
-	ID       int   `json:"id"`
+	*AppReadFilter
+	ID int `json:"id"`
 }
 
 // AppUpdateFields is used as identificator what should be changed in Application.

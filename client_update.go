@@ -30,8 +30,8 @@ type ClientRead struct {
 
 // ClientReadFilter is the inner object for Filter.
 type ClientReadFilter struct {
+	ClientFilter
 	Enabled bool   `json:"enabled,omitempty"`
-	ID      int    `json:"id,omitempty"`
 	Name    string `json:"name,omitempty"`
 }
 
@@ -40,7 +40,7 @@ type ClientReadFilter struct {
 type ClientInfo struct {
 	Status int `json:"status"`
 	Body   []struct {
-		ID               int      `json:"id"`
+		ClientFilter
 		Name             string   `json:"name"`
 		Components       []string `json:"components"`
 		VulnPrefix       string   `json:"vuln_prefix"`

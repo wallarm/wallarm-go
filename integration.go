@@ -29,8 +29,7 @@ type IntegrationObject struct {
 	CreatedBy string      `json:"created_by"`
 	Target    interface{} `json:"target"`
 	Events    []struct {
-		Event  string `json:"event"`
-		Active bool   `json:"active"`
+		IntegrationEvents
 	} `json:"events"`
 }
 
@@ -59,21 +58,48 @@ type IntegrationCreate struct {
 // an integration entity with the associative parameters.
 type IntegrationCreateResp struct {
 	Body struct {
-		Result string `json:"result"`
-		Object struct {
-			ID        int         `json:"id"`
-			Active    bool        `json:"active"`
-			Name      string      `json:"name"`
-			Type      string      `json:"type"`
-			CreatedAt int         `json:"created_at"`
-			CreatedBy string      `json:"created_by"`
-			Target    interface{} `json:"target"`
-			Events    []struct {
-				Event  string `json:"event"`
-				Active bool   `json:"active"`
-			} `json:"events"`
-		} `json:"object"`
+		Result            string `json:"result"`
+		IntegrationObject `json:"object"`
 	} `json:"body"`
+}
+
+// IntegrationWithAPITarget is used to create an Integration with the following parameters.
+// On purpose to fulfil a custom Webhooks integration.
+type IntegrationWithAPITarget struct {
+	Token       string                 `json:"token,omitempty"`
+	API         string                 `json:"api,omitempty"`
+	URL         string                 `json:"url,omitempty"`
+	HTTPMethod  string                 `json:"http_method,omitempty"`
+	Headers     map[string]interface{} `json:"headers"`
+	CaFile      string                 `json:"ca_file"`
+	CaVerify    bool                   `json:"ca_verify"`
+	Timeout     int                    `json:"timeout,omitempty"`
+	OpenTimeout int                    `json:"open_timeout,omitempty"`
+}
+
+// IntegrationWithAPICreate is a root object of Create action for Integrations.
+// It aids to set `Events` to trigger this integration.
+// `Type` possible values: "web_hooks"
+// `Target` is a struct for a Webhooks endpoint containing params such as URL, Token, etc.
+type IntegrationWithAPICreate struct {
+	Name     string                    `json:"name"`
+	Active   bool                      `json:"active"`
+	Target   *IntegrationWithAPITarget `json:"target"`
+	Events   *[]IntegrationEvents      `json:"events"`
+	Type     string                    `json:"type"`
+	Clientid int                       `json:"clientid,omitempty"`
+}
+
+// EmailIntegrationCreate is a root object of `Create` action for the `email` integration.
+// Temporary workaround (`Target` is a slice instead of string) to not check type many times.
+// Then it will be changed to interface{} with type checking
+type EmailIntegrationCreate struct {
+	Name     string               `json:"name"`
+	Active   bool                 `json:"active"`
+	Target   []string             `json:"target"`
+	Events   *[]IntegrationEvents `json:"events"`
+	Type     string               `json:"type"`
+	Clientid int                  `json:"clientid,omitempty"`
 }
 
 // IntegrationCreate returns create object if Integration
@@ -151,33 +177,6 @@ func (api *API) IntegrationDelete(integrationID int) error {
 	return nil
 }
 
-// IntegrationWithAPITarget is used to create an Integration with the following parameters.
-// On purpose to fulfil a custom Webhooks integration.
-type IntegrationWithAPITarget struct {
-	Token       string                 `json:"token,omitempty"`
-	API         string                 `json:"api,omitempty"`
-	URL         string                 `json:"url,omitempty"`
-	HTTPMethod  string                 `json:"http_method,omitempty"`
-	Headers     map[string]interface{} `json:"headers"`
-	CaFile      string                 `json:"ca_file"`
-	CaVerify    bool                   `json:"ca_verify"`
-	Timeout     int                    `json:"timeout,omitempty"`
-	OpenTimeout int                    `json:"open_timeout,omitempty"`
-}
-
-// IntegrationWithAPICreate is a root object of Create action for Integrations.
-// It aids to set `Events` to trigger this integration.
-// `Type` possible values: "web_hooks"
-// `Target` is a struct for a Webhooks endpoint containing params such as URL, Token, etc.
-type IntegrationWithAPICreate struct {
-	Name     string                    `json:"name"`
-	Active   bool                      `json:"active"`
-	Target   *IntegrationWithAPITarget `json:"target"`
-	Events   *[]IntegrationEvents      `json:"events"`
-	Type     string                    `json:"type"`
-	Clientid int                       `json:"clientid,omitempty"`
-}
-
 // IntegrationWithAPICreate returns created object if an integration
 //  has been created successfully, otherwise - error.
 // It accepts defined settings namely Event types, Name, Target.
@@ -213,18 +212,6 @@ func (api *API) IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICrea
 		return nil, err
 	}
 	return &i, nil
-}
-
-// EmailIntegrationCreate is a root object of `Create` action for the `email` integration.
-// Temporary workaround (`Target` is a slice instead of string) to not check type many times.
-// Then it will be changed to interface{} with type checking
-type EmailIntegrationCreate struct {
-	Name     string               `json:"name"`
-	Active   bool                 `json:"active"`
-	Target   []string             `json:"target"`
-	Events   *[]IntegrationEvents `json:"events"`
-	Type     string               `json:"type"`
-	Clientid int                  `json:"clientid,omitempty"`
 }
 
 // EmailIntegrationCreate returns created object if the `email` Integration

@@ -44,16 +44,15 @@ type ScannerDelete struct {
 	Bulk *[]ScannerDeleteBulk `json:"bulk"`
 }
 
-// ScannerDeleteFilter is used as a filter for delete query.
-type ScannerDeleteFilter struct {
-	Query    string `json:"query"`
-	Clientid int    `json:"clientid"`
-	ID       []int  `json:"id"`
+// ScannerFilter is used as a filter for delete query.
+type ScannerFilter struct {
+	*ScannerCreate
+	ID []int `json:"id"`
 }
 
 // ScannerDeleteBulk is used to update scope resource.
 type ScannerDeleteBulk struct {
-	Filter *ScannerDeleteFilter `json:"filter"`
+	Filter *ScannerFilter `json:"filter"`
 }
 
 // ScannerUpdate is used to update scope resource.

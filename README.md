@@ -1,7 +1,7 @@
 # wallarm-go
 
 [![build](https://github.com/416e64726579/wallarm-go/workflows/Go/badge.svg)](https://github.com/416e64726579/wallarm-go/actions?query=workflow%3AGo)
-[![GoDoc](https://img.shields.io/badge/godoc-reference-5673AF.svg?style=flat-square)](https://godoc.org/github.com/416e64726579/wallarm-go)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/416e64726579/wallarm-go)](https://pkg.go.dev/github.com/416e64726579/wallarm-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/416e64726579/wallarm-go/blob/master/LICENSE)
 
@@ -21,8 +21,8 @@ A Go library for interacting with
 * Manage triggers
 * Manage users
 * Manage the blacklist
-* Change the global WAF mode
-* List vulnerabilities
+* Switch the WAF/Scanner/Active Threat Verification modes
+* Inquire found vulnerabilities
 
 ## Install
 
@@ -33,6 +33,8 @@ go get github.com/416e64726579/wallarm-go
 ```
 
 ## Getting Started
+
+The sample code could be similar 
 
 ```go
 package main
@@ -61,11 +63,11 @@ func main() {
 	fmt.Println(u)
 
 	// Change global WAF mode to monitoring
-	mode := ClientUpdate{
-		Filter: &ClientFilter{
+	mode := wallarm.ClientUpdate{
+		Filter: &wallarm.ClientFilter{
 			ID: 1,
 		},
-		Fields: &ClientFields{
+		Fields: &wallarm.ClientFields{
 			Mode: "monitoring",
 		},
 	}
@@ -75,11 +77,41 @@ func main() {
 	}
 	// Print client data
 	fmt.Println(c)
+
+	// Create a trigger when the number of attacks more than 1000 in 10 minutes
+	filter := wallarm.TriggerFilters{
+		ID: "ip_address",
+		Operator: "eq",
+		Values: []interface{}{"2.2.2.2"},
+	}
+
+	var filters []wallarm.TriggerFilters
+	filters = append(filters, filter)
+
+	action := wallarm.TriggerActions{
+		ID: "send_notification",
+		Values: []interface{}{100},
+	}
+
+	var actions []wallarm.TriggerActions
+	actions = append(actions, action)
+
+	triggerBody := wallarm.TriggerCreate{
+			Trigger: &wallarm.Trigger{
+				Name:       "New Terraform Trigger Telegram",
+				Comment:    "This is a description set by Terraform",
+				TemplateID: "attacks_exceeded",
+				Enabled:    enabled,
+				Filters:    filters,
+				Actions:    actions,
+			},
+		}
+
+		if err := api.TriggerCreate(&triggerBody, 1); err != nil {
+			return err
+		}
 }
 ```
-
-The reference to the godoc API description of the package
-[API documentation](https://godoc.org/github.com/416e64726579/wallarm-go)
 
 # License
 

@@ -55,7 +55,7 @@ type GetNodePOST struct {
 
 // GetNodeBody is used to find out configurations and parameters of one specific Node.
 type GetNodeBody struct {
-	GetNodeBodyPOST
+	*GetNodeBodyPOST
 	ID                  int         `json:"id"`
 	UUID                string      `json:"uuid"`
 	IP                  interface{} `json:"ip"`

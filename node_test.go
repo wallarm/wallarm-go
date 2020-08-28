@@ -13,7 +13,7 @@ var (
 		Status: 200,
 		Body: []GetNodeBody{
 			{
-				GetNodeBodyPOST: GetNodeBodyPOST{
+				GetNodeBodyPOST: &GetNodeBodyPOST{
 					Type:              "cloud_node",
 					Hostname:          "k8s",
 					Enabled:           true,
@@ -38,7 +38,7 @@ var (
 				RequestsAmount:      0,
 			},
 			{
-				GetNodeBodyPOST: GetNodeBodyPOST{
+				GetNodeBodyPOST: &GetNodeBodyPOST{
 					Type:              "cloud_node",
 					Hostname:          "TEST",
 					Enabled:           true,
@@ -142,6 +142,9 @@ func TestCreateNode(t *testing.T) {
 	defer teardown()
 	expectedCreateNode := NodeCreateResp{
 		Status: 200,
+		Body: &GetNodeBody{
+			GetNodeBodyPOST: &GetNodeBodyPOST{},
+		},
 	}
 	expectedCreateNode.Body.Type = "cloud_node"
 	expectedCreateNode.Body.ID = 15049247

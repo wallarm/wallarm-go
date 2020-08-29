@@ -19,6 +19,16 @@ jobs:
         run: |
           go get -v -u golang.org/x/lint/golint
       - name: Vet
-        run: go vet $(go list ./...)
+        run: make vet
       - name: Test
-        run: go test -v -race ./...
+        run: make test
+      - name: Generate coverage report
+        run: make cover
+      - name: Upload coverage to Codecov
+      - uses: actions/checkout@master
+      - uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.html
+          flags: unittests
+          name: wallarm-go

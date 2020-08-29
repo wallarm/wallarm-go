@@ -2,6 +2,7 @@
 
 [![build](https://github.com/416e64726579/wallarm-go/workflows/Go/badge.svg)](https://github.com/416e64726579/wallarm-go/actions?query=workflow%3AGo)
 [![PkgGoDev](https://pkg.go.dev/badge/github.com/416e64726579/wallarm-go)](https://pkg.go.dev/github.com/416e64726579/wallarm-go)
+[![codecov](https://codecov.io/gh/416e64726579/wallarm-go/branch/master/graph/badge.svg)](https://codecov.io/gh/416e64726579/wallarm-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/416e64726579/wallarm-go/blob/master/LICENSE)
 

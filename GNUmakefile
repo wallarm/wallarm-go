@@ -1,9 +1,14 @@
 all: test
 
-testacc:
-	TF_ACC=1 go test ./... -test.v -timeout 120m
-
 test:
-	go test ./... -test.v -timeout=30s -parallel=4 -race
+	go test ./... -v -timeout=30s -parallel=4 -race
 
-.PHONY: test testacc
+vet:
+	go vet $(go list ./...)
+
+cover:
+	go test ./... -coverprofile c.out
+	go tool cover -func c.out
+	go tool cover -html=c.out -o coverage.html
+
+.PHONY: test vet cover

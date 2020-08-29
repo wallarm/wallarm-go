@@ -137,6 +137,96 @@ func TestGetNodes(t *testing.T) {
 
 }
 
+func TestGetNodes_CloudNodes(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "GET", "Expected method 'GET', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{
+			"status": 200,
+			"body": [
+				{
+					"type": "cloud_node",
+					"id": 10101019292,
+					"uuid": "13ef5fsde-01ca-0000-85ac-78aaf987",
+					"ip": null,
+					"hostname": "k8s",
+					"last_activity": null,
+					"enabled": true,
+					"clientid": 0,
+					"last_analytic": null,
+					"create_time": 1575272181,
+					"create_from": "1.1.1.1",
+					"protondb_version": null,
+					"lom_version": null,
+					"protondb_updated_at": null,
+					"lom_updated_at": null,
+					"node_env_params": {
+						"packages": {}
+					},
+					"active": false,
+					"instance_count": 0,
+					"active_instance_count": 0,
+					"token": "aaaaaaaaaaaaaaaaaaaaaaaaaa",
+					"requests_amount": 0
+				},
+				{
+					"type": "cloud_node",
+					"id": 1111111,
+					"uuid": "cc735e20-0268-7821-ad5d-263016eeb7aa",
+					"ip": null,
+					"hostname": "TEST",
+					"last_activity": null,
+					"enabled": true,
+					"clientid": 0,
+					"last_analytic": null,
+					"create_time": 1586445477,
+					"create_from": "1.1.1.1",
+					"protondb_version": null,
+					"lom_version": null,
+					"protondb_updated_at": null,
+					"lom_updated_at": null,
+					"node_env_params": {
+						"packages": {}
+					},
+					"active": false,
+					"instance_count": 0,
+					"active_instance_count": 0,
+					"token": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+					"requests_amount": 0
+				}
+			]
+		}`)
+	}
+
+	mux.HandleFunc("/v2/node", handler)
+	actual, err := client.GetNodeRead(0, "cloud_node")
+	if assert.NoError(t, err) {
+		assert.Equal(t, expectedGetNode, *actual)
+	}
+
+}
+
+func TestGetNodes_IncorrectJSON(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "GET", "Expected method 'GET', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{
+			[]
+		}`)
+	}
+
+	mux.HandleFunc("/v2/node", handler)
+	_, err := client.GetNodeRead(0, "fast_node")
+	assert.EqualError(t, err, "invalid character '[' looking for beginning of object key string")
+
+}
+
 func TestCreateNode(t *testing.T) {
 	setup()
 	defer teardown()
@@ -216,7 +306,7 @@ func TestCreateNode(t *testing.T) {
 	}
 }
 
-func TestCreateDuplicatedNode(t *testing.T) {
+func TestCreate_DuplicatedNode(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -247,7 +337,34 @@ func TestCreateDuplicatedNode(t *testing.T) {
 
 }
 
-func TestCreateNodeWithIncorrectType(t *testing.T) {
+func TestCreate_EmptyResp(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "POST", "Expected method 'POST', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(200)
+		fmt.Fprint(w, `{
+			[]
+		}`)
+	}
+
+	mux.HandleFunc("/v2/node", handler)
+
+	_, err := client.NodeCreate(
+		&NodeCreate{
+			Hostname: "TESTING",
+			Type:     "cloud_node",
+			Clientid: 0,
+		},
+	)
+
+	assert.EqualError(t, err, `invalid character '[' looking for beginning of object key string`)
+
+}
+
+func TestCreateNode_WithIncorrectType(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -321,7 +438,7 @@ func TestDeleteNode(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestDeleteNodeWithMissingID(t *testing.T) {
+func TestDeleteNode_WithMissingID(t *testing.T) {
 	setup()
 	defer teardown()
 	handler := func(w http.ResponseWriter, r *http.Request) {
@@ -349,7 +466,7 @@ func TestDeleteNodeWithMissingID(t *testing.T) {
 		}`)
 }
 
-func TestGetNodesByFilter(t *testing.T) {
+func TestGetNodes_ByFilter(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -407,4 +524,69 @@ func TestGetNodesByFilter(t *testing.T) {
 		assert.Equal(t, expectedGetNodeByFilter, *actual)
 	}
 
+}
+
+func TestGetNodes_ByFilterWithError(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "POST", "Expected method 'POST', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(404)
+		fmt.Fprint(w, `{
+			"status": 404,
+			"body": {
+				"error": "node not found",
+				"value": 15049247
+			}
+		}`)
+	}
+
+	mux.HandleFunc("/v1/objects/node", handler)
+
+	_, err := client.GetNodeReadByFilter(&GetNodeReadByFilter{
+		Filter: &NodeFilter{
+			Hostname: "Non-existent",
+		},
+		Limit:     1,
+		Offset:    0,
+		OrderBy:   "id",
+		OrderDesc: false,
+	})
+
+	assert.EqualError(t, err, `Status code: 404, Body: {
+			"status": 404,
+			"body": {
+				"error": "node not found",
+				"value": 15049247
+			}
+		}`)
+}
+
+func TestGetNodes_ByFilterIncorrectJSON(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "POST", "Expected method 'POST', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{
+			[]
+		}`)
+	}
+
+	mux.HandleFunc("/v1/objects/node", handler)
+
+	_, err := client.GetNodeReadByFilter(&GetNodeReadByFilter{
+		Filter: &NodeFilter{
+			Hostname: "Non-existent",
+		},
+		Limit:     1,
+		Offset:    0,
+		OrderBy:   "id",
+		OrderDesc: false,
+	})
+
+	assert.EqualError(t, err, `invalid character '[' looking for beginning of object key string`)
 }

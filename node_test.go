@@ -224,7 +224,7 @@ func TestCreateDuplicatedNode(t *testing.T) {
 		assert.Equal(t, r.Method, "POST", "Expected method 'POST', got %s", r.Method)
 		w.Header().Set("content-type", "application/json")
 		w.WriteHeader(400)
-		fmt.Fprintf(w, `{
+		fmt.Fprint(w, `{
 			"status": 400,
 			"body": "Already exists"
 		}`)

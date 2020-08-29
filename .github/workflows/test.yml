@@ -28,6 +28,6 @@ jobs:
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.html
+          file: ./coverage.txt
           flags: unittests
           name: wallarm-go

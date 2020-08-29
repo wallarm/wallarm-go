@@ -7,8 +7,6 @@ vet:
 	go vet $(go list ./...)
 
 cover:
-	go test ./... -coverprofile c.out
-	go tool cover -func c.out
-	go tool cover -html=c.out -o coverage.html
+	go test ./... -race -coverprofile=coverage.txt -covermode=atomic
 
 .PHONY: test vet cover

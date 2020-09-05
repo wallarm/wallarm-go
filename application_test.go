@@ -61,7 +61,7 @@ func TestAppCreate_Duplicated(t *testing.T) {
 
 	mux.HandleFunc("/v1/objects/pool/create", handler)
 	err := client.AppCreate(appBody)
-	assert.EqualError(t, err, `Status code: 400, Body: {
+	assert.EqualError(t, err, `HTTP Status: 400, Body: {
 			"status": 400,
 			"body": "Already exists"
 		}`)

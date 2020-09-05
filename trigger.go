@@ -46,26 +46,23 @@ type TriggerCreate struct {
 	Trigger *Trigger `json:"trigger"`
 }
 
-// TriggerRead is the response which contains information about all the created Triggers within an account
-type TriggerRead struct {
-	Triggers []struct {
-		ID        int           `json:"id"`
-		Name      string        `json:"name"`
-		Comment   interface{}   `json:"comment"`
-		Enabled   bool          `json:"enabled"`
-		ClientID  int           `json:"client_id"`
-		Filters   []interface{} `json:"filters"`
-		Threshold struct {
+// TriggerResp is returned on successful trigger updating and creating
+type TriggerResp struct {
+	Trigger struct {
+		ID       int           `json:"id"`
+		Name     string        `json:"name"`
+		Comment  interface{}   `json:"comment"`
+		Enabled  bool          `json:"enabled"`
+		ClientID int           `json:"client_id"`
+		Filters  []interface{} `json:"filters"`
+		Actions  []struct {
+			ID string `json:"id"`
+		} `json:"actions"`
+		Thresholds []struct {
 			Operator string `json:"operator"`
 			Period   int    `json:"period"`
 			Count    int    `json:"count"`
-		} `json:"threshold"`
-		Actions []struct {
-			ID     string `json:"id"`
-			Params struct {
-				IntegrationIds []int `json:"integration_ids"`
-			} `json:"params"`
-		} `json:"actions"`
+		} `json:"thresholds"`
 		Template struct {
 			ID      string `json:"id"`
 			Filters []struct {
@@ -84,13 +81,21 @@ type TriggerRead struct {
 			Actions []struct {
 				ID     string `json:"id"`
 				Params struct {
-					Notification     string   `json:"notification"`
-					IntegrationTypes []string `json:"integration_types"`
-					Subject          string   `json:"subject"`
-				} `json:"params"`
+					LockTime int `json:"lock_time"`
+				} `json:"params,omitempty"`
 			} `json:"actions"`
 		} `json:"template"`
-	} `json:"triggers"`
+		Threshold struct {
+			Operator string `json:"operator"`
+			Period   int    `json:"period"`
+			Count    int    `json:"count"`
+		} `json:"threshold"`
+	} `json:"trigger"`
+}
+
+// TriggerRead is the response which contains information about all the created Triggers within an account
+type TriggerRead struct {
+	Triggers []TriggerResp
 }
 
 // TriggerRead is used to return Trigger response that is used to distinguish distinct Trigger ID of the trigger.
@@ -115,14 +120,18 @@ func (api *API) TriggerRead(clientID int) (*TriggerRead, error) {
 // TriggerCreate creates Trigger with the parameters in JSON body.
 // For example, define filters and thresholds which trigger actions.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) error {
+func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) (*TriggerResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers", clientID)
-	_, err := api.makeRequest("POST", uri, "trigger", triggerBody)
+	respBody, err := api.makeRequest("POST", uri, "trigger", triggerBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var t TriggerResp
+	if err = json.Unmarshal(respBody, &t); err != nil {
+		return nil, err
+	}
+	return &t, nil
 }
 
 // TriggerDelete deletes Trigger defined by distinct ID.
@@ -139,12 +148,16 @@ func (api *API) TriggerDelete(clientID, triggerID int) error {
 
 // TriggerUpdate updates existing trigger using unique ID.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) error {
+func (api *API) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
-	_, err := api.makeRequest("PUT", uri, "trigger", triggerBody)
+	respBody, err := api.makeRequest("PUT", uri, "trigger", triggerBody)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var t TriggerResp
+	if err = json.Unmarshal(respBody, &t); err != nil {
+		return nil, err
+	}
+	return &t, nil
 }

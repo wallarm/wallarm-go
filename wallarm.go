@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,11 +16,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ErrExistingResource is returned when resource was created other than Terrafom ways - directly via API
+var ErrExistingResource = errors.New("This resource has already been created earlier")
+
+// ErrInvalidCredentials is raised when not all the credentials are presented
+var ErrInvalidCredentials = errors.New("Credentials are not set. Specify UUID and Secret")
+
 // New creates a new Wallarm API client.
-func New(apiURL, uuid, secret string, opts ...Option) (*API, error) {
-	if uuid == "" || secret == "" {
-		return nil, errors.New("Credentials are not set")
-	}
+// func New(apiURL, uuid, secret string, opts ...Option) (*API, error) {
+func New(apiURL string, opts ...Option) (*API, error) {
+
+	// if uuid == "" || secret == "" {
+	// 	return nil, ErrInvalidCredentials
+	// }
 
 	api, err := newClient(opts...)
 	if err != nil {
@@ -27,10 +36,8 @@ func New(apiURL, uuid, secret string, opts ...Option) (*API, error) {
 	}
 
 	api.baseURL = apiURL
-	api.apiUUID = uuid
-	api.apiSecret = secret
-	api.headers.Add("X-WallarmAPI-UUID", uuid)
-	api.headers.Add("X-WallarmAPI-Secret", secret)
+	// api.headers.Add("X-WallarmAPI-UUID", uuid)
+	// api.headers.Add("X-WallarmAPI-Secret", secret)
 
 	return api, nil
 }
@@ -49,8 +56,7 @@ func newClient(opts ...Option) (*API, error) {
 		logger: silentLogger,
 	}
 
-	err := api.parseOptions(opts...)
-	if err != nil {
+	if err := api.parseOptions(opts...); err != nil {
 		return nil, errors.Wrap(err, "options parsing failed")
 	}
 
@@ -93,6 +99,7 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 	var respErr error
 	var reqBody io.Reader
 	var respBody []byte
+
 	for i := 0; i <= api.retryPolicy.MaxRetries; i++ {
 		if jsonBody != nil {
 			reqBody = bytes.NewReader(jsonBody)
@@ -123,10 +130,9 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 		// retry if the server is rate limiting us or if it failed
 		// assumes server operations are rolled back on failure
 		if respErr != nil || resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= 500 {
+			defer resp.Body.Close()
 			if respErr == nil {
 				respBody, err = ioutil.ReadAll(resp.Body)
-				resp.Body.Close()
-
 				respErr = errors.Wrap(err, "could not read response body")
 
 				api.logger.Printf("Request: %s %s got an error response %d: %s\n", method, uri, resp.StatusCode,
@@ -137,7 +143,6 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 			continue
 		} else {
 			respBody, err = ioutil.ReadAll(resp.Body)
-			defer resp.Body.Close()
 			if err != nil {
 				return nil, errors.Wrap(err, "could not read response body")
 			}
@@ -153,24 +158,22 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 	switch {
 	case resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices:
 	case resp.StatusCode == http.StatusUnauthorized:
-		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
+		return nil, errors.Errorf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	case resp.StatusCode == http.StatusForbidden:
-		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
+		return nil, errors.Errorf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	case resp.StatusCode == http.StatusServiceUnavailable,
 		resp.StatusCode == http.StatusBadGateway,
 		resp.StatusCode == http.StatusGatewayTimeout,
 		resp.StatusCode == 522,
 		resp.StatusCode == 523,
 		resp.StatusCode == 524:
-		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
+		return nil, errors.Errorf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	case resp.StatusCode == http.StatusBadRequest && (reqType == "node" || reqType == "app") && string(respBody) == `{"status":400,"body":"Already exists"}`:
-		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
-		return nil, err
+		return nil, errors.Wrap(ErrExistingResource, fmt.Sprintf("HTTP Status: %[1]v Body: %[2]s", resp.StatusCode, string(respBody)))
 	case resp.StatusCode == http.StatusConflict && Contains(specificResourceProcessing, reqType):
-		err := &ExistingResourceError{Status: resp.StatusCode, Body: string(respBody)}
-		return nil, err
+		return nil, errors.Wrap(ErrExistingResource, fmt.Sprintf("HTTP Status: %[1]v Body: %[2]s", resp.StatusCode, string(respBody)))
 	default:
-		return nil, errors.Errorf("Status code: %d, Body: %s", resp.StatusCode, respBody)
+		return nil, errors.Errorf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	}
 
 	return respBody, nil
@@ -184,11 +187,9 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 	req.WithContext(ctx)
 
 	req.Header = api.headers
-
 	if api.UserAgent != "" {
 		req.Header.Set("User-Agent", api.UserAgent)
 	}
-
 	methods := []string{"POST", "PUT"}
 
 	if req.Header.Get("Content-Type") == "" && Contains(methods, method) && reqType != "userdetails" {
@@ -210,36 +211,4 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 		return nil, errors.Wrap(err, "HTTP request failed")
 	}
 	return resp, nil
-}
-
-// Contains wraps methods (for string and int) to check if List contains the element.
-func Contains(a interface{}, x interface{}) bool {
-	switch x.(type) {
-	case int:
-		group := a.([]int)
-		return intInList(group, x.(int))
-	case string:
-		group := a.([]string)
-		return strInList(group, x.(string))
-	default:
-		return false
-	}
-}
-
-func strInList(a []string, x string) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
-}
-
-func intInList(a []int, x int) bool {
-	for _, n := range a {
-		if x == n {
-			return true
-		}
-	}
-	return false
 }

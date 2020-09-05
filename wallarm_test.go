@@ -26,7 +26,10 @@ func setup(opts ...Option) {
 	server = httptest.NewServer(mux)
 
 	// Wallarm client configured to use test server
-	client, _ = New(server.URL, "00000000-0000-0000-0000-000000000000", "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0")
+	authHeaders := make(http.Header)
+	authHeaders.Add("X-WallarmAPI-UUID", "00000000-0000-0000-0000-000000000000")
+	authHeaders.Add("X-WallarmAPI-Secret", "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0")
+	client, _ = New(server.URL, Headers(authHeaders))
 	client.baseURL = server.URL
 }
 
@@ -59,10 +62,7 @@ func TestClient_Headers(t *testing.T) {
 	})
 	teardown()
 
-	// it should set X-Auth-User-Service-Key and omit X-Auth-Email and X-Auth-Key when using NewWithUserServiceKey
 	setup()
-	client, err := New(server.URL, "00000000-0000-0000-0000-000000000000", "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0")
-	assert.NoError(t, err)
 	client.baseURL = server.URL
 	mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "GET", r.Method, "Expected method 'GET', got %s", r.Method)
@@ -344,7 +344,7 @@ func TestErrorFromResponse(t *testing.T) {
 	mux.HandleFunc("/v1/user", handler)
 
 	_, err := client.UserDetails()
-	assert.EqualError(t, err, `Status code: 403, Body: {
+	assert.EqualError(t, err, `HTTP Status: 403, Body: {
 			"status": 403,
 			"body": "User not authenticated"
 		}`)

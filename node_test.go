@@ -330,7 +330,7 @@ func TestCreate_DuplicatedNode(t *testing.T) {
 		},
 	)
 
-	assert.EqualError(t, err, `Status code: 400, Body: {
+	assert.EqualError(t, err, `HTTP Status: 400, Body: {
 			"status": 400,
 			"body": "Already exists"
 		}`)
@@ -388,7 +388,7 @@ func TestCreateNode_WithIncorrectType(t *testing.T) {
 		},
 	)
 
-	assert.EqualError(t, err, `Status code: 400, Body: {
+	assert.EqualError(t, err, `HTTP Status: 400, Body: {
 			"status": 400,
 			"body": "Already exists"
 		}`)
@@ -457,7 +457,7 @@ func TestDeleteNode_WithMissingID(t *testing.T) {
 	mux.HandleFunc("/v2/node/15049247", handler)
 
 	err := client.NodeDelete(15049247)
-	assert.EqualError(t, err, `Status code: 404, Body: {
+	assert.EqualError(t, err, `HTTP Status: 404, Body: {
 			"status": 404,
 			"body": {
 				"error": "node not found",
@@ -555,7 +555,7 @@ func TestGetNodes_ByFilterWithError(t *testing.T) {
 		OrderDesc: false,
 	})
 
-	assert.EqualError(t, err, `Status code: 404, Body: {
+	assert.EqualError(t, err, `HTTP Status: 404, Body: {
 			"status": 404,
 			"body": {
 				"error": "node not found",

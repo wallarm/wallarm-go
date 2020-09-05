@@ -29,8 +29,6 @@ type Logger interface {
 // be modified concurrently.
 type API struct {
 	baseURL     string
-	apiSecret   string
-	apiUUID     string
 	ClientID    int
 	UserAgent   string
 	headers     http.Header

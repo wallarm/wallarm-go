@@ -11,6 +11,7 @@ import (
 	"math"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/pkg/errors"
@@ -26,18 +27,11 @@ var ErrInvalidCredentials = errors.New("Credentials are not set. Specify UUID an
 // func New(apiURL, uuid, secret string, opts ...Option) (*API, error) {
 func New(apiURL string, opts ...Option) (*API, error) {
 
-	// if uuid == "" || secret == "" {
-	// 	return nil, ErrInvalidCredentials
-	// }
-
 	api, err := newClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-
 	api.baseURL = apiURL
-	// api.headers.Add("X-WallarmAPI-UUID", uuid)
-	// api.headers.Add("X-WallarmAPI-Secret", secret)
 
 	return api, nil
 }
@@ -54,6 +48,7 @@ func newClient(opts ...Option) (*API, error) {
 			MaxRetryDelay: time.Duration(30) * time.Second,
 		},
 		logger: silentLogger,
+		Mutex:  &sync.Mutex{},
 	}
 
 	if err := api.parseOptions(opts...); err != nil {
@@ -70,15 +65,21 @@ func newClient(opts ...Option) (*API, error) {
 }
 
 // makeRequest makes a HTTP request and returns the body as a byte slice,
-// closing it before returning. params will be serialized to JSON.
+// closing it before returning. params will be serialized to JSON or string for GET query.
 func (api *API) makeRequest(method, uri, reqType string, params interface{}) ([]byte, error) {
 	return api.makeRequestContext(context.TODO(), method, uri, reqType, params)
 }
 
 func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType string, params interface{}) ([]byte, error) {
 	// Replace nil with a JSON object if needed
-	var jsonBody []byte
-	var err error
+	var (
+		jsonBody []byte
+		err      error
+		resp     *http.Response
+		respErr  error
+		reqBody  io.Reader
+		respBody []byte
+	)
 
 	if params != nil {
 		if _, ok := params.(string); ok {
@@ -94,11 +95,6 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 	} else {
 		jsonBody = nil
 	}
-
-	var resp *http.Response
-	var respErr error
-	var reqBody io.Reader
-	var respBody []byte
 
 	for i := 0; i <= api.retryPolicy.MaxRetries; i++ {
 		if jsonBody != nil {
@@ -122,9 +118,11 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 
 		if query, ok := params.(string); ok {
 			q := strings.NewReader(query)
-			resp, respErr = api.request(ctx, method, uri, reqType, reqBody, q)
+			resp, err = api.request(ctx, method, uri, reqType, reqBody, q)
+			respErr = errors.Wrap(err, "could not make a request with get query")
 		} else {
-			resp, respErr = api.request(ctx, method, uri, reqType, reqBody, nil)
+			resp, err = api.request(ctx, method, uri, reqType, reqBody, nil)
+			respErr = errors.Wrap(err, "could not make a request with JSON body")
 		}
 
 		// retry if the server is rate limiting us or if it failed
@@ -180,11 +178,13 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 }
 
 func (api *API) request(ctx context.Context, method, uri, reqType string, reqBody, query io.Reader) (*http.Response, error) {
-	req, err := http.NewRequest(method, api.baseURL+uri, reqBody)
+	api.Lock()
+	defer api.Unlock()
+
+	req, err := http.NewRequestWithContext(ctx, method, api.baseURL+uri, reqBody)
 	if err != nil {
 		return nil, errors.Wrap(err, "HTTP request creation failed")
 	}
-	req.WithContext(ctx)
 
 	req.Header = api.headers
 	if api.UserAgent != "" {
@@ -210,5 +210,6 @@ func (api *API) request(ctx context.Context, method, uri, reqType string, reqBod
 	if err != nil {
 		return nil, errors.Wrap(err, "HTTP request failed")
 	}
+
 	return resp, nil
 }

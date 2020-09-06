@@ -2,6 +2,7 @@ package wallarm
 
 import (
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -28,13 +29,13 @@ type Logger interface {
 // API holds the configuration for the current API client. A client should not
 // be modified concurrently.
 type API struct {
-	baseURL     string
-	ClientID    int
-	UserAgent   string
-	headers     http.Header
-	httpClient  *http.Client
-	retryPolicy RetryPolicy
-	logger      Logger
+	baseURL, UserAgent string
+	ClientID           int
+	headers            http.Header
+	httpClient         *http.Client
+	retryPolicy        RetryPolicy
+	logger             Logger
+	*sync.Mutex
 }
 
 // HTTPClient accepts a custom *http.Client for making API calls.

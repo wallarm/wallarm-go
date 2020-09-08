@@ -1,3 +1,4 @@
+// Package wallarm implements the Wallarm v2 API.
 package wallarm
 
 import (
@@ -17,14 +18,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-// ErrExistingResource is returned when resource was created other than Terrafom ways - directly via API
+// ErrExistingResource is returned when resource was created other than Terrafom ways - directly via the API.
 var ErrExistingResource = errors.New("This resource has already been created earlier")
 
-// ErrInvalidCredentials is raised when not all the credentials are presented
+// ErrInvalidCredentials is raised when not all the credentials are presented.
 var ErrInvalidCredentials = errors.New("Credentials are not set. Specify UUID and Secret")
 
 // New creates a new Wallarm API client.
-// func New(apiURL, uuid, secret string, opts ...Option) (*API, error) {
 func New(apiURL string, opts ...Option) (*API, error) {
 
 	api, err := newClient(opts...)

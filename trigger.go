@@ -48,54 +48,57 @@ type TriggerCreate struct {
 
 // TriggerResp is returned on successful trigger updating and creating
 type TriggerResp struct {
-	Trigger struct {
-		ID       int           `json:"id"`
-		Name     string        `json:"name"`
-		Comment  interface{}   `json:"comment"`
-		Enabled  bool          `json:"enabled"`
-		ClientID int           `json:"client_id"`
-		Filters  []interface{} `json:"filters"`
-		Actions  []struct {
-			ID string `json:"id"`
-		} `json:"actions"`
-		Thresholds []struct {
-			Operator string `json:"operator"`
-			Period   int    `json:"period"`
-			Count    int    `json:"count"`
-		} `json:"thresholds"`
-		Template struct {
-			ID      string `json:"id"`
-			Filters []struct {
-				ID               string        `json:"id"`
-				Required         bool          `json:"required"`
-				Values           []interface{} `json:"values"`
-				AllowedOperators []string      `json:"allowed_operators"`
-				Operator         string        `json:"operator"`
-			} `json:"filters"`
-			Threshold struct {
-				AllowedOperators []string `json:"allowed_operators"`
-				Operator         string   `json:"operator"`
-				Period           int      `json:"period"`
-				Count            int      `json:"count"`
-			} `json:"threshold"`
-			Actions []struct {
-				ID     string `json:"id"`
-				Params struct {
-					LockTime int `json:"lock_time"`
-				} `json:"params,omitempty"`
-			} `json:"actions"`
-		} `json:"template"`
+	ID       int           `json:"id"`
+	Name     string        `json:"name"`
+	Comment  interface{}   `json:"comment"`
+	Enabled  bool          `json:"enabled"`
+	ClientID int           `json:"client_id"`
+	Filters  []interface{} `json:"filters"`
+	Actions  []struct {
+		ID string `json:"id"`
+	} `json:"actions"`
+	Thresholds []struct {
+		Operator string `json:"operator"`
+		Period   int    `json:"period"`
+		Count    int    `json:"count"`
+	} `json:"thresholds"`
+	Template struct {
+		ID      string `json:"id"`
+		Filters []struct {
+			ID               string        `json:"id"`
+			Required         bool          `json:"required"`
+			Values           []interface{} `json:"values"`
+			AllowedOperators []string      `json:"allowed_operators"`
+			Operator         string        `json:"operator"`
+		} `json:"filters"`
 		Threshold struct {
-			Operator string `json:"operator"`
-			Period   int    `json:"period"`
-			Count    int    `json:"count"`
+			AllowedOperators []string `json:"allowed_operators"`
+			Operator         string   `json:"operator"`
+			Period           int      `json:"period"`
+			Count            int      `json:"count"`
 		} `json:"threshold"`
-	} `json:"trigger"`
+		Actions []struct {
+			ID     string `json:"id"`
+			Params struct {
+				LockTime int `json:"lock_time"`
+			} `json:"params,omitempty"`
+		} `json:"actions"`
+	} `json:"template"`
+	Threshold struct {
+		Operator string `json:"operator"`
+		Period   int    `json:"period"`
+		Count    int    `json:"count"`
+	} `json:"threshold"`
+}
+
+// TriggerCreateResp is the response on the creating a trigger.
+type TriggerCreateResp struct {
+	*TriggerResp `json:"trigger"`
 }
 
 // TriggerRead is the response which contains information about all the created Triggers within an account
 type TriggerRead struct {
-	Triggers []TriggerResp
+	Triggers []TriggerResp `json:"triggers"`
 }
 
 // TriggerRead is used to return Trigger response that is used to distinguish distinct Trigger ID of the trigger.
@@ -120,14 +123,14 @@ func (api *API) TriggerRead(clientID int) (*TriggerRead, error) {
 // TriggerCreate creates Trigger with the parameters in JSON body.
 // For example, define filters and thresholds which trigger actions.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) (*TriggerResp, error) {
+func (api *API) TriggerCreate(triggerBody *TriggerCreate, clientID int) (*TriggerCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers", clientID)
 	respBody, err := api.makeRequest("POST", uri, "trigger", triggerBody)
 	if err != nil {
 		return nil, err
 	}
-	var t TriggerResp
+	var t TriggerCreateResp
 	if err = json.Unmarshal(respBody, &t); err != nil {
 		return nil, err
 	}

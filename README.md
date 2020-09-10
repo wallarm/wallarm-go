@@ -41,27 +41,35 @@ The sample code could be similar
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
+	"net/http"
 
 	wallarm "github.com/416e64726579/wallarm-go"
 )
 
 func main() {
+	
+	authHeaders := make(http.Header)
+	wapiHost := os.Getenv("WALLARM_API_HOST")
+	wapiUUID := os.Getenv("WALLARM_API_UUID")
+	wapiSecret := os.Getenv("WALLARM_API_SECRET")
+	authHeaders.Add("X-WallarmAPI-UUID", wapiUUID)
+	authHeaders.Add("X-WallarmAPI-Secret", wapiSecret)
+
 	// Construct a new API object
-	api, err := wallarm.New(os.Getenv("WALLARM_API_UUID"), os.Getenv("WALLARM_API_SECRET"))
+	api, err := wallarm.New(wapiHost, wallarm.Headers(authHeaders))
 	if err != nil {
-		log.Fatal(err)
+		log.Errorln(err)
 	}
 
 	// Fetch user details
 	u, err := api.UserDetails()
 	if err != nil {
-		log.Fatal(err)
+		log.Errorln(err)
 	}
 	// Print user specific data
-	fmt.Println(u)
+	log.Println(u)
 
 	// Change global WAF mode to monitoring
 	mode := wallarm.ClientUpdate{
@@ -74,10 +82,10 @@ func main() {
 	}
 	c, err := api.ClientUpdate(&mode)
 	if err != nil {
-		log.Fatal(err)
+		log.Errorln(err)
 	}
 	// Print client data
-	fmt.Println(c)
+	log.Println(c)
 
 	// Create a trigger when the number of attacks more than 1000 in 10 minutes
 	filter := wallarm.TriggerFilters{
@@ -108,9 +116,12 @@ func main() {
 			},
 		}
 
-		if err := api.TriggerCreate(&triggerBody, 1); err != nil {
-			return err
-		}
+	triggerResp, err = client.TriggerCreate(&triggerBody, 1)
+	if err != nil {
+		log.Errorln(err)
+	}
+	// Print trigger metadata
+	log.Println(triggerResp)
 }
 ```
 

@@ -48,7 +48,7 @@ type BlacklistRead struct {
 // BlacklistRead requests the current blacklist for the future purposes.
 // It is going to respond with the list of IP addresses.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) BlacklistRead(clientID int) error {
+func (api *API) BlacklistRead(clientID int) ([]BlacklistRead, error) {
 	uri := "/v3/blacklist"
 
 	q := url.Values{}
@@ -59,13 +59,21 @@ func (api *API) BlacklistRead(clientID int) error {
 
 	respBody, err := api.makeRequest("GET", uri, "", query)
 	if err != nil {
-		return err
+		return nil, err
 	}
+
+	var data BlacklistRead
+	if err = json.Unmarshal(respBody, &data); err != nil {
+		return nil, err
+	}
+
+	var resp []BlacklistRead
+	resp = append(resp, data)
 
 	for {
 		var data BlacklistRead
 		if err = json.Unmarshal(respBody, &data); err != nil {
-			return err
+			return nil, err
 		}
 		if data.Body.Continuation != nil {
 			if q.Get("continuation") == "" {
@@ -77,16 +85,16 @@ func (api *API) BlacklistRead(clientID int) error {
 
 			respBody, err = api.makeRequest("GET", uri, "", query)
 			if err != nil {
-				return err
+				return nil, err
 			}
-
+			resp = append(resp, data)
 		} else {
-			return nil
+			return resp, nil
 		}
 	}
 }
 
-// BlacklistCreate creates a blacklist in Wallarm Cloud.
+// BlacklistCreate creates a blacklist in the Wallarm Cloud.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *API) BlacklistCreate(blacklistBody *BlacklistCreate) error {
 
@@ -101,16 +109,54 @@ func (api *API) BlacklistCreate(blacklistBody *BlacklistCreate) error {
 // BlacklistDelete deletes a blacklist for the client.
 // Currently, it will flush the entire blacklist, then it will be changed for granular deletion.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *API) BlacklistDelete(clientID int) error {
+func (api *API) BlacklistDelete(clientID int, ids []int) error {
+	var rest int
 
 	uri := "/v3/blacklist/all"
+
 	q := url.Values{}
 	q.Add("filter[clientid]", strconv.Itoa(clientID))
+	for k, id := range ids {
+		lengthID := len([]byte(strconv.Itoa(id)))
+		lengthQuery := len([]byte(q.Encode()))
+		if lengthQuery+lengthID > 7000 {
+			rest = k
+			break
+		}
+		q.Add("filter[id][]", strconv.Itoa(id))
+	}
 	query := q.Encode()
 
 	_, err := api.makeRequest("DELETE", uri, "", query)
 	if err != nil {
 		return err
 	}
+
+	idRest := ids
+	for rest != 0 {
+		q := url.Values{}
+		q.Add("filter[clientid]", strconv.Itoa(clientID))
+		idRest = idRest[rest:]
+		for k, id := range idRest {
+			lengthID := len([]byte(strconv.Itoa(id)))
+			lengthQuery := len([]byte(q.Encode()))
+			if lengthQuery+lengthID > 7000 {
+				rest = k
+				break
+			}
+			q.Add("filter[id][]", strconv.Itoa(id))
+
+			if k == len(idRest)-1 {
+				rest = 0
+			}
+		}
+		query := q.Encode()
+
+		_, err := api.makeRequest("DELETE", uri, "", query)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }

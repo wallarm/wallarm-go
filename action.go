@@ -16,30 +16,33 @@ type ActionDetails struct {
 
 // ActionCreate is a creation skeleton for the Rule.
 type ActionCreate struct {
-	Type       string           `json:"type"`
-	Action     *[]ActionDetails `json:"action,omitempty"`
-	Clientid   int              `json:"clientid,omitempty"`
-	Validated  bool             `json:"validated"`
-	Point      [][]interface{}  `json:"point,omitempty"`
-	Rules      []string         `json:"rules,omitempty"`
-	AttackType string           `json:"attack_type,omitempty"`
-	Mode       string           `json:"mode,omitempty"`
-	Regex      string           `json:"regex,omitempty"`
-	RegexID    int              `json:"regex_id,omitempty"`
-	Enabled    *bool            `json:"enabled,omitempty"`
-	Name       string           `json:"name,omitempty"`
-	Values     []string         `json:"values,omitempty"`
+	Type       string              `json:"type"`
+	Action     *[]ActionDetails    `json:"action,omitempty"`
+	Clientid   int                 `json:"clientid,omitempty"`
+	Validated  bool                `json:"validated"`
+	Point      TwoDimensionalSlice `json:"point,omitempty"`
+	Rules      []string            `json:"rules,omitempty"`
+	AttackType string              `json:"attack_type,omitempty"`
+	Mode       string              `json:"mode,omitempty"`
+	Regex      string              `json:"regex,omitempty"`
+	RegexID    int                 `json:"regex_id,omitempty"`
+	Enabled    *bool               `json:"enabled,omitempty"`
+	Name       string              `json:"name,omitempty"`
+	Values     []string            `json:"values,omitempty"`
 }
 
 // ActionFilter is the specific filter for getting the rules.
 // This is an inner structure.
 type ActionFilter struct {
-	ID         []int           `json:"id,omitempty"`
-	NotID      []int           `json:"!id,omitempty"`
-	Clientid   []int           `json:"clientid,omitempty"`
-	HintsCount [][]interface{} `json:"hints_count,omitempty"`
-	HintType   []string        `json:"hint_type,omitempty"`
+	ID         []int               `json:"id,omitempty"`
+	NotID      []int               `json:"!id,omitempty"`
+	Clientid   []int               `json:"clientid,omitempty"`
+	HintsCount TwoDimensionalSlice `json:"hints_count,omitempty"`
+	HintType   []string            `json:"hint_type,omitempty"`
 }
+
+// TwoDimensionalSlice is used for Point and HintsCount structures.
+type TwoDimensionalSlice [][]interface{}
 
 // ActionRead is used as a filter to fetch the rules.
 type ActionRead struct {

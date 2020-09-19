@@ -94,11 +94,11 @@ type IntegrationWithAPICreate struct {
 // Temporary workaround (`Target` is a slice instead of string) to not check type many times.
 // Then it will be changed to interface{} with type checking
 type EmailIntegrationCreate struct {
-	Name     string               `json:"name"`
+	Name     string               `json:"name,omitempty"`
 	Active   bool                 `json:"active"`
-	Target   []string             `json:"target"`
-	Events   *[]IntegrationEvents `json:"events"`
-	Type     string               `json:"type"`
+	Target   []string             `json:"target,omitempty"`
+	Events   *[]IntegrationEvents `json:"events,omitempty"`
+	Type     string               `json:"type,omitempty"`
 	Clientid int                  `json:"clientid,omitempty"`
 }
 

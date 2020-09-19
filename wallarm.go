@@ -128,9 +128,10 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 		// retry if the server is rate limiting us or if it failed
 		// assumes server operations are rolled back on failure
 		if respErr != nil || resp.StatusCode == http.StatusTooManyRequests || resp.StatusCode >= 500 {
-			defer resp.Body.Close()
 			if respErr == nil {
 				respBody, err = ioutil.ReadAll(resp.Body)
+				resp.Body.Close()
+
 				respErr = errors.Wrap(err, "could not read response body")
 
 				api.logger.Printf("Request: %s %s got an error response %d: %s\n", method, uri, resp.StatusCode,
@@ -141,12 +142,14 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 			continue
 		} else {
 			respBody, err = ioutil.ReadAll(resp.Body)
+			defer resp.Body.Close()
 			if err != nil {
 				return nil, errors.Wrap(err, "could not read response body")
 			}
 			break
 		}
 	}
+
 	if respErr != nil {
 		return nil, respErr
 	}

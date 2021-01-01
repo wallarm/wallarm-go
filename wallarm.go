@@ -25,21 +25,21 @@ var ErrExistingResource = errors.New("This resource has already been created ear
 var ErrInvalidCredentials = errors.New("Credentials are not set. Specify UUID and Secret")
 
 // New creates a new Wallarm API client.
-func New(apiURL string, opts ...Option) (*API, error) {
+func New(opts ...Option) (API, error) {
 
 	api, err := newClient(opts...)
 	if err != nil {
 		return nil, err
 	}
-	api.baseURL = apiURL
 
 	return api, nil
 }
 
-func newClient(opts ...Option) (*API, error) {
+func newClient(opts ...Option) (API, error) {
 	silentLogger := log.New(ioutil.Discard, "", log.LstdFlags)
+	defaultUserAgent := "Wallarm-go/" + Version
 
-	api := &API{
+	api := &api{
 		baseURL: apiURL,
 		headers: make(http.Header),
 		retryPolicy: RetryPolicy{
@@ -59,18 +59,19 @@ func newClient(opts ...Option) (*API, error) {
 	// their own.
 	if api.httpClient == nil {
 		api.httpClient = http.DefaultClient
+		api.UserAgent = defaultUserAgent
 	}
 
 	return api, nil
 }
 
-// makeRequest makes a HTTP request and returns the body as a byte slice,
+// makeRequest makes an HTTP request and returns the body as a byte slice,
 // closing it before returning. params will be serialized to JSON or string for GET query.
-func (api *API) makeRequest(method, uri, reqType string, params interface{}) ([]byte, error) {
+func (api *api) makeRequest(method, uri, reqType string, params interface{}) ([]byte, error) {
 	return api.makeRequestContext(context.TODO(), method, uri, reqType, params)
 }
 
-func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType string, params interface{}) ([]byte, error) {
+func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType string, params interface{}) ([]byte, error) {
 	// Replace nil with a JSON object if needed
 	var (
 		jsonBody []byte
@@ -180,7 +181,7 @@ func (api *API) makeRequestContext(ctx context.Context, method, uri, reqType str
 	return respBody, nil
 }
 
-func (api *API) request(ctx context.Context, method, uri, reqType string, reqBody, query io.Reader) (*http.Response, error) {
+func (api *api) request(ctx context.Context, method, uri, reqType string, reqBody, query io.Reader) (*http.Response, error) {
 	api.Lock()
 	defer api.Unlock()
 

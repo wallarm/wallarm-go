@@ -42,34 +42,44 @@ package main
 
 import (
 	"log"
-	"os"
 	"net/http"
+	"os"
 
 	wallarm "github.com/416e64726579/wallarm-go"
 )
 
 func main() {
-	
+
+	wapiHost, exist := os.LookupEnv("WALLARM_API_HOST")
+	if !exist {
+		wapiHost = "https://api.wallarm.com"
+	}
+	wapiUUID, exist := os.LookupEnv("WALLARM_API_UUID")
+	if !exist {
+		log.Fatal("ENV variable WALLARM_API_UUID is not present")
+	}
+	wapiSecret, exist := os.LookupEnv("WALLARM_API_SECRET")
+	if !exist {
+		log.Fatal("ENV variable WALLARM_API_SECRET is not present")
+	}
+
 	authHeaders := make(http.Header)
-	wapiHost := os.Getenv("WALLARM_API_HOST")
-	wapiUUID := os.Getenv("WALLARM_API_UUID")
-	wapiSecret := os.Getenv("WALLARM_API_SECRET")
 	authHeaders.Add("X-WallarmAPI-UUID", wapiUUID)
 	authHeaders.Add("X-WallarmAPI-Secret", wapiSecret)
 
 	// Construct a new API object
-	api, err := wallarm.New(wapiHost, wallarm.Headers(authHeaders))
+	api, err := wallarm.New(wallarm.UsingBaseURL(wapiHost), wallarm.Headers(authHeaders))
 	if err != nil {
-		log.Errorln(err)
+		log.Print(err)
 	}
 
 	// Fetch user details
 	u, err := api.UserDetails()
 	if err != nil {
-		log.Errorln(err)
+		log.Print(err)
 	}
 	// Print user specific data
-	log.Println(u)
+	log.Println(u.Body)
 
 	// Change global WAF mode to monitoring
 	mode := wallarm.ClientUpdate{
@@ -82,16 +92,16 @@ func main() {
 	}
 	c, err := api.ClientUpdate(&mode)
 	if err != nil {
-		log.Errorln(err)
+		log.Print(err)
 	}
 	// Print client data
 	log.Println(c)
 
 	// Create a trigger when the number of attacks more than 1000 in 10 minutes
 	filter := wallarm.TriggerFilters{
-		ID: "ip_address",
+		ID:       "ip_address",
 		Operator: "eq",
-		Values: []interface{}{"2.2.2.2"},
+		Values:   []interface{}{"2.2.2.2"},
 	}
 
 	var filters []wallarm.TriggerFilters
@@ -99,26 +109,28 @@ func main() {
 
 	action := wallarm.TriggerActions{
 		ID: "send_notification",
-		Values: []interface{}{100},
+		Params: wallarm.TriggerActionParams{
+			IntegrationIds: []int{5},
+		},
 	}
 
 	var actions []wallarm.TriggerActions
 	actions = append(actions, action)
 
 	triggerBody := wallarm.TriggerCreate{
-			Trigger: &wallarm.Trigger{
-				Name:       "New Terraform Trigger Telegram",
-				Comment:    "This is a description set by Terraform",
-				TemplateID: "attacks_exceeded",
-				Enabled:    enabled,
-				Filters:    filters,
-				Actions:    actions,
-			},
-		}
+		Trigger: &wallarm.TriggerParam{
+			Name:       "New Terraform Trigger Telegram",
+			Comment:    "This is a description set by Terraform",
+			TemplateID: "attacks_exceeded",
+			Enabled:    true,
+			Filters:    &filters,
+			Actions:    &actions,
+		},
+	}
 
-	triggerResp, err = client.TriggerCreate(&triggerBody, 1)
+	triggerResp, err := api.TriggerCreate(&triggerBody, 1)
 	if err != nil {
-		log.Errorln(err)
+		log.Print(err)
 	}
 	// Print trigger metadata
 	log.Println(triggerResp)

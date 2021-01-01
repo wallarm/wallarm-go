@@ -14,7 +14,7 @@ var (
 	mux *http.ServeMux
 
 	// client is the API client being tested
-	client *API
+	client API
 
 	// server is a test HTTP server used to provide mock API responses
 	server *httptest.Server
@@ -29,8 +29,7 @@ func setup(opts ...Option) {
 	authHeaders := make(http.Header)
 	authHeaders.Add("X-WallarmAPI-UUID", "00000000-0000-0000-0000-000000000000")
 	authHeaders.Add("X-WallarmAPI-Secret", "a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0")
-	client, _ = New(server.URL, Headers(authHeaders))
-	client.baseURL = server.URL
+	client, _ = New(UsingBaseURL(server.URL), Headers(authHeaders))
 }
 
 func teardown() {
@@ -63,7 +62,6 @@ func TestClient_Headers(t *testing.T) {
 	teardown()
 
 	setup()
-	client.baseURL = server.URL
 	mux.HandleFunc("/user", func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "GET", r.Method, "Expected method 'GET', got %s", r.Method)
 		assert.Equal(t, "00000000-0000-0000-0000-000000000000", r.Header.Get("X-WallarmAPI-UUID"))
@@ -163,7 +161,7 @@ func TestClient_RetryCanSucceedAfterErrors(t *testing.T) {
 
 	mux.HandleFunc("/v2/node", handler)
 
-	_, err := client.GetNodeRead(0, "all")
+	_, err := client.NodeRead(0, "all")
 	assert.NoError(t, err)
 }
 
@@ -187,7 +185,7 @@ func TestClient_RetryReturnsPersistentErrorResponse(t *testing.T) {
 
 	mux.HandleFunc("/v2/node", handler)
 
-	_, err := client.GetNodeRead(0, "all")
+	_, err := client.NodeRead(0, "all")
 	assert.Error(t, err)
 }
 

@@ -9,11 +9,11 @@ import (
 )
 
 var (
-	expectedGetNode = GetNode{
+	expectedNodeRead = NodeRead{
 		Status: 200,
-		Body: []GetNodeBody{
+		Body: []NodeReadBody{
 			{
-				GetNodeBodyPOST: &GetNodeBodyPOST{
+				NodeReadBodyPOST: &NodeReadBodyPOST{
 					Type:              "cloud_node",
 					Hostname:          "k8s",
 					Enabled:           true,
@@ -38,7 +38,7 @@ var (
 				RequestsAmount:      0,
 			},
 			{
-				GetNodeBodyPOST: &GetNodeBodyPOST{
+				NodeReadBodyPOST: &NodeReadBodyPOST{
 					Type:              "cloud_node",
 					Hostname:          "TEST",
 					Enabled:           true,
@@ -65,7 +65,7 @@ var (
 	}
 )
 
-func TestGetNodes(t *testing.T) {
+func TestNodeReads(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -130,14 +130,14 @@ func TestGetNodes(t *testing.T) {
 	}
 
 	mux.HandleFunc("/v2/node", handler)
-	actual, err := client.GetNodeRead(0, "all")
+	actual, err := client.NodeRead(0, "all")
 	if assert.NoError(t, err) {
-		assert.Equal(t, expectedGetNode, *actual)
+		assert.Equal(t, expectedNodeRead, *actual)
 	}
 
 }
 
-func TestGetNodes_CloudNodes(t *testing.T) {
+func TestNodeReads_CloudNodes(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -202,14 +202,14 @@ func TestGetNodes_CloudNodes(t *testing.T) {
 	}
 
 	mux.HandleFunc("/v2/node", handler)
-	actual, err := client.GetNodeRead(0, "cloud_node")
+	actual, err := client.NodeRead(0, "cloud_node")
 	if assert.NoError(t, err) {
-		assert.Equal(t, expectedGetNode, *actual)
+		assert.Equal(t, expectedNodeRead, *actual)
 	}
 
 }
 
-func TestGetNodes_IncorrectJSON(t *testing.T) {
+func TestNodeReads_IncorrectJSON(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -222,7 +222,7 @@ func TestGetNodes_IncorrectJSON(t *testing.T) {
 	}
 
 	mux.HandleFunc("/v2/node", handler)
-	_, err := client.GetNodeRead(0, "fast_node")
+	_, err := client.NodeRead(0, "fast_node")
 	assert.EqualError(t, err, "invalid character '[' looking for beginning of object key string")
 
 }
@@ -232,8 +232,8 @@ func TestCreateNode(t *testing.T) {
 	defer teardown()
 	expectedCreateNode := NodeCreateResp{
 		Status: 200,
-		Body: &GetNodeBody{
-			GetNodeBodyPOST: &GetNodeBodyPOST{},
+		Body: &NodeReadBody{
+			NodeReadBodyPOST: &NodeReadBodyPOST{},
 		},
 	}
 	expectedCreateNode.Body.Type = "cloud_node"
@@ -466,7 +466,7 @@ func TestDeleteNode_WithMissingID(t *testing.T) {
 		}`)
 }
 
-func TestGetNodes_ByFilter(t *testing.T) {
+func TestNodeReads_ByFilter(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -493,9 +493,9 @@ func TestGetNodes_ByFilter(t *testing.T) {
 	}
 
 	mux.HandleFunc("/v1/objects/node", handler)
-	expectedGetNodeByFilter := GetNodePOST{
+	expectedNodeReadByFilter := NodeReadPOST{
 		Status: 200,
-		Body: []GetNodeBodyPOST{
+		Body: []NodeReadBodyPOST{
 			{
 				Type:              "cloud_node",
 				ID:                "13ef5fsde-01ca-0000-85ac-78aaf987",
@@ -511,7 +511,7 @@ func TestGetNodes_ByFilter(t *testing.T) {
 		},
 	}
 
-	actual, err := client.GetNodeReadByFilter(&GetNodeReadByFilter{
+	actual, err := client.NodeReadByFilter(&NodeReadByFilter{
 		Filter: &NodeFilter{
 			Hostname: "TESTING",
 		},
@@ -521,12 +521,12 @@ func TestGetNodes_ByFilter(t *testing.T) {
 		OrderDesc: false,
 	})
 	if assert.NoError(t, err) {
-		assert.Equal(t, expectedGetNodeByFilter, *actual)
+		assert.Equal(t, expectedNodeReadByFilter, *actual)
 	}
 
 }
 
-func TestGetNodes_ByFilterWithError(t *testing.T) {
+func TestNodeReads_ByFilterWithError(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -545,7 +545,7 @@ func TestGetNodes_ByFilterWithError(t *testing.T) {
 
 	mux.HandleFunc("/v1/objects/node", handler)
 
-	_, err := client.GetNodeReadByFilter(&GetNodeReadByFilter{
+	_, err := client.NodeReadByFilter(&NodeReadByFilter{
 		Filter: &NodeFilter{
 			Hostname: "Non-existent",
 		},
@@ -564,7 +564,7 @@ func TestGetNodes_ByFilterWithError(t *testing.T) {
 		}`)
 }
 
-func TestGetNodes_ByFilterIncorrectJSON(t *testing.T) {
+func TestNodeReads_ByFilterIncorrectJSON(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -578,7 +578,7 @@ func TestGetNodes_ByFilterIncorrectJSON(t *testing.T) {
 
 	mux.HandleFunc("/v1/objects/node", handler)
 
-	_, err := client.GetNodeReadByFilter(&GetNodeReadByFilter{
+	_, err := client.NodeReadByFilter(&NodeReadByFilter{
 		Filter: &NodeFilter{
 			Hostname: "Non-existent",
 		},

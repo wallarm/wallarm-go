@@ -35,11 +35,13 @@ type (
 		Rules      []string            `json:"rules,omitempty"`
 		AttackType string              `json:"attack_type,omitempty"`
 		Mode       string              `json:"mode,omitempty"`
+		Counter    string              `json:"counter,omitempty"`
 		Regex      string              `json:"regex,omitempty"`
 		RegexID    int                 `json:"regex_id,omitempty"`
 		Enabled    *bool               `json:"enabled,omitempty"`
 		Name       string              `json:"name,omitempty"`
 		Values     []string            `json:"values,omitempty"`
+		Comment    string              `json:"comment,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

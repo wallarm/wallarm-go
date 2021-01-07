@@ -1,10 +1,10 @@
 # wallarm-go
 
-[![build](https://github.com/416e64726579/wallarm-go/workflows/Go/badge.svg)](https://github.com/416e64726579/wallarm-go/actions?query=workflow%3AGo)
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/416e64726579/wallarm-go)](https://pkg.go.dev/github.com/416e64726579/wallarm-go)
-[![codecov](https://codecov.io/gh/416e64726579/wallarm-go/branch/master/graph/badge.svg)](https://codecov.io/gh/416e64726579/wallarm-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/416e64726579/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/416e64726579/wallarm-go)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/416e64726579/wallarm-go/blob/master/LICENSE)
+[![build](https://github.com/wallarm/wallarm-go/workflows/Go/badge.svg)](https://github.com/wallarm/wallarm-go/actions?query=workflow%3AGo)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/wallarm/wallarm-go)](https://pkg.go.dev/github.com/wallarm/wallarm-go)
+[![codecov](https://codecov.io/gh/wallarm/wallarm-go/branch/master/graph/badge.svg)](https://codecov.io/gh/wallarm/wallarm-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/wallarm/wallarm-go?style=flat-square)](https://goreportcard.com/report/github.com/wallarm/wallarm-go)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/wallarm/wallarm-go/blob/master/LICENSE)
 
 ## Table of Contents
 - [Install](#install)
@@ -30,7 +30,7 @@ A Go library for interacting with
 You need a working Go environment
 
 ```sh
-go get github.com/416e64726579/wallarm-go
+go get github.com/wallarm/wallarm-go
 ```
 
 ## Getting Started
@@ -45,7 +45,7 @@ import (
 	"net/http"
 	"os"
 
-	wallarm "github.com/416e64726579/wallarm-go"
+	wallarm "github.com/wallarm/wallarm-go"
 )
 
 func main() {

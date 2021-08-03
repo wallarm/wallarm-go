@@ -1,4 +1,4 @@
-module github.com/416e64726579/wallarm-go
+module github.com/wallarm/wallarm-go
 
 go 1.15
 

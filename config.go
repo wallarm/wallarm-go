@@ -11,7 +11,7 @@ var apiURL = "https://api.wallarm.com"
 
 const (
 	// Version is the client version
-	Version = "0.0.14"
+	Version = "0.0.17"
 )
 
 // Option is a functional option for configuring the API client

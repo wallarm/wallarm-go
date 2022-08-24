@@ -42,6 +42,9 @@ type (
 		Name       string              `json:"name,omitempty"`
 		Values     []string            `json:"values,omitempty"`
 		Comment    string              `json:"comment,omitempty"`
+		FileType   string              `json:"file_type,omitempty"`
+		Parser     string              `json:"parser,omitempty"`
+		State      string              `json:"state,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

@@ -9,163 +9,108 @@ import (
 type (
 	// Blacklist contains operations available on Blacklist resource
 	Blacklist interface {
-		BlacklistRead(clientID int) ([]BlacklistRead, error)
-		BlacklistCreate(blacklistBody *BlacklistCreate) error
+		BlacklistRead(clientID int) ([]IPRule, error)
+		BlacklistCreate(clientID int, params IPRuleCreationParams) error
 		BlacklistDelete(clientID int, ids []int) error
 	}
 
-	// Bulk is used to define IP address, applications, time and reason
-	Bulk struct {
-		IP       string `json:"ip"`
-		ExpireAt int    `json:"expire_at"`
-		Reason   string `json:"reason"`
-		Poolid   int    `json:"poolid"`
-		Clientid int    `json:"clientid"`
+	IPRuleCreationParams struct {
+		ExpiredAt int    `json:"expired_at"`
+		List      string `json:"list"`
+		Pools     []int  `json:"pools"`
+		Reason    string `json:"reason"`
+		RuleType  string `json:"rule_type"`
+		Subnet    string `json:"subnet"`
 	}
 
-	// BlacklistCreate is a root object to fill the blacklist
-	BlacklistCreate struct {
-		Bulks *[]Bulk `json:"bulk"`
-	}
-
-	// BlacklistRead is used to unmarshal blacklist Read function
-	BlacklistRead struct {
-		Body struct {
-			Result            string      `json:"result"`
-			Total             int         `json:"total"`
-			Continuation      interface{} `json:"continuation"`
-			EventContinuation string      `json:"event_continuation"`
-			Objects           []struct {
-				ID           int           `json:"id"`
-				Clientid     int           `json:"clientid"`
-				Country      string        `json:"country"`
-				Poolid       int           `json:"poolid"`
-				StillAttacks bool          `json:"still_attacks"`
-				IP           string        `json:"ip"`
-				ExpireAt     int           `json:"expire_at"`
-				Tags         []interface{} `json:"tags"`
-				BlockedAt    int           `json:"blocked_at"`
-				Reason       string        `json:"reason"`
-				Tor          interface{}   `json:"tor"`
-				Datacenter   interface{}   `json:"datacenter"`
-				ProxyType    interface{}   `json:"proxy_type"`
-			} `json:"objects"`
-		} `json:"body"`
+	IPRule struct {
+		ID int `json:"id"`
+		ClientID int `json:"clientid"`
+		RuleType string `json:"rule_type"`
+		List string `json:"list"`
+		Author string `json:"author"`
+		CreatedAt int `json:"created_at"`
+		ExpiredAt int `json:"expired_at"`
+		Pools []int `json:"pools"`
+		Reason string `json:"reason"`
+		AuthorTriggerID int `json:"author_trigger_id"`
+		AuthorUserID int `json:"author_user_id"`
+		Subnet string `json:"subnet"`
+		Country string `json:"country"`
+		ProxyType string `json:"proxy_type"`
+		Datacenter string `json:"datacenter"`
+		SourceValues []string `json:"source_values"`
 	}
 )
 
 // BlacklistRead requests the current blacklist for the future purposes.
 // It is going to respond with the list of IP addresses.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) BlacklistRead(clientID int) ([]BlacklistRead, error) {
-	uri := "/v3/blacklist"
+func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
+	uri := "/v4/ip_rules"
 
 	q := url.Values{}
-	q.Add("filter[clientid]", strconv.Itoa(clientID))
-	q.Add("filter[attack_delay]", "300")
-	q.Add("limit", "1000")
-	query := q.Encode()
+	q.Set("filter[clientid]", strconv.Itoa(clientID))
+	q.Set("filter[list]", "black")
+	q.Set("limit", "1000")
+	q.Set("offset", "0")
 
-	respBody, err := api.makeRequest("GET", uri, "", query)
-	if err != nil {
-		return nil, err
+	var bulkIPRules struct {
+		Body struct {
+			Objects []IPRule `json:"objects"`
+		} `json:"body"`
 	}
 
-	var data BlacklistRead
-	if err = json.Unmarshal(respBody, &data); err != nil {
-		return nil, err
-	}
+	var result []IPRule
 
-	var resp []BlacklistRead
-	resp = append(resp, data)
+	for offset := 0; len(bulkIPRules.Body.Objects) > 0; offset += 1000 {
+		q.Set("offset", strconv.Itoa(offset))
 
-	for {
-		var data BlacklistRead
-		if err = json.Unmarshal(respBody, &data); err != nil {
+		respBody, err := api.makeRequest("GET", uri, "", q.Encode())
+		if err != nil {
 			return nil, err
 		}
-		if data.Body.Continuation != nil {
-			if q.Get("continuation") == "" {
-				q.Add("continuation", data.Body.Continuation.(string))
-			} else {
-				q.Set("continuation", data.Body.Continuation.(string))
-			}
-			query = q.Encode()
 
-			respBody, err = api.makeRequest("GET", uri, "", query)
-			if err != nil {
-				return nil, err
-			}
-			resp = append(resp, data)
-		} else {
-			return resp, nil
+		if err = json.Unmarshal(respBody, &bulkIPRules); err != nil {
+			return nil, err
 		}
+
+
+		result = append(result, bulkIPRules.Body.Objects...)
 	}
+
+	return result, nil
 }
 
 // BlacklistCreate creates a blacklist in the Wallarm Cloud.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) BlacklistCreate(blacklistBody *BlacklistCreate) error {
+func (api *api) BlacklistCreate(clientID int, params IPRuleCreationParams) error {
+	uri := "/v4/ip_rules"
+	reqBody := struct {
+		ClientID int `json:"clientid"`
+		Force bool `json:"force"`
+		IPRule IPRuleCreationParams `json:"ip_rule"`
+	}{ClientID: clientID, Force: false, IPRule: params}
 
-	uri := "/v3/blacklist/bulk"
-	_, err := api.makeRequest("POST", uri, "", blacklistBody)
-	if err != nil {
-		return err
-	}
-	return nil
+	_, err := api.makeRequest("POST", uri, "", &reqBody)
+
+	return err
 }
 
 // BlacklistDelete deletes a blacklist for the client.
-// Currently, it will flush the entire blacklist, then it will be changed for granular deletion.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) BlacklistDelete(clientID int, ids []int) error {
-	var rest int
+	uri := "/v4/ip_rules"
+	reqBody := struct {
+		Filter struct {
+			ID       []int `json:"id"`
+			ClientID int   `json:"clientid"`
+		} `json:"filter"`
+	}{}
+	reqBody.Filter.ID = ids
+	reqBody.Filter.ClientID = clientID
 
-	uri := "/v3/blacklist/all"
+	_, err := api.makeRequest("DELETE", uri, "ip_rules", &reqBody)
 
-	q := url.Values{}
-	q.Add("filter[clientid]", strconv.Itoa(clientID))
-	for k, id := range ids {
-		lengthID := len([]byte(strconv.Itoa(id)))
-		lengthQuery := len([]byte(q.Encode()))
-		if lengthQuery+lengthID > 7000 {
-			rest = k
-			break
-		}
-		q.Add("filter[id][]", strconv.Itoa(id))
-	}
-	query := q.Encode()
-
-	_, err := api.makeRequest("DELETE", uri, "", query)
-	if err != nil {
-		return err
-	}
-
-	idRest := ids
-	for rest != 0 {
-		q := url.Values{}
-		q.Add("filter[clientid]", strconv.Itoa(clientID))
-		idRest = idRest[rest:]
-		for k, id := range idRest {
-			lengthID := len([]byte(strconv.Itoa(id)))
-			lengthQuery := len([]byte(q.Encode()))
-			if lengthQuery+lengthID > 7000 {
-				rest = k
-				break
-			}
-			q.Add("filter[id][]", strconv.Itoa(id))
-
-			if k == len(idRest)-1 {
-				rest = 0
-			}
-		}
-		query := q.Encode()
-
-		_, err := api.makeRequest("DELETE", uri, "", query)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return err
 }

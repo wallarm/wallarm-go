@@ -194,9 +194,10 @@ func (api *api) request(ctx context.Context, method, uri, reqType string, reqBod
 	if api.UserAgent != "" {
 		req.Header.Set("User-Agent", api.UserAgent)
 	}
-	methods := []string{"POST", "PUT"}
 
-	if req.Header.Get("Content-Type") == "" && Contains(methods, method) && reqType != "userdetails" {
+	if req.Header.Get("Content-Type") == "" &&
+		(Contains([]string{"POST", "PUT"}, method) && reqType != "userdetails") ||
+		(method == "DELETE" && reqType == "ip_rules") {
 		req.Header.Set("Content-Type", "application/json")
 	} else if method == "GET" {
 		req.Header.Del("Content-Type")

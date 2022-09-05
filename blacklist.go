@@ -24,22 +24,22 @@ type (
 	}
 
 	IPRule struct {
-		ID int `json:"id"`
-		ClientID int `json:"clientid"`
-		RuleType string `json:"rule_type"`
-		List string `json:"list"`
-		Author string `json:"author"`
-		CreatedAt int `json:"created_at"`
-		ExpiredAt int `json:"expired_at"`
-		Pools []int `json:"pools"`
-		Reason string `json:"reason"`
-		AuthorTriggerID int `json:"author_trigger_id"`
-		AuthorUserID int `json:"author_user_id"`
-		Subnet string `json:"subnet"`
-		Country string `json:"country"`
-		ProxyType string `json:"proxy_type"`
-		Datacenter string `json:"datacenter"`
-		SourceValues []string `json:"source_values"`
+		ID              int      `json:"id"`
+		ClientID        int      `json:"clientid"`
+		RuleType        string   `json:"rule_type"`
+		List            string   `json:"list"`
+		Author          string   `json:"author"`
+		CreatedAt       int      `json:"created_at"`
+		ExpiredAt       int      `json:"expired_at"`
+		Pools           []int    `json:"pools"`
+		Reason          string   `json:"reason"`
+		AuthorTriggerID int      `json:"author_trigger_id"`
+		AuthorUserID    int      `json:"author_user_id"`
+		Subnet          string   `json:"subnet"`
+		Country         string   `json:"country"`
+		ProxyType       string   `json:"proxy_type"`
+		Datacenter      string   `json:"datacenter"`
+		SourceValues    []string `json:"source_values"`
 	}
 )
 
@@ -75,7 +75,6 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 			return nil, err
 		}
 
-
 		result = append(result, bulkIPRules.Body.Objects...)
 	}
 
@@ -87,9 +86,9 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 func (api *api) BlacklistCreate(clientID int, params IPRuleCreationParams) error {
 	uri := "/v4/ip_rules"
 	reqBody := struct {
-		ClientID int `json:"clientid"`
-		Force bool `json:"force"`
-		IPRule IPRuleCreationParams `json:"ip_rule"`
+		ClientID int                  `json:"clientid"`
+		Force    bool                 `json:"force"`
+		IPRule   IPRuleCreationParams `json:"ip_rule"`
 	}{ClientID: clientID, Force: false, IPRule: params}
 
 	_, err := api.makeRequest("POST", uri, "", &reqBody)

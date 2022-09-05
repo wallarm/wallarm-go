@@ -52,7 +52,7 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 	q := url.Values{}
 	q.Set("filter[clientid]", strconv.Itoa(clientID))
 	q.Set("filter[list]", "black")
-	q.Set("limit", "1000")
+	q.Set("limit", "100")
 	q.Set("offset", "0")
 
 	var bulkIPRules struct {
@@ -61,9 +61,10 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 		} `json:"body"`
 	}
 
-	var result []IPRule
+	result := []IPRule{}
+	offset := 0
 
-	for offset := 0; len(bulkIPRules.Body.Objects) > 0; offset += 1000 {
+	for {
 		q.Set("offset", strconv.Itoa(offset))
 
 		respBody, err := api.makeRequest("GET", uri, "", q.Encode())
@@ -76,6 +77,12 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 		}
 
 		result = append(result, bulkIPRules.Body.Objects...)
+
+		if len(bulkIPRules.Body.Objects) < 100 {
+			break
+		}
+
+		offset += 100
 	}
 
 	return result, nil

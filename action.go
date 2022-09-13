@@ -101,6 +101,7 @@ type (
 		Point        []interface{}   `json:"point"`
 		AttackType   string          `json:"attack_type"`
 		Rules        []string        `json:"rules"`
+		Counter      string          `json:"counter,omitempty"`
 		// Headers for the Set Response Headers Rule
 		// are defined by these two parameters.
 		Name   string        `json:"name"`

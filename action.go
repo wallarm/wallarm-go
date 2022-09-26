@@ -45,6 +45,7 @@ type (
 		FileType   string              `json:"file_type,omitempty"`
 		Parser     string              `json:"parser,omitempty"`
 		State      string              `json:"state,omitempty"`
+		VarType    string              `json:"var_type,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.
@@ -102,6 +103,7 @@ type (
 		AttackType   string          `json:"attack_type"`
 		Rules        []string        `json:"rules"`
 		Counter      string          `json:"counter,omitempty"`
+		VarType      string          `json:"var_type"`
 		// Headers for the Set Response Headers Rule
 		// are defined by these two parameters.
 		Name   string        `json:"name"`

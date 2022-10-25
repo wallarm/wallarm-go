@@ -206,7 +206,7 @@ func TestUserDetails(t *testing.T) {
 					"admin"
 				],
 				"actual_permissions": [
-					"view_blacklist"
+					"view_denylist"
 				],
 				"mfa_enabled": false,
 				"create_by": 9999999999,

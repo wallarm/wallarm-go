@@ -7,11 +7,11 @@ import (
 )
 
 type (
-	// Blacklist contains operations available on Blacklist resource
-	Blacklist interface {
-		BlacklistRead(clientID int) ([]IPRule, error)
-		BlacklistCreate(clientID int, params IPRuleCreationParams) error
-		BlacklistDelete(clientID int, ids []int) error
+	// Denylist contains operations available on Denylist resource
+	Denylist interface {
+		DenylistRead(clientID int) ([]IPRule, error)
+		DenylistCreate(clientID int, params IPRuleCreationParams) error
+		DenylistDelete(clientID int, ids []int) error
 	}
 
 	IPRuleCreationParams struct {
@@ -43,10 +43,10 @@ type (
 	}
 )
 
-// BlacklistRead requests the current blacklist for the future purposes.
+// DenylistRead requests the current denylist for the future purposes.
 // It is going to respond with the list of IP addresses.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
+func (api *api) DenylistRead(clientID int) ([]IPRule, error) {
 	uri := "/v4/ip_rules"
 
 	q := url.Values{}
@@ -88,9 +88,9 @@ func (api *api) BlacklistRead(clientID int) ([]IPRule, error) {
 	return result, nil
 }
 
-// BlacklistCreate creates a blacklist in the Wallarm Cloud.
+// DenylistCreate creates a denylist in the Wallarm Cloud.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) BlacklistCreate(clientID int, params IPRuleCreationParams) error {
+func (api *api) DenylistCreate(clientID int, params IPRuleCreationParams) error {
 	uri := "/v4/ip_rules"
 	reqBody := struct {
 		ClientID int                  `json:"clientid"`
@@ -103,9 +103,9 @@ func (api *api) BlacklistCreate(clientID int, params IPRuleCreationParams) error
 	return err
 }
 
-// BlacklistDelete deletes a blacklist for the client.
+// DenylistDelete deletes a denylist for the client.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) BlacklistDelete(clientID int, ids []int) error {
+func (api *api) DenylistDelete(clientID int, ids []int) error {
 	uri := "/v4/ip_rules"
 	reqBody := struct {
 		Filter struct {

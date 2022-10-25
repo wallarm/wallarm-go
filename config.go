@@ -37,7 +37,7 @@ type (
 	API interface {
 		Action
 		Application
-		Blacklist
+		Denylist
 		Client
 		Vulnerability
 		Integration

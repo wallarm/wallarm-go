@@ -21,7 +21,7 @@ A Go library for interacting with
 * Manage integrations
 * Manage triggers
 * Manage users
-* Manage the blacklist
+* Manage the denylist
 * Switch the WAF/Scanner/Active Threat Verification modes
 * Inquire found vulnerabilities
 

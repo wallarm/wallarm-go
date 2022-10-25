@@ -2,9 +2,7 @@ package wallarm
 
 import "encoding/json"
 
-// ClientFields defines fields which are subject to update.
 type (
-
 	// Client contains operations available on Client resource
 	Client interface {
 		ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error)
@@ -13,7 +11,6 @@ type (
 
 	// ClientFields defines fields which are subject to update.
 	ClientFields struct {
-		Mode                string `json:"mode,omitempty"`
 		ScannerMode         string `json:"scanner_mode,omitempty"`
 		AttackRecheckerMode string `json:"attack_rechecker_mode,omitempty"`
 	}
@@ -55,7 +52,6 @@ type (
 			VulnPrefix       string   `json:"vuln_prefix"`
 			SupportPlan      string   `json:"support_plan"`
 			DateFormat       string   `json:"date_format"`
-			Mode             string   `json:"mode"`
 			BlockingType     string   `json:"blocking_type"`
 			ScannerMode      string   `json:"scanner_mode"`
 			QratorBlacklists bool     `json:"qrator_blacklists"`
@@ -128,7 +124,7 @@ type (
 )
 
 // ClientUpdate changes client state.
-// It can be used with global WAF mode, Scanner, Attack Rechecker Statuses.
+// It can be used with global Scanner, Attack Rechecker Statuses.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 
@@ -145,7 +141,7 @@ func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 }
 
 // ClientRead requests common info about the account.
-// There is info about Scanner, Attack Rechecker and WAF mode, and others.
+// There is info about Scanner, Attack Rechecker, and others.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) ClientRead(clientBody *ClientRead) (*ClientInfo, error) {
 

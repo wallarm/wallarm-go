@@ -45,6 +45,7 @@ type (
 		Scanner
 		Trigger
 		User
+		WallarmMode
 	}
 
 	api struct {

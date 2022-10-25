@@ -81,21 +81,16 @@ func main() {
 	// Print user specific data
 	log.Println(u.Body)
 
-	// Change global WAF mode to monitoring
-	mode := wallarm.ClientUpdate{
-		Filter: &wallarm.ClientFilter{
-			ID: 1,
-		},
-		Fields: &wallarm.ClientFields{
-			Mode: "monitoring",
-		},
-	}
-	c, err := api.ClientUpdate(&mode)
+	// Change global Wallarm mode to monitoring
+	clientID := 1
+	modeParams := wallarm.WallarmMode{Mode: "monitoring"}
+
+	mode, err := api.WallarmModeUpdate(&modeParams, clientID)
 	if err != nil {
 		log.Print(err)
 	}
-	// Print client data
-	log.Println(c)
+	// Print Wallarm mode
+	log.Println(mode)
 
 	// Create a trigger when the number of attacks more than 1000 in 10 minutes
 	filter := wallarm.TriggerFilters{

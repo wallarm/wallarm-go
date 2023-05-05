@@ -201,7 +201,7 @@ func TestUserDetails(t *testing.T) {
 			"body": {
 				"id": 5528351,
 				"uuid": "00000000-0000-0000-0000-000000000000",
-				"clientid": 0,
+				"client_id": 0,
 				"permissions": [
 					"admin"
 				],
@@ -210,7 +210,7 @@ func TestUserDetails(t *testing.T) {
 				],
 				"mfa_enabled": false,
 				"create_by": 9999999999,
-				"create_at": 1569398384,
+				"create_at": "2023-05-04T09:18:38Z",
 				"create_from": "99.99.99.99",
 				"enabled": true,
 				"validated": true,

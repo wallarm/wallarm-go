@@ -2,6 +2,7 @@ package wallarm
 
 import (
 	"encoding/json"
+	"time"
 )
 
 type (
@@ -40,7 +41,7 @@ type (
 		ActualPermissions []string    `json:"actual_permissions"`
 		MfaEnabled        bool        `json:"mfa_enabled"`
 		CreateBy          int64       `json:"create_by"`
-		CreateAt          int         `json:"create_at"`
+		CreateAt          time.Time   `json:"create_at"`
 		CreateFrom        string      `json:"create_from"`
 		Enabled           bool        `json:"enabled"`
 		Validated         bool        `json:"validated"`
@@ -100,11 +101,16 @@ type (
 		Filter    *UserFilter `json:"filter"`
 	}
 
+	UserDetailsBody struct {
+		*UserParams
+		Clientid int `json:"client_id"`
+	}
+
 	// UserDetails is used as a response for request about the specific User.
 	// For example, it may be used to find out a parameter (Client ID) for the current user which auth params are used
 	UserDetails struct {
-		Status int         `json:"status"`
-		Body   *UserParams `json:"body"`
+		Status int              `json:"status"`
+		Body   *UserDetailsBody `json:"body"`
 	}
 
 	// UserFilter is intended to filter Users for the Delete purpose

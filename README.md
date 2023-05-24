@@ -35,7 +35,7 @@ go get github.com/wallarm/wallarm-go
 
 ## Getting Started
 
-The sample code could be similar 
+The sample code could be similar
 
 ```go
 package main
@@ -54,18 +54,13 @@ func main() {
 	if !exist {
 		wapiHost = "https://api.wallarm.com"
 	}
-	wapiUUID, exist := os.LookupEnv("WALLARM_API_UUID")
+	wapiToken, exist := os.LookupEnv("WALLARM_API_TOKEN")
 	if !exist {
-		log.Fatal("ENV variable WALLARM_API_UUID is not present")
-	}
-	wapiSecret, exist := os.LookupEnv("WALLARM_API_SECRET")
-	if !exist {
-		log.Fatal("ENV variable WALLARM_API_SECRET is not present")
+		log.Fatal("ENV variable WALLARM_API_TOKEN is not present")
 	}
 
 	authHeaders := make(http.Header)
-	authHeaders.Add("X-WallarmAPI-UUID", wapiUUID)
-	authHeaders.Add("X-WallarmAPI-Secret", wapiSecret)
+	authHeaders.Add("X-WallarmAPI-Token", wapiToken)
 
 	// Construct a new API object
 	api, err := wallarm.New(wallarm.UsingBaseURL(wapiHost), wallarm.Headers(authHeaders))

@@ -132,17 +132,18 @@ type (
 
 	// HintFilter is used as a filter by Action ID.
 	HintFilter struct {
-		Clientid        []int    `json:"clientid,omitempty"`
-		ActionID        []int    `json:"actionid,omitempty"`
-		ID              []int    `json:"id,omitempty"`
-		NotID           []int    `json:"!id,omitempty"`
-		NotActionID     []int    `json:"!actionid,omitempty"`
-		CreateUserid    []int    `json:"create_userid,omitempty"`
-		NotCreateUserid []int    `json:"!create_userid,omitempty"`
-		CreateTime      [][]int  `json:"create_time,omitempty"`
-		NotCreateTime   [][]int  `json:"!create_time,omitempty"`
-		System          bool     `json:"system,omitempty"`
-		Type            []string `json:"type,omitempty"`
+		Clientid        []int               `json:"clientid,omitempty"`
+		ActionID        []int               `json:"actionid,omitempty"`
+		ID              []int               `json:"id,omitempty"`
+		NotID           []int               `json:"!id,omitempty"`
+		NotActionID     []int               `json:"!actionid,omitempty"`
+		CreateUserid    []int               `json:"create_userid,omitempty"`
+		NotCreateUserid []int               `json:"!create_userid,omitempty"`
+		CreateTime      [][]int             `json:"create_time,omitempty"`
+		NotCreateTime   [][]int             `json:"!create_time,omitempty"`
+		System          bool                `json:"system,omitempty"`
+		Type            []string            `json:"type,omitempty"`
+		Point           TwoDimensionalSlice `json:"point,omitempty"`
 	}
 
 	// HintDelete is used for removal of Rule by Hint ID.

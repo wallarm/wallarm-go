@@ -170,7 +170,7 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 		resp.StatusCode == 523,
 		resp.StatusCode == 524:
 		return nil, errors.Errorf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
-	case resp.StatusCode == http.StatusBadRequest && (reqType == "node" || reqType == "app") && string(respBody) == `{"status":400,"body":"Already exists"}`:
+	case resp.StatusCode == http.StatusBadRequest && (reqType == "node" || reqType == "app" || reqType == "client") && string(respBody) == `{"status":400,"body":"Already exists"}`:
 		return nil, errors.Wrap(ErrExistingResource, fmt.Sprintf("HTTP Status: %[1]v Body: %[2]s", resp.StatusCode, string(respBody)))
 	case resp.StatusCode == http.StatusConflict && Contains(specificResourceProcessing, reqType):
 		return nil, errors.Wrap(ErrExistingResource, fmt.Sprintf("HTTP Status: %[1]v Body: %[2]s", resp.StatusCode, string(respBody)))

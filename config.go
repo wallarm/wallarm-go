@@ -49,6 +49,7 @@ type (
 		Trigger
 		User
 		WallarmMode
+		RuleSettings
 	}
 
 	api struct {

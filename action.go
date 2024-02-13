@@ -27,25 +27,26 @@ type (
 
 	// ActionCreate is a creation skeleton for the Rule.
 	ActionCreate struct {
-		Type       string              `json:"type"`
-		Action     *[]ActionDetails    `json:"action,omitempty"`
-		Clientid   int                 `json:"clientid,omitempty"`
-		Validated  bool                `json:"validated"`
-		Point      TwoDimensionalSlice `json:"point,omitempty"`
-		Rules      []string            `json:"rules,omitempty"`
-		AttackType string              `json:"attack_type,omitempty"`
-		Mode       string              `json:"mode,omitempty"`
-		Counter    string              `json:"counter,omitempty"`
-		Regex      string              `json:"regex,omitempty"`
-		RegexID    int                 `json:"regex_id,omitempty"`
-		Enabled    *bool               `json:"enabled,omitempty"`
-		Name       string              `json:"name,omitempty"`
-		Values     []string            `json:"values,omitempty"`
-		Comment    string              `json:"comment,omitempty"`
-		FileType   string              `json:"file_type,omitempty"`
-		Parser     string              `json:"parser,omitempty"`
-		State      string              `json:"state,omitempty"`
-		VarType    string              `json:"var_type,omitempty"`
+		Type                string              `json:"type"`
+		Action              *[]ActionDetails    `json:"action,omitempty"`
+		Clientid            int                 `json:"clientid,omitempty"`
+		Validated           bool                `json:"validated"`
+		Point               TwoDimensionalSlice `json:"point,omitempty"`
+		Rules               []string            `json:"rules,omitempty"`
+		AttackType          string              `json:"attack_type,omitempty"`
+		Mode                string              `json:"mode,omitempty"`
+		Counter             string              `json:"counter,omitempty"`
+		Regex               string              `json:"regex,omitempty"`
+		RegexID             int                 `json:"regex_id,omitempty"`
+		Enabled             *bool               `json:"enabled,omitempty"`
+		Name                string              `json:"name,omitempty"`
+		Values              []string            `json:"values,omitempty"`
+		Comment             string              `json:"comment,omitempty"`
+		FileType            string              `json:"file_type,omitempty"`
+		Parser              string              `json:"parser,omitempty"`
+		State               string              `json:"state,omitempty"`
+		VarType             string              `json:"var_type,omitempty"`
+		VariativityDisabled bool                `json:"variativity_disabled,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

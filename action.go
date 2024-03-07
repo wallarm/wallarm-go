@@ -47,6 +47,11 @@ type (
 		State               string              `json:"state,omitempty"`
 		VarType             string              `json:"var_type,omitempty"`
 		VariativityDisabled bool                `json:"variativity_disabled,omitempty"`
+		LoginRegex          string              `json:"login_regex,omitempty"`
+		CredStuffType       string              `json:"cred_stuff_type,omitempty"`
+		CredStuffMode       string              `json:"cred_stuff_mode,omitempty"`
+		CaseSensitive       *bool               `json:"case_sensitive,omitempty"`
+		LoginPoint          TwoDimensionalSlice `json:"login_point,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.
@@ -85,25 +90,30 @@ type (
 
 	// ActionBody is an inner body for the Action and Hint responses.
 	ActionBody struct {
-		ID           int             `json:"id"`
-		ActionID     int             `json:"actionid"`
-		Clientid     int             `json:"clientid"`
-		Action       []ActionDetails `json:"action"`
-		CreateTime   int             `json:"create_time"`
-		CreateUserid int             `json:"create_userid"`
-		Validated    bool            `json:"validated"`
-		System       bool            `json:"system"`
-		RegexID      interface{}     `json:"regex_id"`
-		UpdatedAt    int             `json:"updated_at"`
-		Type         string          `json:"type"`
-		Enabled      bool            `json:"enabled"`
-		Mode         string          `json:"mode"`
-		Regex        string          `json:"regex"`
-		Point        []interface{}   `json:"point"`
-		AttackType   string          `json:"attack_type"`
-		Rules        []string        `json:"rules"`
-		Counter      string          `json:"counter,omitempty"`
-		VarType      string          `json:"var_type"`
+		ID            int             `json:"id"`
+		ActionID      int             `json:"actionid"`
+		Clientid      int             `json:"clientid"`
+		Action        []ActionDetails `json:"action"`
+		CreateTime    int             `json:"create_time"`
+		CreateUserid  int             `json:"create_userid"`
+		Validated     bool            `json:"validated"`
+		System        bool            `json:"system"`
+		RegexID       interface{}     `json:"regex_id"`
+		UpdatedAt     int             `json:"updated_at"`
+		Type          string          `json:"type"`
+		Enabled       bool            `json:"enabled"`
+		Mode          string          `json:"mode"`
+		Regex         string          `json:"regex"`
+		Point         []interface{}   `json:"point"`
+		AttackType    string          `json:"attack_type"`
+		Rules         []string        `json:"rules"`
+		Counter       string          `json:"counter,omitempty"`
+		VarType       string          `json:"var_type"`
+		LoginRegex    string          `json:"login_regex"`
+		CredStuffType string          `json:"cred_stuff_type"`
+		CredStuffMode string          `json:"cred_stuff_mode"`
+		CaseSensitive *bool           `json:"case_sensitive"`
+		LoginPoint    []interface{}   `json:"login_point"`
 		// Headers for the Set Response Headers Rule
 		// are defined by these two parameters.
 		Name   string        `json:"name"`
@@ -222,7 +232,6 @@ func (api *api) RuleDelete(actionID int) error {
 // HintDelete deletes the Rule defined by the unique Hint ID.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) HintDelete(hintbody *HintDelete) error {
-
 	uri := "/v1/objects/hint/delete"
 	_, err := api.makeRequest("POST", uri, "hint", hintbody)
 	if err != nil {

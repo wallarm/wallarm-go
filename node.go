@@ -18,9 +18,10 @@ type (
 
 	// NodeCreate represents options to set for the Node for creating.
 	NodeCreate struct {
-		Hostname string `json:"hostname"`
-		Type     string `json:"type"`
-		Clientid int    `json:"clientid"`
+		Hostname    string `json:"hostname"`
+		Type        string `json:"type"`
+		Clientid    int    `json:"clientid"`
+		PartnerMode bool   `json:"partner_mode"`
 	}
 
 	// NodeCreateResp is the API response on the Create action containing

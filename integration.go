@@ -189,7 +189,7 @@ func (api *api) IntegrationRead(clientID int, id int) (*IntegrationObject, error
 		}
 	}
 
-	return nil, errors.New(fmt.Sprintf("Body: %s", string(respBody)))
+	return nil, errors.New(fmt.Sprintf("Not found. Body: %s", string(respBody)))
 }
 
 // IntegrationDelete is used to delete an existing integration.

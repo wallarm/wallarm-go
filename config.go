@@ -50,6 +50,7 @@ type (
 		User
 		WallarmMode
 		RuleSettings
+		ApiSpec
 	}
 
 	api struct {

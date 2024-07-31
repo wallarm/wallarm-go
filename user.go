@@ -24,6 +24,7 @@ type (
 		Realname    string   `json:"realname"`
 		Permissions []string `json:"permissions"`
 		Clientid    int      `json:"clientid,omitempty"`
+		Enabled     bool     `json:"enabled"`
 	}
 
 	// UserRead is used as a response for the Read function for the User endpoints
@@ -43,7 +44,6 @@ type (
 		CreateBy          int64       `json:"create_by"`
 		CreateAt          int         `json:"create_at"`
 		CreateFrom        string      `json:"create_from"`
-		Enabled           bool        `json:"enabled"`
 		Validated         bool        `json:"validated"`
 		PasswordChanged   int         `json:"password_changed"`
 		LoginHistory      []struct {

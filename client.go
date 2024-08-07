@@ -25,9 +25,9 @@ type (
 
 	// ClientCreate is a root object for updating.
 	ClientCreate struct {
-		Name        string  `json:"name"`
-		VulnPrefix  string  `json:"vuln_prefix"`
-		PartnerUUID *string `json:"partner_uuid"`
+		Name        string `json:"name"`
+		VulnPrefix  string `json:"vuln_prefix"`
+		PartnerUUID string `json:"partner_uuid"`
 	}
 
 	// ClientUpdate is a root object for updating.

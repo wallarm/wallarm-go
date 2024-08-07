@@ -20,6 +20,8 @@ type (
 		IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICreate, integrationID int) (*IntegrationCreateResp, error)
 		EmailIntegrationCreate(emailBody *EmailIntegrationCreate) (*IntegrationCreateResp, error)
 		EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, integrationID int) (*IntegrationCreateResp, error)
+		TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (IntegrationCreateResp, error)
+		TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (IntegrationCreateResp, error)
 	}
 
 	// IntegrationEvents represents `Events` object while creating a new integration.
@@ -61,7 +63,7 @@ type (
 	IntegrationCreate struct {
 		Name     string               `json:"name"`
 		Active   bool                 `json:"active"`
-		Target   string               `json:"target"`
+		Target   interface{}          `json:"target"`
 		Events   *[]IntegrationEvents `json:"events"`
 		Type     string               `json:"type"`
 		Clientid int                  `json:"clientid,omitempty"`
@@ -113,6 +115,18 @@ type (
 		Events   *[]IntegrationEvents `json:"events,omitempty"`
 		Type     string               `json:"type,omitempty"`
 		Clientid int                  `json:"clientid,omitempty"`
+	}
+
+	TelegramIntegrationCreate struct {
+		Name     string `json:"name,omitempty"`
+		Clientid int    `json:"clientid,omitempty"`
+		Token    string `json:"token,omitempty"`
+		ChatData string `json:"chat_data,omitempty"`
+	}
+
+	DatadogTarget struct {
+		Region string `json:"region"`
+		Token  string `json:"token"`
 	}
 )
 
@@ -175,14 +189,13 @@ func (api *api) IntegrationRead(clientID int, id int) (*IntegrationObject, error
 		}
 	}
 
-	return nil, errors.New(fmt.Sprintf("Body: %s", string(respBody)))
+	return nil, errors.New(fmt.Sprintf("Not found. Body: %s", string(respBody)))
 }
 
 // IntegrationDelete is used to delete an existing integration.
 // If successful, returns nothing.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) IntegrationDelete(integrationID int) error {
-
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
 	_, err := api.makeRequest("DELETE", uri, "integration", nil)
 	if err != nil {
@@ -265,4 +278,34 @@ func (api *api) EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, 
 		return nil, err
 	}
 	return &i, nil
+}
+
+func (api *api) TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (IntegrationCreateResp, error) {
+
+	uri := "/v2/integration/telegram"
+	var i IntegrationCreateResp
+	respBody, err := api.makeRequest("POST", uri, "email", tgBody)
+	if err != nil {
+		return i, fmt.Errorf("TelegramIntegrationCreate: failed to make request - %w", err)
+	}
+
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return i, fmt.Errorf("TelegramIntegrationCreate: failed to read request body - %w", err)
+	}
+	return i, nil
+}
+
+func (api *api) TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (IntegrationCreateResp, error) {
+
+	var i IntegrationCreateResp
+	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
+	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody)
+	if err != nil {
+		return i, fmt.Errorf("TelegramIntegrationUpdate: failed to make request - %w", err)
+	}
+
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return i, fmt.Errorf("TelegramIntegrationUpdate: failed to make request - %w", err)
+	}
+	return i, nil
 }

@@ -203,6 +203,10 @@ func (api *api) request(ctx context.Context, method, uri, reqType string, reqBod
 		req.Header.Del("Content-Type")
 	}
 
+	if method == "DELETE" && reqType != "ip_rules" {
+		req.Header.Del("Content-Type")
+	}
+
 	if query != nil {
 		q, err := ioutil.ReadAll(query)
 		if err != nil {

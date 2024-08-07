@@ -41,6 +41,7 @@ type (
 		ProxyType       string   `json:"proxy_type"`
 		Datacenter      string   `json:"datacenter"`
 		SourceValues    []string `json:"source_values"`
+		DeletedBy       string   `json:"deleted_by"`
 	}
 )
 

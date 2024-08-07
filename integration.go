@@ -20,8 +20,8 @@ type (
 		IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICreate, integrationID int) (*IntegrationCreateResp, error)
 		EmailIntegrationCreate(emailBody *EmailIntegrationCreate) (*IntegrationCreateResp, error)
 		EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, integrationID int) (*IntegrationCreateResp, error)
-		TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (*IntegrationCreateResp, error)
-		TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (*IntegrationCreateResp, error)
+		TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (IntegrationCreateResp, error)
+		TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (IntegrationCreateResp, error)
 	}
 
 	// IntegrationEvents represents `Events` object while creating a new integration.
@@ -280,32 +280,32 @@ func (api *api) EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, 
 	return &i, nil
 }
 
-func (api *api) TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (*IntegrationCreateResp, error) {
+func (api *api) TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (IntegrationCreateResp, error) {
 
 	uri := "/v2/integration/telegram"
+	var i IntegrationCreateResp
 	respBody, err := api.makeRequest("POST", uri, "email", tgBody)
 	if err != nil {
-		return nil, err
+		return i, fmt.Errorf("TelegramIntegrationCreate: failed to make request - %w", err)
 	}
 
-	var i IntegrationCreateResp
 	if err = json.Unmarshal(respBody, &i); err != nil {
-		return nil, err
+		return i, fmt.Errorf("TelegramIntegrationCreate: failed to read request body - %w", err)
 	}
-	return &i, nil
+	return i, nil
 }
 
-func (api *api) TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (*IntegrationCreateResp, error) {
+func (api *api) TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCreate, integrationID int) (IntegrationCreateResp, error) {
 
+	var i IntegrationCreateResp
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
 	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody)
 	if err != nil {
-		return nil, err
+		return i, fmt.Errorf("TelegramIntegrationUpdate: failed to make request - %w", err)
 	}
 
-	var i IntegrationCreateResp
 	if err = json.Unmarshal(respBody, &i); err != nil {
-		return nil, err
+		return i, fmt.Errorf("TelegramIntegrationUpdate: failed to make request - %w", err)
 	}
-	return &i, nil
+	return i, nil
 }

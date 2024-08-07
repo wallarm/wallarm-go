@@ -10,9 +10,9 @@ import (
 type (
 	// ApiSpec contains operations available on ApiSpec resource
 	ApiSpec interface {
-		ApiSpecCreate(apiSpecBody *ApiSpecCreate) (*ApiSpecCreateResp, error)
+		ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, error)
 		ApiSpecDelete(clientID int, apiSpecID int) error
-		ApiSpecRead(clientID int, id int) (*ApiSpecBody, error)
+		ApiSpecRead(clientID int, id int) (ApiSpecBody, error)
 	}
 
 	ApiSpecCreate struct {
@@ -49,7 +49,7 @@ type (
 		ZombieEndpointsCount int           `json:"zombie_endpoints_count"`
 		OpenAPIVersion       string        `json:"openapi_version"`
 		LastSyncedAt         string        `json:"last_synced_at"`
-		LastComparedAt       interface{}   `json:"last_compared_at"`
+		LastComparedAt       string        `json:"last_compared_at"`
 		UpdatedAt            string        `json:"updated_at"`
 		CreatedAt            string        `json:"created_at"`
 		NodeSyncVersion      int           `json:"node_sync_version"`
@@ -72,38 +72,42 @@ type (
 	}
 )
 
-func (api *api) ApiSpecRead(clientID int, id int) (*ApiSpecBody, error) {
+var ErrNotFound = errors.New("ApiSpec not found")
+
+func (api *api) ApiSpecRead(clientID int, id int) (ApiSpecBody, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", clientID)
+	var apiSpecBody ApiSpecBody
 	respBody, err := api.makeRequest("GET", uri, "api_spec", nil)
 	if err != nil {
-		return nil, err
+		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to make request - %w", err)
 	}
 	var readResult ApiSpecRead
 	if err = json.Unmarshal(respBody, &readResult); err != nil {
-		return nil, err
+		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to parse response - %w", err)
 	}
 	for _, obj := range readResult.Items {
 		if obj.ID == id {
-			return &obj, nil
+			return obj, nil
 		}
 	}
 
-	return nil, errors.New(fmt.Sprintf("Not found. Body: %s", string(respBody)))
+	return apiSpecBody, fmt.Errorf("ApiSpecRead: %w - body: %s", ErrNotFound, string(respBody))
 }
 
-func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (*ApiSpecCreateResp, error) {
+func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", apiSpecBody.ClientID)
 	respBody, err := api.makeRequest("POST", uri, "api_spec", apiSpecBody)
-	if err != nil {
-		return nil, err
-	}
 	var a ApiSpecCreateResp
-	if err = json.Unmarshal(respBody, &a); err != nil {
-		return nil, err
+	if err != nil {
+		return a, fmt.Errorf("ApiSpecCreate: failed to make request - %w", err)
 	}
-	return &a, nil
+
+	if err = json.Unmarshal(respBody, &a); err != nil {
+		return a, fmt.Errorf("ApiSpecCreate: failed to parse response - %w", err)
+	}
+	return a, nil
 }
 
 func (api *api) ApiSpecDelete(clientID int, apiSpecID int) error {
@@ -111,7 +115,7 @@ func (api *api) ApiSpecDelete(clientID int, apiSpecID int) error {
 
 	_, err := api.makeRequest("DELETE", uri, "api_spec", nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("ApiSpecDelete: failed to make request - %w", err)
 	}
 	return nil
 }

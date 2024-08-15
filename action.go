@@ -52,6 +52,11 @@ type (
 		CredStuffMode       string              `json:"cred_stuff_mode,omitempty"`
 		CaseSensitive       *bool               `json:"case_sensitive,omitempty"`
 		LoginPoint          TwoDimensionalSlice `json:"login_point,omitempty"`
+		Delay               int                 `json:"delay,omitempty"`
+		Burst               int                 `json:"burst,omitempty"`
+		Rate                int                 `json:"rate,omitempty"`
+		RspStatus           int                 `json:"rsp_status,omitempty"`
+		TimeUnit            string              `json:"time_unit,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

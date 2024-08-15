@@ -12,7 +12,7 @@ type (
 		TriggerRead(clientID int) (*TriggerRead, error)
 		TriggerCreate(triggerBody *TriggerCreate, clientID int) (*TriggerCreateResp, error)
 		TriggerDelete(clientID, triggerID int) error
-		TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerResp, error)
+		TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerCreateResp, error)
 	}
 
 	// TriggerFilters is used to specify params for Trigger["Filters"] which is used as a slice
@@ -161,14 +161,14 @@ func (api *api) TriggerDelete(clientID, triggerID int) error {
 
 // TriggerUpdate updates existing trigger using unique ID.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerResp, error) {
+func (api *api) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
 	respBody, err := api.makeRequest("PUT", uri, "trigger", triggerBody)
 	if err != nil {
 		return nil, err
 	}
-	var t TriggerResp
+	var t TriggerCreateResp
 	if err = json.Unmarshal(respBody, &t); err != nil {
 		return nil, err
 	}

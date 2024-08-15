@@ -84,6 +84,7 @@ type (
 		Token       string                 `json:"token,omitempty"`
 		API         string                 `json:"api,omitempty"`
 		URL         string                 `json:"url,omitempty"`
+		Format      string                 `json:"format,omitempty"`
 		HTTPMethod  string                 `json:"http_method,omitempty"`
 		Headers     map[string]interface{} `json:"headers"`
 		CaFile      string                 `json:"ca_file"`

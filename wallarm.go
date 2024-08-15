@@ -11,6 +11,7 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -36,7 +37,12 @@ func New(opts ...Option) (API, error) {
 }
 
 func newClient(opts ...Option) (API, error) {
-	silentLogger := log.New(ioutil.Discard, "", log.LstdFlags)
+	logger := log.New(ioutil.Discard, "", log.LstdFlags)
+	_, useTfOutput := os.LookupEnv("TF_LOG_PROVIDER")
+	if useTfOutput {
+		logger = log.New(os.Stdout, "", log.LstdFlags)
+	}
+
 	defaultUserAgent := "Wallarm-go/" + Version
 
 	api := &api{
@@ -47,7 +53,7 @@ func newClient(opts ...Option) (API, error) {
 			MinRetryDelay: time.Duration(1) * time.Second,
 			MaxRetryDelay: time.Duration(30) * time.Second,
 		},
-		logger: silentLogger,
+		logger: logger,
 		Mutex:  &sync.Mutex{},
 	}
 
@@ -117,6 +123,7 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 
 		}
 
+		api.logger.Printf("REQUEST: Method: %s, Uri: %s, Body: %s", method, uri, string(jsonBody))
 		if query, ok := params.(string); ok {
 			q := strings.NewReader(query)
 			resp, err = api.request(ctx, method, uri, reqType, reqBody, q)
@@ -156,7 +163,7 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 	}
 
 	specificResourceProcessing := []string{"scanner", "user"}
-
+	api.logger.Printf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	switch {
 	case resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices:
 	case resp.StatusCode == http.StatusUnauthorized:

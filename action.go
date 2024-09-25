@@ -57,6 +57,7 @@ type (
 		Rate                int                 `json:"rate,omitempty"`
 		RspStatus           int                 `json:"rsp_status,omitempty"`
 		TimeUnit            string              `json:"time_unit,omitempty"`
+		OverlimitTime       int                 `json:"overlimit_time,omitempty"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

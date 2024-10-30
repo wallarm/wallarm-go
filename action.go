@@ -141,6 +141,7 @@ type (
 		Suffix           string        `json:"suffix,omitempty"`
 		FileType         string        `json:"file_type,omitempty"`
 		Parser           string        `json:"parser,omitempty"`
+		State            string        `json:"state,omitempty"`
 		MaxDepth         int           `json:"max_depth,omitempty"`
 		MaxValueSizeKb   int           `json:"max_value_size_kb,omitempty"`
 		MaxDocSizeKb     int           `json:"max_doc_size_kb,omitempty"`

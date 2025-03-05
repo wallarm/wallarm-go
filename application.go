@@ -12,9 +12,12 @@ type (
 	}
 
 	// AppCreate is a request body to set ID and Name for the App.
+	// ID is optional when creating a new application.
+	// If ID is not provided, the system will generate one automatically.
 	AppCreate struct {
-		*AppFilter
-		Name string `json:"name"`
+		ID       *int   `json:"id,omitempty"`
+		Clientid int    `json:"clientid"`
+		Name     string `json:"name"`
 	}
 
 	// AppFilter is used to filter applications by ID and ClientID.
@@ -44,8 +47,10 @@ type (
 	AppReadResp struct {
 		Status int `json:"status"`
 		Body   []struct {
-			*AppCreate
-			Deleted bool `json:"deleted"`
+			ID       *int   `json:"id"`
+			Clientid int    `json:"clientid"`
+			Name     string `json:"name"`
+			Deleted  bool   `json:"deleted"`
 		} `json:"body"`
 	}
 
@@ -84,6 +89,7 @@ func (api *api) AppRead(appBody *AppRead) (*AppReadResp, error) {
 }
 
 // AppCreate returns nothing if Application has been created successfully, otherwise error.
+// ID is optional when creating a new application. If ID is not provided, the system will generate one automatically.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) AppCreate(appBody *AppCreate) error {
 

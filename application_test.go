@@ -18,7 +18,7 @@ func TestAppCreate(t *testing.T) {
 		fmt.Fprint(w, `{
 			"status": 200,
 			"body": {
-				"id": 0,
+				"id": 123,
 				"clientid": 0,
 				"name": "Test",
 				"deleted": false
@@ -26,11 +26,12 @@ func TestAppCreate(t *testing.T) {
 		}`)
 	}
 
+	id := 123
+
 	appBody := &AppCreate{
-		Name: "Test",
-		AppFilter: &AppFilter{
-			ID:       0,
-			Clientid: 0},
+		ID:       &id,
+		Clientid: 0,
+		Name:     "Test",
 	}
 
 	mux.HandleFunc("/v1/objects/pool/create", handler)
@@ -52,11 +53,12 @@ func TestAppCreate_Duplicated(t *testing.T) {
 		}`)
 	}
 
+	id := 123
+
 	appBody := &AppCreate{
-		Name: "Test",
-		AppFilter: &AppFilter{
-			ID:       0,
-			Clientid: 0},
+		ID:       &id,
+		Clientid: 0,
+		Name:     "Test",
 	}
 
 	mux.HandleFunc("/v1/objects/pool/create", handler)
@@ -65,6 +67,34 @@ func TestAppCreate_Duplicated(t *testing.T) {
 			"status": 400,
 			"body": "Already exists"
 		}`)
+}
+
+func TestAppCreate_WithoutID(t *testing.T) {
+	setup()
+	defer teardown()
+
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, r.Method, "POST", "Expected method 'POST', got %s", r.Method)
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{
+			"status": 200,
+			"body": {
+				"id": 123,
+				"clientid": 0,
+				"name": "Test",
+				"deleted": false
+			}
+		}`)
+	}
+
+	appBody := &AppCreate{
+		Clientid: 0,
+		Name:     "Test",
+	}
+
+	mux.HandleFunc("/v1/objects/pool/create", handler)
+	err := client.AppCreate(appBody)
+	assert.NoError(t, err)
 }
 
 func TestAppDelete(t *testing.T) {

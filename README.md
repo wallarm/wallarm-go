@@ -124,6 +124,30 @@ func main() {
 	}
 	// Print trigger metadata
 	log.Println(triggerResp)
+
+	// Create an application with auto-generated ID
+	appCreate := wallarm.AppCreate{
+		Clientid: clientID,
+		Name:     "My First Application",
+	}
+
+	err = api.AppCreate(appCreate)
+	if err != nil {
+		log.Print(err)
+	}
+
+	// Create an application with specified ID
+	customID := 42
+	appCreateWithID := wallarm.AppCreate{
+		ID:       &customID,
+		Clientid: clientID,
+		Name:     "My Application with Custom ID",
+	}
+
+	err = api.AppCreate(appCreateWithID)
+	if err != nil {
+		log.Print(err)
+	}
 }
 ```
 

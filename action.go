@@ -28,49 +28,77 @@ type (
 
 	// ActionCreate is a creation skeleton for the Rule.
 	ActionCreate struct {
-		Type                string              `json:"type"`
-		Action              *[]ActionDetails    `json:"action,omitempty"`
-		Clientid            int                 `json:"clientid,omitempty"`
-		Validated           bool                `json:"validated"`
-		Point               TwoDimensionalSlice `json:"point,omitempty"`
-		Rules               []string            `json:"rules,omitempty"`
-		AttackType          string              `json:"attack_type,omitempty"`
-		Mode                string              `json:"mode,omitempty"`
-		Counter             string              `json:"counter,omitempty"`
-		Regex               string              `json:"regex,omitempty"`
-		RegexID             int                 `json:"regex_id,omitempty"`
-		Enabled             *bool               `json:"enabled,omitempty"`
-		Name                string              `json:"name,omitempty"`
-		Values              []string            `json:"values,omitempty"`
-		Comment             string              `json:"comment,omitempty"`
-		FileType            string              `json:"file_type,omitempty"`
-		Parser              string              `json:"parser,omitempty"`
-		State               string              `json:"state,omitempty"`
-		VarType             string              `json:"var_type,omitempty"`
-		VariativityDisabled bool                `json:"variativity_disabled,omitempty"`
-		LoginRegex          string              `json:"login_regex,omitempty"`
-		CredStuffType       string              `json:"cred_stuff_type,omitempty"`
-		CredStuffMode       string              `json:"cred_stuff_mode,omitempty"`
-		CaseSensitive       *bool               `json:"case_sensitive,omitempty"`
-		LoginPoint          TwoDimensionalSlice `json:"login_point,omitempty"`
-		Delay               int                 `json:"delay,omitempty"`
-		Burst               int                 `json:"burst,omitempty"`
-		Rate                int                 `json:"rate,omitempty"`
-		RspStatus           int                 `json:"rsp_status,omitempty"`
-		TimeUnit            string              `json:"time_unit,omitempty"`
-		OverlimitTime       int                 `json:"overlimit_time,omitempty"`
-		Suffix              string              `json:"suffix,omitempty"`
-		MaxDepth            int                 `json:"max_depth,omitempty"`
-		MaxValueSizeKb      int                 `json:"max_value_size_kb,omitempty"`
-		MaxDocSizeKb        int                 `json:"max_doc_size_kb,omitempty"`
-		MaxAliasesSizeKb    int                 `json:"max_aliases,omitempty"`
-		MaxDocPerBatch      int                 `json:"max_doc_per_batch,omitempty"`
-		Introspection       *bool               `json:"introspection,omitempty"`
-		DebugEnabled        *bool               `json:"debug_enabled,omitempty"`
-		Set                 string              `json:"set,omitempty"`
-		Active              bool                `json:"active"`
-		Title               string              `json:"title,omitempty"`
-		Mitigation          string              `json:"mitigation,omitempty"`
+		Type                 string                `json:"type"`
+		Action               *[]ActionDetails      `json:"action,omitempty"`
+		Clientid             int                   `json:"clientid,omitempty"`
+		Validated            bool                  `json:"validated"`
+		Point                TwoDimensionalSlice   `json:"point,omitempty"`
+		Rules                []string              `json:"rules,omitempty"`
+		AttackType           string                `json:"attack_type,omitempty"`
+		Mode                 string                `json:"mode,omitempty"`
+		Counter              string                `json:"counter,omitempty"`
+		Regex                string                `json:"regex,omitempty"`
+		RegexID              int                   `json:"regex_id,omitempty"`
+		Enabled              *bool                 `json:"enabled,omitempty"`
+		Name                 string                `json:"name,omitempty"`
+		Values               []string              `json:"values,omitempty"`
+		Comment              string                `json:"comment,omitempty"`
+		FileType             string                `json:"file_type,omitempty"`
+		Parser               string                `json:"parser,omitempty"`
+		State                string                `json:"state,omitempty"`
+		VarType              string                `json:"var_type,omitempty"`
+		VariativityDisabled  bool                  `json:"variativity_disabled,omitempty"`
+		LoginRegex           string                `json:"login_regex,omitempty"`
+		CredStuffType        string                `json:"cred_stuff_type,omitempty"`
+		CredStuffMode        string                `json:"cred_stuff_mode,omitempty"`
+		CaseSensitive        *bool                 `json:"case_sensitive,omitempty"`
+		LoginPoint           TwoDimensionalSlice   `json:"login_point,omitempty"`
+		Delay                int                   `json:"delay,omitempty"`
+		Burst                int                   `json:"burst,omitempty"`
+		Rate                 int                   `json:"rate,omitempty"`
+		RspStatus            int                   `json:"rsp_status,omitempty"`
+		TimeUnit             string                `json:"time_unit,omitempty"`
+		OverlimitTime        int                   `json:"overlimit_time,omitempty"`
+		Suffix               string                `json:"suffix,omitempty"`
+		MaxDepth             int                   `json:"max_depth,omitempty"`
+		MaxValueSizeKb       int                   `json:"max_value_size_kb,omitempty"`
+		MaxDocSizeKb         int                   `json:"max_doc_size_kb,omitempty"`
+		MaxAliasesSizeKb     int                   `json:"max_aliases,omitempty"`
+		MaxDocPerBatch       int                   `json:"max_doc_per_batch,omitempty"`
+		Introspection        *bool                 `json:"introspection,omitempty"`
+		DebugEnabled         *bool                 `json:"debug_enabled,omitempty"`
+		Set                  string                `json:"set,omitempty"`
+		Active               bool                  `json:"active"`
+		Title                string                `json:"title,omitempty"`
+		Mitigation           string                `json:"mitigation,omitempty"`
+		EnumeratedParameters *EnumeratedParameters `json:"enumerated_parameters,omitempty"`
+		AdvancedConditions   []AdvancedCondition   `json:"advanced_conditions,omitempty"`
+		ArbitraryConditions  []ArbitraryCondition  `json:"arbitrary_conditions,omitempty"`
+	}
+
+	EnumeratedParameters struct {
+		Mode                 string   `json:"mode"`
+		NameRegexps          []string `json:"name_regexps,omitempty"`
+		ValueRegexp          []string `json:"value_regexps,omitempty"`
+		AdditionalParameters bool     `json:"additional_parameters"`
+		PlainParameters      bool     `json:"plain_parameters"`
+		Points               *Points  `json:"points,omitempty"`
+	}
+
+	AdvancedCondition struct {
+		Field    string   `json:"field"`
+		Operator string   `json:"operator"`
+		Value    []string `json:"value"`
+	}
+
+	ArbitraryCondition struct {
+		Point    []string `json:"point"`
+		Operator string   `json:"operator"`
+		Value    []string `json:"value"`
+	}
+	Points struct {
+		Point     []string `json:"point"`
+		Sensitive bool     `json:"sensitive"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

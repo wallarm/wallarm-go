@@ -92,13 +92,13 @@ type (
 	}
 
 	ArbitraryCondition struct {
-		Point    []string `json:"point"`
-		Operator string   `json:"operator"`
-		Value    []string `json:"value"`
+		Point    TwoDimensionalSlice `json:"point"`
+		Operator string              `json:"operator"`
+		Value    []string            `json:"value"`
 	}
 	Points struct {
-		Point     []string `json:"point"`
-		Sensitive bool     `json:"sensitive"`
+		Point     TwoDimensionalSlice `json:"point"`
+		Sensitive bool                `json:"sensitive"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

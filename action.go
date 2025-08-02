@@ -200,6 +200,7 @@ type (
 		Active               bool                  `json:"active"`
 		Title                string                `json:"title,omitempty"`
 		Mitigation           string                `json:"mitigation,omitempty"`
+		Reaction             *Reaction             `json:"reaction,omitempty"`
 		Threshold            *Threshold            `json:"threshold,omitempty"`
 		EnumeratedParameters *EnumeratedParameters `json:"enumerated_parameters,omitempty"`
 		AdvancedConditions   []AdvancedCondition   `json:"advanced_conditions"`

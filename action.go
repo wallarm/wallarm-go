@@ -105,9 +105,9 @@ type (
 	}
 
 	Reaction struct {
-		BlockBySession int `json:"block_by_session"`
-		BlockByIP      int `json:"block_by_ip"`
-		GraylistByIP   int `json:"graylist_by_ip"`
+		BlockBySession *int `json:"block_by_session,omitempty"`
+		BlockByIP      *int `json:"block_by_ip,omitempty"`
+		GraylistByIP   *int `json:"graylist_by_ip,omitempty"`
 	}
 
 	Threshold struct {

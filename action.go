@@ -71,6 +71,8 @@ type (
 		Active               bool                  `json:"active"`
 		Title                string                `json:"title,omitempty"`
 		Mitigation           string                `json:"mitigation,omitempty"`
+		Reaction             *Reaction             `json:"reaction,omitempty"`
+		Threshold            *Threshold            `json:"threshold,omitempty"`
 		EnumeratedParameters *EnumeratedParameters `json:"enumerated_parameters,omitempty"`
 		AdvancedConditions   []AdvancedCondition   `json:"advanced_conditions,omitempty"`
 		ArbitraryConditions  []ArbitraryCondition  `json:"arbitrary_conditions,omitempty"`
@@ -96,9 +98,21 @@ type (
 		Operator string              `json:"operator"`
 		Value    []string            `json:"value"`
 	}
+
 	Points struct {
 		Point     TwoDimensionalSlice `json:"point"`
 		Sensitive bool                `json:"sensitive"`
+	}
+
+	Reaction struct {
+		BlockBySession int `json:"block_by_session"`
+		BlockByIP      int `json:"block_by_ip"`
+		GraylistByIP   int `json:"graylist_by_ip"`
+	}
+
+	Threshold struct {
+		Count  int `json:"count"`
+		Period int `json:"period"`
 	}
 
 	// ActionFilter is the specific filter for getting the rules.

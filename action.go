@@ -74,8 +74,8 @@ type (
 		Reaction             *Reaction               `json:"reaction,omitempty"`
 		Threshold            *Threshold              `json:"threshold,omitempty"`
 		EnumeratedParameters *EnumeratedParameters   `json:"enumerated_parameters,omitempty"`
-		AdvancedConditions   []AdvancedCondition     `json:"advanced_conditions"`
-		ArbitraryConditions  []ArbitraryConditionReq `json:"arbitrary_conditions"`
+		AdvancedConditions   []AdvancedCondition     `json:"advanced_conditions,omitempty"`
+		ArbitraryConditions  []ArbitraryConditionReq `json:"arbitrary_conditions,omitempty"`
 	}
 
 	EnumeratedParameters struct {

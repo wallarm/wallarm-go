@@ -209,8 +209,8 @@ type (
 		Reaction             *Reaction                `json:"reaction,omitempty"`
 		Threshold            *Threshold               `json:"threshold,omitempty"`
 		EnumeratedParameters *EnumeratedParameters    `json:"enumerated_parameters,omitempty"`
-		AdvancedConditions   []AdvancedCondition      `json:"advanced_conditions"`
-		ArbitraryConditions  []ArbitraryConditionResp `json:"arbitrary_conditions"`
+		AdvancedConditions   []AdvancedCondition      `json:"advanced_conditions,omitempty"`
+		ArbitraryConditions  []ArbitraryConditionResp `json:"arbitrary_conditions,omitempty"`
 	}
 
 	// ActionCreateResp is the response of just created Rule.

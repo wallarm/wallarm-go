@@ -213,6 +213,8 @@ type (
 		EnumeratedParameters *EnumeratedParameters    `json:"enumerated_parameters,omitempty"`
 		AdvancedConditions   []AdvancedCondition      `json:"advanced_conditions,omitempty"`
 		ArbitraryConditions  []ArbitraryConditionResp `json:"arbitrary_conditions,omitempty"`
+		Size                 int                      `json:"size,omitempty"`
+		SizeUnit             string                   `json:"size_unit,omitempty"`
 	}
 
 	// ActionCreateResp is the response of just created Rule.

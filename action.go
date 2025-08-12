@@ -76,6 +76,8 @@ type (
 		EnumeratedParameters *EnumeratedParameters   `json:"enumerated_parameters,omitempty"`
 		AdvancedConditions   []AdvancedCondition     `json:"advanced_conditions,omitempty"`
 		ArbitraryConditions  []ArbitraryConditionReq `json:"arbitrary_conditions,omitempty"`
+		Size                 int                     `json:"size,omitempty"`
+		SizeUnit             string                  `json:"size_unit,omitempty"`
 	}
 
 	EnumeratedParameters struct {

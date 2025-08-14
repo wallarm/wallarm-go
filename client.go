@@ -13,7 +13,6 @@ type (
 	// ClientFields defines fields which are subject to update.
 	ClientFields struct {
 		Enabled             bool   `json:"enabled,omitempty"`
-		ScannerMode         string `json:"scanner_mode,omitempty"`
 		AttackRecheckerMode string `json:"attack_rechecker_mode,omitempty"`
 	}
 

@@ -11,7 +11,7 @@ type (
 		GetSecurityIssuesRead(getSecurityIssuesBody *GetSecurityIssuesRead) (*GetSecurityIssuesResp, error)
 	}
 
-	// GetSecurityIssuesRead is a root object for requesting vulnerabilities.
+	// GetSecurityIssuesRead is a root object for requesting security issues.
 	// Limit is a number between 0 - 1000
 	// Offset is a number between 0 - 1000
 	GetSecurityIssuesRead struct {

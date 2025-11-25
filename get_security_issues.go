@@ -8,7 +8,7 @@ import (
 type (
 	// SecurityIssues contains operations available on SecurityIssues resource
 	SecurityIssues interface {
-		GetVulnRead(getVulnBody *GetVulnRead) (*GetVulnReadResp, error)
+		GetSecurityIssuesRead(getSecurityIssuesBody *GetSecurityIssuesRead) (*GetSecurityIssuesResp, error)
 	}
 
 	// GetSecurityIssuesRead is a root object for requesting vulnerabilities.

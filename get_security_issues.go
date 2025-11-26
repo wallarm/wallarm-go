@@ -103,15 +103,15 @@ type (
 	}
 )
 
-func (api *api) GetSecurityIssuesRead(getSecurityIssuesBody *GetSecurityIssuesRead) (*GetSecurityIssuesResp, error) {
+func (api *api) GetSecurityIssuesRead(getSecurityIssuesBody *GetSecurityIssuesRead) ([]*GetSecurityIssuesResp, error) {
 	uri := "/v1/security_issues"
 	respBody, err := api.makeRequest(http.MethodGet, uri, "security_issues", getSecurityIssuesBody)
 	if err != nil {
 		return nil, err
 	}
-	var v GetSecurityIssuesResp
+	var v []*GetSecurityIssuesResp
 	if err = json.Unmarshal(respBody, &v); err != nil {
 		return nil, err
 	}
-	return &v, nil
+	return v, nil
 }

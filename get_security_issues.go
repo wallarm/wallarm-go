@@ -13,7 +13,7 @@ type (
 
 	// GetSecurityIssuesRead is a root object for requesting security issues.
 	// Limit is a number between 0 - 1000
-	// Offset is a number between 0 - 1000
+	// Offset is a number
 	GetSecurityIssuesRead struct {
 		ClientID  int                       `json:"client_id"`
 		Offset    int                       `json:"offset"`

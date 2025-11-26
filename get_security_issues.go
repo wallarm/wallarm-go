@@ -20,8 +20,7 @@ type (
 		Limit     int                      `json:"limit"`
 		Unlimited bool                     `json:"unlimited"`
 		Filter    *GetSecurityIssuesFilter `json:"filter"`
-		OrderBy   string                   `json:"order_by"`
-		OrderDesc bool                     `json:"order_desc"`
+		OrderBy   GetSecurityIssuesOrderBy `json:"order_by"`
 	}
 
 	GetSecurityIssuesOrderBy struct {

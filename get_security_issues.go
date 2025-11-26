@@ -15,12 +15,12 @@ type (
 	// Limit is a number between 0 - 1000
 	// Offset is a number between 0 - 1000
 	GetSecurityIssuesRead struct {
-		ClientID  int                      `json:"client_id"`
-		Offset    int                      `json:"offset"`
-		Limit     int                      `json:"limit"`
-		Unlimited bool                     `json:"unlimited"`
-		Filter    *GetSecurityIssuesFilter `json:"filter"`
-		OrderBy   GetSecurityIssuesOrderBy `json:"order_by"`
+		ClientID  int                       `json:"client_id"`
+		Offset    int                       `json:"offset"`
+		Limit     int                       `json:"limit"`
+		Unlimited bool                      `json:"unlimited"`
+		Filter    *GetSecurityIssuesFilter  `json:"filter"`
+		OrderBy   *GetSecurityIssuesOrderBy `json:"order_by"`
 	}
 
 	GetSecurityIssuesOrderBy struct {

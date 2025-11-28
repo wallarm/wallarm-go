@@ -73,11 +73,15 @@ func newClient(opts ...Option) (API, error) {
 
 // makeRequest makes an HTTP request and returns the body as a byte slice,
 // closing it before returning. params will be serialized to JSON or string for GET query.
-func (api *api) makeRequest(method, uri, reqType string, params interface{}) ([]byte, error) {
-	return api.makeRequestContext(context.TODO(), method, uri, reqType, params)
+func (api *api) makeRequest(method, uri, reqType string, params interface{}, headers map[string]string) ([]byte, error) {
+	return api.makeRequestContext(context.TODO(), method, uri, reqType, params, headers)
 }
 
-func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType string, params interface{}) ([]byte, error) {
+func (api *api) makeRequestWithHeaders(method, uri, reqType string, params interface{}, headers map[string]string) ([]byte, error) {
+	return api.makeRequestContext(context.TODO(), method, uri, reqType, params, headers)
+}
+
+func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType string, params interface{}, headers map[string]string) ([]byte, error) {
 	// Replace nil with a JSON object if needed
 	var (
 		jsonBody []byte
@@ -126,10 +130,10 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 		api.logger.Printf("REQUEST: Method: %s, Uri: %s, Body: %s", method, uri, string(jsonBody))
 		if query, ok := params.(string); ok {
 			q := strings.NewReader(query)
-			resp, err = api.request(ctx, method, uri, reqType, reqBody, q)
+			resp, err = api.request(ctx, method, uri, reqType, reqBody, q, headers)
 			respErr = errors.Wrap(err, "could not make a request with get query")
 		} else {
-			resp, err = api.request(ctx, method, uri, reqType, reqBody, nil)
+			resp, err = api.request(ctx, method, uri, reqType, reqBody, nil, headers)
 			respErr = errors.Wrap(err, "could not make a request with JSON body")
 		}
 
@@ -188,7 +192,7 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 	return respBody, nil
 }
 
-func (api *api) request(ctx context.Context, method, uri, reqType string, reqBody, query io.Reader) (*http.Response, error) {
+func (api *api) request(ctx context.Context, method, uri, reqType string, reqBody, query io.Reader, headers map[string]string) (*http.Response, error) {
 	api.Lock()
 	defer api.Unlock()
 
@@ -214,6 +218,9 @@ func (api *api) request(ctx context.Context, method, uri, reqType string, reqBod
 		req.Header.Del("Content-Type")
 	}
 
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
 	if query != nil {
 		q, err := ioutil.ReadAll(query)
 		if err != nil {

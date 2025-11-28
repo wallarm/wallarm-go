@@ -271,7 +271,7 @@ type (
 func (api *api) HintRead(hintBody *HintRead) (*HintReadResp, error) {
 
 	uri := "/v1/objects/hint"
-	respBody, err := api.makeRequest(http.MethodPost, uri, "hint", hintBody)
+	respBody, err := api.makeRequest(http.MethodPost, uri, "hint", hintBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -287,7 +287,7 @@ func (api *api) HintRead(hintBody *HintRead) (*HintReadResp, error) {
 func (api *api) RuleRead(ruleBody *ActionRead) (*ActionFetch, error) {
 
 	uri := "/v1/objects/action"
-	respBody, err := api.makeRequest(http.MethodPost, uri, "rule", ruleBody)
+	respBody, err := api.makeRequest(http.MethodPost, uri, "rule", ruleBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -303,7 +303,7 @@ func (api *api) RuleRead(ruleBody *ActionRead) (*ActionFetch, error) {
 func (api *api) HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
 
 	uri := "/v1/objects/hint/create"
-	respBody, err := api.makeRequest(http.MethodPost, uri, "rule", ruleBody)
+	respBody, err := api.makeRequest(http.MethodPost, uri, "rule", ruleBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -319,7 +319,7 @@ func (api *api) HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
 func (api *api) RuleDelete(actionID int) error {
 
 	uri := fmt.Sprintf("/v2/action/%d", actionID)
-	_, err := api.makeRequest(http.MethodDelete, uri, "rule", nil)
+	_, err := api.makeRequest(http.MethodDelete, uri, "rule", nil, nil)
 	if err != nil {
 		return err
 	}
@@ -330,7 +330,7 @@ func (api *api) RuleDelete(actionID int) error {
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) HintDelete(hintbody *HintDelete) error {
 	uri := "/v1/objects/hint/delete"
-	_, err := api.makeRequest(http.MethodPost, uri, "hint", hintbody)
+	_, err := api.makeRequest(http.MethodPost, uri, "hint", hintbody, nil)
 	if err != nil {
 		return err
 	}

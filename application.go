@@ -77,7 +77,7 @@ type (
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) AppRead(appBody *AppRead) (*AppReadResp, error) {
 	uri := "/v1/objects/pool"
-	respBody, err := api.makeRequest("POST", uri, "app", appBody)
+	respBody, err := api.makeRequest("POST", uri, "app", appBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,7 @@ func (api *api) AppRead(appBody *AppRead) (*AppReadResp, error) {
 func (api *api) AppCreate(appBody *AppCreate) error {
 
 	uri := "/v1/objects/pool/create"
-	_, err := api.makeRequest("POST", uri, "app", appBody)
+	_, err := api.makeRequest("POST", uri, "app", appBody, nil)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (api *api) AppCreate(appBody *AppCreate) error {
 func (api *api) AppDelete(appBody *AppDelete) error {
 
 	uri := "/v1/objects/pool/delete"
-	_, err := api.makeRequest("POST", uri, "app", appBody)
+	_, err := api.makeRequest("POST", uri, "app", appBody, nil)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (api *api) AppDelete(appBody *AppDelete) error {
 func (api *api) AppUpdate(appBody *AppUpdate) error {
 
 	uri := "/v1/objects/pool/update"
-	_, err := api.makeRequest("POST", uri, "app", appBody)
+	_, err := api.makeRequest("POST", uri, "app", appBody, nil)
 	if err != nil {
 		return err
 	}

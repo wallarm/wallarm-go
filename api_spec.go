@@ -78,7 +78,7 @@ func (api *api) ApiSpecRead(clientID int, id int) (ApiSpecBody, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", clientID)
 	var apiSpecBody ApiSpecBody
-	respBody, err := api.makeRequest("GET", uri, "api_spec", nil)
+	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
 	if err != nil {
 		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to make request - %w", err)
 	}
@@ -98,7 +98,7 @@ func (api *api) ApiSpecRead(clientID int, id int) (ApiSpecBody, error) {
 func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", apiSpecBody.ClientID)
-	respBody, err := api.makeRequest("POST", uri, "api_spec", apiSpecBody)
+	respBody, err := api.makeRequest("POST", uri, "api_spec", apiSpecBody, nil)
 	var a ApiSpecCreateResp
 	if err != nil {
 		return a, fmt.Errorf("ApiSpecCreate: failed to make request - %w", err)
@@ -113,7 +113,7 @@ func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, er
 func (api *api) ApiSpecDelete(clientID int, apiSpecID int) error {
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, apiSpecID)
 
-	_, err := api.makeRequest("DELETE", uri, "api_spec", nil)
+	_, err := api.makeRequest("DELETE", uri, "api_spec", nil, nil)
 	if err != nil {
 		return fmt.Errorf("ApiSpecDelete: failed to make request - %w", err)
 	}

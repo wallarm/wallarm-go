@@ -2,7 +2,6 @@ package wallarm
 
 import (
 	"encoding/json"
-	"github.com/go-openapi/runtime"
 	"net/http"
 )
 
@@ -107,7 +106,7 @@ type (
 func (api *api) GetSecurityIssuesRead(getSecurityIssuesBody *GetSecurityIssuesRead) ([]*GetSecurityIssuesResp, error) {
 	uri := "/v1/security_issues"
 	respBody, err := api.makeRequest(http.MethodGet, uri, "security_issues", getSecurityIssuesBody,
-		map[string]string{runtime.HeaderContentType: runtime.JSONMime})
+		map[string]string{"Content-Type": "application/json"})
 	if err != nil {
 		return nil, err
 	}

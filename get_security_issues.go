@@ -29,35 +29,35 @@ type (
 	}
 
 	GetSecurityIssuesFilter struct {
-		ClientId           int      `json:"client_id"`
-		NotClientId        int      `json:"!client_id"`
-		Severity           []string `json:"severity"`
-		NotSeverity        []string `json:"!severity"`
-		Host               string   `json:"host"`
-		NotHost            string   `json:"!host"`
-		State              []string `json:"state"`
-		NotState           []string `json:"!state"`
-		CreatedSince       int      `json:"created_since"`
-		DiscoveredSince    int      `json:"discovered_since"`
-		DiscoveredBy       []string `json:"discovered_by"`
-		NotDiscoveredBy    []string `json:"!discovered_by"`
-		Id                 int      `json:"id"`
-		NotId              int      `json:"!id"`
-		DomainId           int      `json:"domain_id"`
-		NotDomainId        int      `json:"!domain_id"`
-		SubdomainId        int      `json:"subdomain_id"`
-		NotSubdomainId     int      `json:"!subdomain_id"`
-		IssueType          string   `json:"issue_type"`
-		NotIssueType       string   `json:"!issue_type"`
-		Owasp              string   `json:"owasp"`
-		NotOwasp           string   `json:"!owasp"`
-		SourceTemplate     string   `json:"source_template"`
-		NotSourceTemplate  string   `json:"!source_template"`
-		GroupId            string   `json:"group_id"`
-		NotGroupId         string   `json:"!group_id"`
-		SearchQuery        string   `json:"search_query"`
-		TestRunPublicUuids string   `json:"test_run_public_uuids"`
-		Verified           bool     `json:"verified"`
+		ClientId           int      `json:"client_id,omitempty"`
+		NotClientId        int      `json:"!client_id,omitempty"`
+		Severity           []string `json:"severity,omitempty"`
+		NotSeverity        []string `json:"!severity,omitempty"`
+		Host               string   `json:"host,omitempty"`
+		NotHost            string   `json:"!host,omitempty"`
+		State              []string `json:"state,omitempty"`
+		NotState           []string `json:"!state,omitempty"`
+		CreatedSince       int      `json:"created_since,omitempty"`
+		DiscoveredSince    int      `json:"discovered_since,omitempty"`
+		DiscoveredBy       []string `json:"discovered_by,omitempty"`
+		NotDiscoveredBy    []string `json:"!discovered_by,omitempty"`
+		Id                 int      `json:"id,omitempty"`
+		NotId              int      `json:"!id,omitempty"`
+		DomainId           int      `json:"domain_id,omitempty"`
+		NotDomainId        int      `json:"!domain_id,omitempty"`
+		SubdomainId        int      `json:"subdomain_id,omitempty"`
+		NotSubdomainId     int      `json:"!subdomain_id,omitempty"`
+		IssueType          string   `json:"issue_type,omitempty"`
+		NotIssueType       string   `json:"!issue_type,omitempty"`
+		Owasp              string   `json:"owasp,omitempty"`
+		NotOwasp           string   `json:"!owasp,omitempty"`
+		SourceTemplate     string   `json:"source_template,omitempty"`
+		NotSourceTemplate  string   `json:"!source_template,omitempty"`
+		GroupId            string   `json:"group_id,omitempty"`
+		NotGroupId         string   `json:"!group_id,omitempty"`
+		SearchQuery        string   `json:"search_query,omitempty"`
+		TestRunPublicUuids string   `json:"test_run_public_uuids,omitempty"`
+		Verified           bool     `json:"verified,omitempty"`
 	}
 
 	GetSecurityIssuesResp struct {

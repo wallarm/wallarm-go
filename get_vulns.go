@@ -86,7 +86,7 @@ type (
 func (api *api) GetVulnRead(getVulnBody *GetVulnRead) (*GetVulnReadResp, error) {
 
 	uri := "/v1/objects/vuln"
-	respBody, err := api.makeRequest("POST", uri, "vuln", getVulnBody)
+	respBody, err := api.makeRequest("POST", uri, "vuln", getVulnBody, nil)
 	if err != nil {
 		return nil, err
 	}

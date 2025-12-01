@@ -138,7 +138,7 @@ type (
 func (api *api) IntegrationCreate(integrationBody *IntegrationCreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +156,7 @@ func (api *api) IntegrationCreate(integrationBody *IntegrationCreate) (*Integrat
 func (api *api) IntegrationUpdate(integrationBody *IntegrationCreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +176,7 @@ func (api *api) IntegrationRead(clientID int, id int) (*IntegrationObject, error
 	q := url.Values{}
 	q.Add("clientid", strconv.Itoa(clientID))
 	query := q.Encode()
-	respBody, err := api.makeRequest("GET", uri, "integration", query)
+	respBody, err := api.makeRequest("GET", uri, "integration", query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +198,7 @@ func (api *api) IntegrationRead(clientID int, id int) (*IntegrationObject, error
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) IntegrationDelete(integrationID int) error {
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	_, err := api.makeRequest("DELETE", uri, "integration", nil)
+	_, err := api.makeRequest("DELETE", uri, "integration", nil, nil)
 	if err != nil {
 		return err
 	}
@@ -214,7 +214,7 @@ func (api *api) IntegrationDelete(integrationID int) error {
 func (api *api) IntegrationWithAPICreate(integrationBody *IntegrationWithAPICreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("POST", uri, "integration", integrationBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -232,7 +232,7 @@ func (api *api) IntegrationWithAPICreate(integrationBody *IntegrationWithAPICrea
 func (api *api) IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -251,7 +251,7 @@ func (api *api) IntegrationWithAPIUpdate(integrationBody *IntegrationWithAPICrea
 func (api *api) EmailIntegrationCreate(emailBody *EmailIntegrationCreate) (*IntegrationCreateResp, error) {
 
 	uri := "/v2/integration"
-	respBody, err := api.makeRequest("POST", uri, "email", emailBody)
+	respBody, err := api.makeRequest("POST", uri, "email", emailBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -269,7 +269,7 @@ func (api *api) EmailIntegrationCreate(emailBody *EmailIntegrationCreate) (*Inte
 func (api *api) EmailIntegrationUpdate(integrationBody *EmailIntegrationCreate, integrationID int) (*IntegrationCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -285,7 +285,7 @@ func (api *api) TelegramIntegrationCreate(tgBody *TelegramIntegrationCreate) (In
 
 	uri := "/v2/integration/telegram"
 	var i IntegrationCreateResp
-	respBody, err := api.makeRequest("POST", uri, "email", tgBody)
+	respBody, err := api.makeRequest("POST", uri, "email", tgBody, nil)
 	if err != nil {
 		return i, fmt.Errorf("TelegramIntegrationCreate: failed to make request - %w", err)
 	}
@@ -300,7 +300,7 @@ func (api *api) TelegramIntegrationUpdate(integrationBody *TelegramIntegrationCr
 
 	var i IntegrationCreateResp
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
-	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody)
+	respBody, err := api.makeRequest("PUT", uri, "email", integrationBody, nil)
 	if err != nil {
 		return i, fmt.Errorf("TelegramIntegrationUpdate: failed to make request - %w", err)
 	}

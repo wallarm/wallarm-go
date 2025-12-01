@@ -76,7 +76,7 @@ type (
 func (api *api) ScannerCreate(scannerBody *ScannerCreate) (*ScannerCreateBody, error) {
 
 	uri := "/v2/scope/new"
-	res, err := api.makeRequest("PUT", uri, "scanner", scannerBody)
+	res, err := api.makeRequest("PUT", uri, "scanner", scannerBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (api *api) ScannerCreate(scannerBody *ScannerCreate) (*ScannerCreateBody, e
 func (api *api) ScannerDelete(scannerBody *ScannerDelete, resType string) error {
 
 	uri := fmt.Sprintf("/v2/scope/%s/bulk", resType)
-	_, err := api.makeRequest("POST", uri, "", scannerBody)
+	_, err := api.makeRequest("POST", uri, "", scannerBody, nil)
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (api *api) ScannerDelete(scannerBody *ScannerDelete, resType string) error 
 func (api *api) ScannerUpdate(scannerBody *ScannerUpdate, resType string, resID int) error {
 
 	uri := fmt.Sprintf("/v2/scope/%s/%d", resType, resID)
-	_, err := api.makeRequest("POST", uri, "scanner", scannerBody)
+	_, err := api.makeRequest("POST", uri, "scanner", scannerBody, nil)
 	if err != nil {
 		return err
 	}

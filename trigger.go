@@ -119,7 +119,7 @@ func (api *api) TriggerRead(clientID int) (*TriggerRead, error) {
 	q := url.Values{}
 	q.Add("denormalize", "true")
 	query := q.Encode()
-	respBody, err := api.makeRequest("GET", uri, "trigger", query)
+	respBody, err := api.makeRequest("GET", uri, "trigger", query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +136,7 @@ func (api *api) TriggerRead(clientID int) (*TriggerRead, error) {
 func (api *api) TriggerCreate(triggerBody *TriggerCreate, clientID int) (*TriggerCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers", clientID)
-	respBody, err := api.makeRequest("POST", uri, "trigger", triggerBody)
+	respBody, err := api.makeRequest("POST", uri, "trigger", triggerBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +152,7 @@ func (api *api) TriggerCreate(triggerBody *TriggerCreate, clientID int) (*Trigge
 func (api *api) TriggerDelete(clientID, triggerID int) error {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
-	_, err := api.makeRequest("DELETE", uri, "trigger", nil)
+	_, err := api.makeRequest("DELETE", uri, "trigger", nil, nil)
 	if err != nil {
 		return err
 	}
@@ -164,7 +164,7 @@ func (api *api) TriggerDelete(clientID, triggerID int) error {
 func (api *api) TriggerUpdate(triggerBody *TriggerCreate, clientID, triggerID int) (*TriggerCreateResp, error) {
 
 	uri := fmt.Sprintf("/v2/clients/%d/triggers/%d", clientID, triggerID)
-	respBody, err := api.makeRequest("PUT", uri, "trigger", triggerBody)
+	respBody, err := api.makeRequest("PUT", uri, "trigger", triggerBody, nil)
 	if err != nil {
 		return nil, err
 	}

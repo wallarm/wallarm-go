@@ -72,7 +72,7 @@ func (api *api) IPListRead(listType IPListType, clientID int) ([]IPRule, error) 
 	for {
 		q.Set("offset", strconv.Itoa(offset))
 
-		respBody, err := api.makeRequest("GET", uri, "", q.Encode())
+		respBody, err := api.makeRequest("GET", uri, "", q.Encode(), nil)
 		if err != nil {
 			return nil, err
 		}
@@ -101,7 +101,7 @@ func (api *api) IPListCreate(clientID int, params IPRuleCreationParams) error {
 		IPRule   IPRuleCreationParams `json:"ip_rule"`
 	}{ClientID: clientID, Force: false, IPRule: params}
 
-	_, err := api.makeRequest("POST", uri, "", &reqBody)
+	_, err := api.makeRequest("POST", uri, "", &reqBody, nil)
 
 	return err
 }
@@ -119,7 +119,7 @@ func (api *api) IPListDelete(listType IPListType, clientID int, ids []int) error
 	reqBody.Filter.ClientID = clientID
 	reqBody.Filter.List = listType
 
-	_, err := api.makeRequest("DELETE", uri, "ip_rules", &reqBody)
+	_, err := api.makeRequest("DELETE", uri, "ip_rules", &reqBody, nil)
 
 	return err
 }

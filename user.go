@@ -187,7 +187,7 @@ type (
 func (api *api) UserRead(userBody *UserGet) (*UserRead, error) {
 
 	uri := "/v1/objects/user"
-	respBody, err := api.makeRequest("POST", uri, "user", userBody)
+	respBody, err := api.makeRequest("POST", uri, "user", userBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -203,7 +203,7 @@ func (api *api) UserRead(userBody *UserGet) (*UserRead, error) {
 func (api *api) UserCreate(userBody *UserCreate) (*UserCreateResponse, error) {
 
 	uri := "/v1/objects/user/create"
-	respBody, err := api.makeRequest("POST", uri, "user", userBody)
+	respBody, err := api.makeRequest("POST", uri, "user", userBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +220,7 @@ func (api *api) UserCreate(userBody *UserCreate) (*UserCreateResponse, error) {
 func (api *api) UserDelete(userBody *UserDelete) error {
 
 	uri := "/v1/objects/user/delete"
-	_, err := api.makeRequest("POST", uri, "user", userBody)
+	_, err := api.makeRequest("POST", uri, "user", userBody, nil)
 	if err != nil {
 		return err
 	}
@@ -232,7 +232,7 @@ func (api *api) UserDelete(userBody *UserDelete) error {
 func (api *api) UserUpdate(userBody *UserUpdate) error {
 
 	uri := "/v1/objects/user/update"
-	_, err := api.makeRequest("POST", uri, "user", userBody)
+	_, err := api.makeRequest("POST", uri, "user", userBody, nil)
 	if err != nil {
 		return err
 	}
@@ -244,7 +244,7 @@ func (api *api) UserUpdate(userBody *UserUpdate) error {
 func (api *api) UserDetails() (*UserDetails, error) {
 
 	uri := "/v1/user"
-	respBody, err := api.makeRequest("POST", uri, "userdetails", nil)
+	respBody, err := api.makeRequest("POST", uri, "userdetails", nil, nil)
 	if err != nil {
 		return nil, err
 	}

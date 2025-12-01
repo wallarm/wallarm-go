@@ -25,7 +25,7 @@ type (
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) WallarmModeUpdate(wallarmModeBody *WallarmModeParams, clientID int) (*WallarmModeResponse, error) {
 	url := fmt.Sprintf("/v2/client/%d/rules/wallarm_mode", clientID)
-	rawResp, err := api.makeRequest("PUT", url, "wallarm_mode", wallarmModeBody)
+	rawResp, err := api.makeRequest("PUT", url, "wallarm_mode", wallarmModeBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (api *api) WallarmModeUpdate(wallarmModeBody *WallarmModeParams, clientID i
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) WallarmModeRead(clientID int) (*WallarmModeResponse, error) {
 	url := fmt.Sprintf("/v2/client/%d/rules/wallarm_mode", clientID)
-	rawResp, err := api.makeRequest("GET", url, "wallarm_mode", nil)
+	rawResp, err := api.makeRequest("GET", url, "wallarm_mode", nil, nil)
 	if err != nil {
 		return nil, err
 	}

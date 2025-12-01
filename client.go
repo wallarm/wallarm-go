@@ -146,7 +146,7 @@ type (
 func (api *api) ClientCreate(clientBody *ClientCreate) (*SingleClientInfo, error) {
 
 	uri := "/v1/objects/client/create"
-	respBody, err := api.makeRequest("POST", uri, "client", clientBody)
+	respBody, err := api.makeRequest("POST", uri, "client", clientBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +163,7 @@ func (api *api) ClientCreate(clientBody *ClientCreate) (*SingleClientInfo, error
 func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 
 	uri := "/v1/objects/client/update"
-	respBody, err := api.makeRequest("POST", uri, "client", clientBody)
+	respBody, err := api.makeRequest("POST", uri, "client", clientBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +180,7 @@ func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 func (api *api) ClientRead(clientBody *ClientRead) (*ClientInfo, error) {
 
 	uri := "/v1/objects/client"
-	respBody, err := api.makeRequest("POST", uri, "client", clientBody)
+	respBody, err := api.makeRequest("POST", uri, "client", clientBody, nil)
 	if err != nil {
 		return nil, err
 	}

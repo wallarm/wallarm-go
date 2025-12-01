@@ -110,7 +110,7 @@ type (
 func (api *api) NodeCreate(nodeBody *NodeCreate) (*NodeCreateResp, error) {
 
 	uri := "/v2/node"
-	respBody, err := api.makeRequest("POST", uri, "node", nodeBody)
+	respBody, err := api.makeRequest("POST", uri, "node", nodeBody, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (api *api) NodeCreate(nodeBody *NodeCreate) (*NodeCreateResp, error) {
 func (api *api) NodeDelete(nodeID int) error {
 
 	uri := fmt.Sprintf("/v2/node/%d", nodeID)
-	_, err := api.makeRequest("DELETE", uri, "", nil)
+	_, err := api.makeRequest("DELETE", uri, "", nil, nil)
 	if err != nil {
 		return err
 	}
@@ -151,7 +151,7 @@ func (api *api) NodeRead(clientID int, typeNode string) (*NodeRead, error) {
 	}
 	query := q.Encode()
 
-	respBody, err := api.makeRequest("GET", uri, "", query)
+	respBody, err := api.makeRequest("GET", uri, "", query, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +168,7 @@ func (api *api) NodeRead(clientID int, typeNode string) (*NodeRead, error) {
 func (api *api) NodeReadByFilter(getNodeBody *NodeReadByFilter) (*NodeReadPOST, error) {
 
 	uri := "/v1/objects/node"
-	respBody, err := api.makeRequest("POST", uri, "", getNodeBody)
+	respBody, err := api.makeRequest("POST", uri, "", getNodeBody, nil)
 	if err != nil {
 		return nil, err
 	}

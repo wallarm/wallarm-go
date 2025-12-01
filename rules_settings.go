@@ -46,7 +46,7 @@ type (
 func (api *api) RulesSettingsRead(clientID int) (*RulesSettingsResponse, error) {
 	uri := fmt.Sprintf("/v2/client/%d/rules/settings", clientID)
 
-	rawResponse, err := api.makeRequest("GET", uri, "rules_settings", nil)
+	rawResponse, err := api.makeRequest("GET", uri, "rules_settings", nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func (api *api) RulesSettingsRead(clientID int) (*RulesSettingsResponse, error) 
 func (api *api) RulesSettingsUpdate(params *RuleSettingsParams, clientID int) (*RulesSettingsResponse, error) {
 	uri := fmt.Sprintf("/v2/client/%d/rules/settings", clientID)
 
-	rawResponse, err := api.makeRequest("PUT", uri, "rules_settings", params)
+	rawResponse, err := api.makeRequest("PUT", uri, "rules_settings", params, nil)
 	if err != nil {
 		return nil, err
 	}

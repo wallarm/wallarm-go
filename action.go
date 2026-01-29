@@ -81,12 +81,12 @@ type (
 	}
 
 	EnumeratedParameters struct {
-		Mode                 string   `json:"mode"`
-		NameRegexps          []string `json:"name_regexps,omitempty"`
-		ValueRegexp          []string `json:"value_regexps,omitempty"`
-		AdditionalParameters bool     `json:"additional_parameters"`
-		PlainParameters      bool     `json:"plain_parameters"`
-		Points               *Points  `json:"points,omitempty"`
+		Mode                 string    `json:"mode"`
+		NameRegexps          []string  `json:"name_regexps,omitempty"`
+		ValueRegexp          []string  `json:"value_regexps,omitempty"`
+		AdditionalParameters *bool     `json:"additional_parameters,omitempty"`
+		PlainParameters      *bool     `json:"plain_parameters,omitempty"`
+		Points               []*Points `json:"points,omitempty"`
 	}
 
 	AdvancedCondition struct {
@@ -108,8 +108,8 @@ type (
 	}
 
 	Points struct {
-		Point     TwoDimensionalSlice `json:"point"`
-		Sensitive bool                `json:"sensitive"`
+		Point     []interface{} `json:"point"`
+		Sensitive bool          `json:"sensitive"`
 	}
 
 	Reaction struct {

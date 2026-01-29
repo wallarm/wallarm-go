@@ -108,8 +108,8 @@ type (
 	}
 
 	Points struct {
-		Point     TwoDimensionalSlice `json:"point"`
-		Sensitive bool                `json:"sensitive"`
+		Point     []interface{} `json:"point"`
+		Sensitive bool          `json:"sensitive"`
 	}
 
 	Reaction struct {

@@ -13,8 +13,14 @@ type (
 		HintRead(hintBody *HintRead) (*HintReadResp, error)
 		RuleRead(ruleBody *ActionRead) (*ActionFetch, error)
 		HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error)
+		HintUpdateV3(ruleID int, hintBody *HintUpdateV3Params) (*ActionCreateResp, error)
 		RuleDelete(actionID int) error
 		HintDelete(hintbody *HintDelete) error
+	}
+
+	// HintUpdateV3Params is used for updating a hint via v3 API.
+	HintUpdateV3Params struct {
+		VariativityDisabled *bool `json:"variativity_disabled,omitempty"`
 	}
 
 	// ActionDetails defines the Action of how to parse the request.
@@ -336,4 +342,19 @@ func (api *api) HintDelete(hintbody *HintDelete) error {
 		return err
 	}
 	return nil
+}
+
+// HintUpdateV3 updates a hint by rule ID via v3 API.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *api) HintUpdateV3(ruleID int, hintBody *HintUpdateV3Params) (*ActionCreateResp, error) {
+	uri := fmt.Sprintf("/v3/hint/%d", ruleID)
+	respBody, err := api.makeRequest(http.MethodPut, uri, "hint", hintBody, nil)
+	if err != nil {
+		return nil, err
+	}
+	var a ActionCreateResp
+	if err = json.Unmarshal(respBody, &a); err != nil {
+		return nil, err
+	}
+	return &a, nil
 }

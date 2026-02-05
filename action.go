@@ -20,7 +20,8 @@ type (
 
 	// HintUpdateV3Params is used for updating a hint via v3 API.
 	HintUpdateV3Params struct {
-		VariativityDisabled *bool `json:"variativity_disabled,omitempty"`
+		VariativityDisabled *bool   `json:"variativity_disabled,omitempty"`
+		Comment             *string `json:"comment,omitempty"`
 	}
 
 	// ActionDetails defines the Action of how to parse the request.

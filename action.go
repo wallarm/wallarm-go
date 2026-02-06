@@ -214,6 +214,7 @@ type (
 		Set                  string                   `json:"set,omitempty"`
 		Active               bool                     `json:"active"`
 		Title                string                   `json:"title,omitempty"`
+		Comment              string                   `json:"comment,omitempty"`
 		Mitigation           string                   `json:"mitigation,omitempty"`
 		Reaction             *Reaction                `json:"reaction,omitempty"`
 		Threshold            *Threshold               `json:"threshold,omitempty"`

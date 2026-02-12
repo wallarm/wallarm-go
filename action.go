@@ -42,6 +42,7 @@ type (
 		Point                TwoDimensionalSlice     `json:"point,omitempty"`
 		Rules                []string                `json:"rules,omitempty"`
 		AttackType           string                  `json:"attack_type,omitempty"`
+		Stamp                int                     `json:"stamp,omitempty"`
 		Mode                 string                  `json:"mode,omitempty"`
 		Counter              string                  `json:"counter,omitempty"`
 		Regex                string                  `json:"regex,omitempty"`
@@ -182,6 +183,7 @@ type (
 		Regex         string          `json:"regex"`
 		Point         []interface{}   `json:"point"`
 		AttackType    string          `json:"attack_type"`
+		Stamp         int             `json:"stamp,omitempty"`
 		Rules         []string        `json:"rules"`
 		Counter       string          `json:"counter,omitempty"`
 		VarType       string          `json:"var_type"`

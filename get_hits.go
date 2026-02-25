@@ -34,6 +34,7 @@ type (
 		NotAasmEvent     bool        `json:"!aasm_event"`
 		NotWallarmScanner bool       `json:"!wallarm_scanner"`
 		RequestID        string      `json:"request_id,omitempty"`
+		Attackid         []string    `json:"attackid,omitempty"`
 	}
 
 	// HitObject represents a single hit returned by the Wallarm API.

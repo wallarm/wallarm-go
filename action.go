@@ -260,7 +260,7 @@ type (
 		NotCreateUserid []int               `json:"!create_userid,omitempty"`
 		CreateTime      [][]int             `json:"create_time,omitempty"`
 		NotCreateTime   [][]int             `json:"!create_time,omitempty"`
-		System          bool                `json:"system,omitempty"`
+		System          *bool               `json:"system,omitempty"`
 		Type            []string            `json:"type,omitempty"`
 		Point           TwoDimensionalSlice `json:"point,omitempty"`
 	}

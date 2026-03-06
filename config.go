@@ -52,6 +52,7 @@ type (
 		RuleSettings
 		ApiSpec
 		SecurityIssues
+		Hits
 	}
 
 	api struct {

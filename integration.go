@@ -133,6 +133,11 @@ type (
 		Region string `json:"region"`
 		Token  string `json:"token"`
 	}
+
+	InsightConnectTarget struct {
+		Token string `json:"token"`
+		API   string `json:"api"`
+	}
 )
 
 // IntegrationCreate returns create object if Integration

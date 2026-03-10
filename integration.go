@@ -25,12 +25,16 @@ type (
 	}
 
 	// IntegrationEvents represents `Events` object while creating a new integration.
-	// Event possible values: "hit", "vuln_high", "vuln_medium", "vuln_low", "system", "scope".
-	// If `IntegrationObject.Type` is "opsgenie" possible values: "hit", "vuln".
+	// Event possible values depend on the integration type. For example, for data_dog:
+	// "siem", "rules_and_triggers", "number_of_requests_per_hour",
+	// "security_issue_critical", "security_issue_high", "security_issue_medium",
+	// "security_issue_low", "security_issue_info", "system".
 	// `Active` identifies whether the current Event should be reported.
+	// `WithHeaders` is optional and only applicable to the "siem" event type.
 	IntegrationEvents struct {
-		Event  string `json:"event"`
-		Active bool   `json:"active"`
+		Event       string `json:"event"`
+		Active      bool   `json:"active"`
+		WithHeaders *bool  `json:"with_headers,omitempty"`
 	}
 
 	// IntegrationObject is an inner object for the Read function containing.

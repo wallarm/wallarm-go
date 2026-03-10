@@ -45,7 +45,6 @@ type (
 		Vulnerability
 		Integration
 		Node
-		Scanner
 		Trigger
 		User
 		WallarmMode

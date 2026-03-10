@@ -2,26 +2,22 @@ package wallarm
 
 type Allowlist interface {
 	AllowlistRead(clientID int) ([]IPRule, error)
-	AllowlistCreate(clientID int, params IPRuleCreationParams) error
-	AllowlistDelete(clientID int, ids []int) error
+	AllowlistCreate(clientID int, params AccessRuleCreateRequest) error
+	AllowlistDelete(clientID int, rules []AccessRuleDeleteEntry) error
 }
 
-// AllowlistRead requests the current allowlist for the future purposes.
-// It is going to respond with the list of IP addresses.
-// API reference: https://apiconsole.eu1.wallarm.com
+// AllowlistRead requests the current allowlist.
 func (api *api) AllowlistRead(clientID int) ([]IPRule, error) {
 	return api.IPListRead(AllowlistType, clientID)
 }
 
-// AllowlistCreate creates a allowlist in the Wallarm Cloud.
-// API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) AllowlistCreate(clientID int, params IPRuleCreationParams) error {
+// AllowlistCreate creates an allowlist entry in the Wallarm Cloud.
+func (api *api) AllowlistCreate(clientID int, params AccessRuleCreateRequest) error {
 	params.List = AllowlistType
 	return api.IPListCreate(clientID, params)
 }
 
-// AllowlistDelete deletes a allowlist for the client.
-// API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) AllowlistDelete(clientID int, ids []int) error {
-	return api.IPListDelete(AllowlistType, clientID, ids)
+// AllowlistDelete deletes allowlist entries for the client.
+func (api *api) AllowlistDelete(clientID int, rules []AccessRuleDeleteEntry) error {
+	return api.IPListDelete(clientID, rules)
 }

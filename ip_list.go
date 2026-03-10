@@ -2,6 +2,7 @@ package wallarm
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strconv"
 )
@@ -11,62 +12,72 @@ type (
 
 	IPList interface {
 		IPListRead(listType IPListType, clientID int) ([]IPRule, error)
-		IPListCreate(clientID int, params IPRuleCreationParams) error
-		IPListDelete(listType IPListType, clientID int, ids []int) error
+		IPListCreate(clientID int, params AccessRuleCreateRequest) error
+		IPListDelete(clientID int, rules []AccessRuleDeleteEntry) error
 	}
 
-	IPRuleCreationParams struct {
-		ExpiredAt int        `json:"expired_at"`
-		List      IPListType `json:"list"`
-		Pools     []int      `json:"pools"`
-		Reason    string     `json:"reason"`
-		RuleType  string     `json:"rule_type"`
-		Subnet    string     `json:"subnet"`
+	AccessRuleCreateRequest struct {
+		List           IPListType        `json:"list"`
+		Force          bool              `json:"force"`
+		Reason         string            `json:"reason"`
+		ApplicationIDs []int             `json:"application_ids"`
+		ExpiredAt      int               `json:"expired_at"`
+		Rules          []AccessRuleEntry `json:"rules"`
+	}
+
+	AccessRuleEntry struct {
+		RulesType string   `json:"rules_type"`
+		Values    []string `json:"values"`
+	}
+
+	AccessRuleDeleteRequest struct {
+		Rules []AccessRuleDeleteEntry `json:"rules"`
+	}
+
+	AccessRuleDeleteEntry struct {
+		RuleType string `json:"rule_type"`
+		IDs      []int  `json:"ids"`
 	}
 
 	IPRule struct {
-		ID              int      `json:"id"`
-		ClientID        int      `json:"clientid"`
-		RuleType        string   `json:"rule_type"`
-		List            string   `json:"list"`
-		Author          string   `json:"author"`
-		CreatedAt       int      `json:"created_at"`
-		ExpiredAt       int      `json:"expired_at"`
-		Pools           []int    `json:"pools"`
-		Reason          string   `json:"reason"`
-		AuthorTriggerID int      `json:"author_trigger_id"`
-		AuthorUserID    int      `json:"author_user_id"`
-		Subnet          string   `json:"subnet"`
-		Country         string   `json:"country"`
-		ProxyType       string   `json:"proxy_type"`
-		Datacenter      string   `json:"datacenter"`
-		SourceValues    []string `json:"source_values"`
-		DeletedBy       string   `json:"deleted_by"`
+		ID             int      `json:"id"`
+		ClientID       int      `json:"client_id"`
+		RuleType       string   `json:"rule_type"`
+		List           string   `json:"list"`
+		CreatedAt      int      `json:"created_at"`
+		ExpiredAt      int      `json:"expired_at"`
+		ApplicationIDs []int    `json:"application_ids"`
+		Reason         string   `json:"reason"`
+		AuthorUserID   int      `json:"author_user_id"`
+		Values         []string `json:"values"`
+		Status         string   `json:"status"`
 	}
 )
 
 const (
-	DenylistType  IPListType = "black"
-	AllowlistType IPListType = "white"
+	DenylistType  IPListType = "block"
+	AllowlistType IPListType = "allow"
 	GraylistType  IPListType = "gray"
 )
 
 func (api *api) IPListRead(listType IPListType, clientID int) ([]IPRule, error) {
-	uri := "/v4/ip_rules"
+	uri := fmt.Sprintf("/v1/blocklist/clients/%d/groups", clientID)
 
 	q := url.Values{}
-	q.Set("filter[clientid]", strconv.Itoa(clientID))
+	q.Add("filter[rule_type][]", "subnet")
+	q.Add("filter[rule_type][]", "proxy_type")
+	q.Add("filter[rule_type][]", "datacenter")
+	q.Add("filter[rule_type][]", "location")
 	q.Set("filter[list]", string(listType))
-	q.Set("limit", "100")
-	q.Set("offset", "0")
+	q.Set("limit", "50")
 
-	var bulkIPRules struct {
+	var response struct {
 		Body struct {
 			Objects []IPRule `json:"objects"`
 		} `json:"body"`
 	}
 
-	result := []IPRule{}
+	var result []IPRule
 	offset := 0
 
 	for {
@@ -77,47 +88,36 @@ func (api *api) IPListRead(listType IPListType, clientID int) ([]IPRule, error) 
 			return nil, err
 		}
 
-		if err = json.Unmarshal(respBody, &bulkIPRules); err != nil {
+		if err = json.Unmarshal(respBody, &response); err != nil {
 			return nil, err
 		}
 
-		result = append(result, bulkIPRules.Body.Objects...)
+		result = append(result, response.Body.Objects...)
 
-		if len(bulkIPRules.Body.Objects) < 100 {
+		if len(response.Body.Objects) < 50 {
 			break
 		}
 
-		offset += 100
+		offset += 50
 	}
 
 	return result, nil
 }
 
-func (api *api) IPListCreate(clientID int, params IPRuleCreationParams) error {
-	uri := "/v4/ip_rules"
-	reqBody := struct {
-		ClientID int                  `json:"clientid"`
-		Force    bool                 `json:"force"`
-		IPRule   IPRuleCreationParams `json:"ip_rule"`
-	}{ClientID: clientID, Force: false, IPRule: params}
+func (api *api) IPListCreate(clientID int, params AccessRuleCreateRequest) error {
+	uri := fmt.Sprintf("/v1/blocklist/clients/%d/access_rules", clientID)
 
-	_, err := api.makeRequest("POST", uri, "", &reqBody, nil)
+	_, err := api.makeRequest("POST", uri, "", &params, nil)
 
 	return err
 }
 
-func (api *api) IPListDelete(listType IPListType, clientID int, ids []int) error {
-	uri := "/v4/ip_rules"
-	reqBody := struct {
-		Filter struct {
-			ID       []int      `json:"id"`
-			ClientID int        `json:"clientid"`
-			List     IPListType `json:"list"`
-		} `json:"filter"`
-	}{}
-	reqBody.Filter.ID = ids
-	reqBody.Filter.ClientID = clientID
-	reqBody.Filter.List = listType
+func (api *api) IPListDelete(clientID int, rules []AccessRuleDeleteEntry) error {
+	uri := fmt.Sprintf("/v1/blocklist/clients/%d/groups", clientID)
+
+	reqBody := AccessRuleDeleteRequest{
+		Rules: rules,
+	}
 
 	_, err := api.makeRequest("DELETE", uri, "ip_rules", &reqBody, nil)
 

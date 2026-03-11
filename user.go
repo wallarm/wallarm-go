@@ -117,7 +117,7 @@ type (
 	// UserFilter is intended to filter Users for the Delete purpose
 	UserFilter struct {
 		ID       int    `json:"id,omitempty"`
-		Clientid int    `json:"clientid,omitempty"`
+		Clientid []int  `json:"clientid,omitempty"`
 		UUID     string `json:"uuid,omitempty"`
 		Username string `json:"username,omitempty"`
 		Email    string `json:"email,omitempty"`

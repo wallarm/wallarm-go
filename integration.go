@@ -14,6 +14,7 @@ type (
 	Integration interface {
 		IntegrationCreate(integrationBody *IntegrationCreate) (*IntegrationCreateResp, error)
 		IntegrationUpdate(integrationBody *IntegrationCreate, integrationID int) (*IntegrationCreateResp, error)
+		IntegrationPartialUpdate(integrationID int, body map[string]interface{}) (*IntegrationCreateResp, error)
 		IntegrationRead(clientID int, id int) (*IntegrationObject, error)
 		IntegrationDelete(integrationID int) error
 		IntegrationWithAPICreate(integrationBody *IntegrationWithAPICreate) (*IntegrationCreateResp, error)
@@ -95,6 +96,7 @@ type (
 		CaVerify    bool                   `json:"ca_verify"`
 		Timeout     int                    `json:"timeout,omitempty"`
 		OpenTimeout int                    `json:"open_timeout,omitempty"`
+		Subtype     string                 `json:"subtype,omitempty"`
 	}
 
 	// IntegrationWithAPICreate is a root object of Create action for Integrations.
@@ -134,7 +136,7 @@ type (
 		Token  string `json:"token"`
 	}
 
-	InsightConnectTarget struct {
+	IntegrationTokenAPITarget struct {
 		Token string `json:"token"`
 		API   string `json:"api"`
 	}
@@ -166,6 +168,22 @@ func (api *api) IntegrationUpdate(integrationBody *IntegrationCreate, integratio
 
 	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
 	respBody, err := api.makeRequest("PUT", uri, "integration", integrationBody, nil)
+	if err != nil {
+		return nil, err
+	}
+	var i IntegrationCreateResp
+	if err = json.Unmarshal(respBody, &i); err != nil {
+		return nil, err
+	}
+	return &i, nil
+}
+
+// IntegrationPartialUpdate sends only the changed fields to the API.
+// API reference: https://apiconsole.eu1.wallarm.com
+func (api *api) IntegrationPartialUpdate(integrationID int, body map[string]interface{}) (*IntegrationCreateResp, error) {
+
+	uri := fmt.Sprintf("/v2/integration/%d", integrationID)
+	respBody, err := api.makeRequest("PUT", uri, "integration", body, nil)
 	if err != nil {
 		return nil, err
 	}

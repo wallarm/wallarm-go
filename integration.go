@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
-
-	"github.com/pkg/errors"
 )
 
 type (
@@ -211,13 +209,16 @@ func (api *api) IntegrationRead(clientID int, id int) (*IntegrationObject, error
 	if err = json.Unmarshal(respBody, &i); err != nil {
 		return nil, err
 	}
+	if i.Body.Object == nil {
+		return nil, fmt.Errorf("Not found. Integration %d: no integrations returned for client %d", id, clientID)
+	}
 	for _, obj := range *i.Body.Object {
 		if obj.ID == id {
 			return &obj, nil
 		}
 	}
 
-	return nil, errors.New(fmt.Sprintf("Not found. Body: %s", string(respBody)))
+	return nil, fmt.Errorf("Not found. Integration %d not found for client %d. Body: %s", id, clientID, string(respBody))
 }
 
 // IntegrationDelete is used to delete an existing integration.

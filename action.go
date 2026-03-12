@@ -14,7 +14,7 @@ type (
 		RuleRead(ruleBody *ActionRead) (*ActionFetch, error)
 		HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error)
 		HintUpdateV3(ruleID int, hintBody *HintUpdateV3Params) (*ActionCreateResp, error)
-		RuleDelete(actionID int) error
+		ActionDelete(actionID int) error
 		HintDelete(hintbody *HintDelete) error
 	}
 
@@ -325,9 +325,9 @@ func (api *api) HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
 	return &a, nil
 }
 
-// RuleDelete deletes the Rule defined by unique ID.
+// ActionDelete deletes the Action defined by unique ID.
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) RuleDelete(actionID int) error {
+func (api *api) ActionDelete(actionID int) error {
 
 	uri := fmt.Sprintf("/v2/action/%d", actionID)
 	_, err := api.makeRequest(http.MethodDelete, uri, "rule", nil, nil)

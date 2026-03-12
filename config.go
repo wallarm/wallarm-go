@@ -51,6 +51,7 @@ type (
 		OverlimitResSettings
 		RuleSettings
 		ApiSpec
+		CredentialStuffingConfigs
 		SecurityIssues
 		Hits
 	}

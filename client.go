@@ -1,6 +1,10 @@
 package wallarm
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+	"net/url"
+)
 
 type (
 	// Client contains operations available on Client resource
@@ -12,6 +16,7 @@ type (
 
 	// ClientFields defines fields which are subject to update.
 	ClientFields struct {
+		Name                string `json:"name,omitempty"`
 		Enabled             bool   `json:"enabled,omitempty"`
 		AttackRecheckerMode string `json:"attack_rechecker_mode,omitempty"`
 	}
@@ -19,7 +24,7 @@ type (
 	// ClientFilter is used for filtration.
 	// ID is a Client ID entity.
 	ClientFilter struct {
-		ID int `json:"id"`
+		ID int `json:"id,omitempty"`
 	}
 
 	// ClientCreate is a root object for updating.
@@ -47,6 +52,7 @@ type (
 		ClientFilter
 		Enabled bool   `json:"enabled,omitempty"`
 		Name    string `json:"name,omitempty"`
+		UUID    string `json:"uuid,omitempty"`
 	}
 
 	// ClientInfo is the response on the Client Read.
@@ -71,7 +77,6 @@ type (
 		SupportPlan      string   `json:"support_plan"`
 		DateFormat       string   `json:"date_format"`
 		BlockingType     string   `json:"blocking_type"`
-		ScannerMode      string   `json:"scanner_mode"`
 		QratorBlacklists bool     `json:"qrator_blacklists"`
 		Notifications    struct {
 			ReportDaily struct {
@@ -118,14 +123,6 @@ type (
 			} `json:"scope"`
 		} `json:"notifications"`
 		LastScan            interface{} `json:"last_scan"`
-		ScannerCluster      string      `json:"scanner_cluster"`
-		ScannerScopeCluster string      `json:"scanner_scope_cluster"`
-		ScannerState        struct {
-			LastScan      int         `json:"last_scan"`
-			LastVuln      int         `json:"last_vuln"`
-			LastVulnCheck interface{} `json:"last_vuln_check"`
-			LastWapi      interface{} `json:"last_wapi"`
-		} `json:"scanner_state"`
 		Language            string `json:"language"`
 		AttackRecheckerMode string `json:"attack_rechecker_mode"`
 		VulnRecheckerMode   string `json:"vuln_rechecker_mode"`
@@ -137,7 +134,6 @@ type (
 		CanEnableBlacklist  bool   `json:"can_enable_blacklist"`
 		BlacklistDisabledAt int    `json:"blacklist_disabled_at"`
 		HiddenVulns         bool   `json:"hidden_vulns"`
-		ScannerPriority     string `json:"scanner_priority"`
 	}
 )
 
@@ -158,7 +154,6 @@ func (api *api) ClientCreate(clientBody *ClientCreate) (*SingleClientInfo, error
 }
 
 // ClientUpdate changes client state.
-// It can be used with global Scanner, Attack Rechecker Statuses.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 
@@ -175,12 +170,11 @@ func (api *api) ClientUpdate(clientBody *ClientUpdate) (*ClientInfo, error) {
 }
 
 // ClientRead requests common info about the account.
-// There is info about Scanner, Attack Rechecker, and others.
 // API reference: https://apiconsole.eu1.wallarm.com
 func (api *api) ClientRead(clientBody *ClientRead) (*ClientInfo, error) {
 
 	uri := "/v1/objects/client"
-	respBody, err := api.makeRequest("POST", uri, "client", clientBody, nil)
+	respBody, err := api.makeRequest("GET", uri, "client", clientBody.toQuery(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -189,4 +183,31 @@ func (api *api) ClientRead(clientBody *ClientRead) (*ClientInfo, error) {
 		return nil, err
 	}
 	return &c, nil
+}
+
+// toQuery converts the ClientRead filter to URL query parameters.
+// e.g. filter[id]=8649&limit=1&offset=0
+func (cr *ClientRead) toQuery() string {
+	v := url.Values{}
+	if cr.Filter != nil {
+		if cr.Filter.ID != 0 {
+			v.Set("filter[id]", fmt.Sprintf("%d", cr.Filter.ID))
+		}
+		if cr.Filter.Enabled {
+			v.Set("filter[enabled]", "true")
+		}
+		if cr.Filter.Name != "" {
+			v.Set("filter[name]", cr.Filter.Name)
+		}
+		if cr.Filter.UUID != "" {
+			v.Set("filter[uuid]", cr.Filter.UUID)
+		}
+	}
+	if cr.Limit > 0 {
+		v.Set("limit", fmt.Sprintf("%d", cr.Limit))
+	}
+	if cr.Offset > 0 {
+		v.Set("offset", fmt.Sprintf("%d", cr.Offset))
+	}
+	return v.Encode()
 }

@@ -166,7 +166,7 @@ func (api *api) makeRequestContext(ctx context.Context, method, uri, reqType str
 		return nil, respErr
 	}
 
-	specificResourceProcessing := []string{"scanner", "user"}
+	specificResourceProcessing := []string{"user"}
 	api.logger.Printf("HTTP Status: %d, Body: %s", resp.StatusCode, respBody)
 	switch {
 	case resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices:

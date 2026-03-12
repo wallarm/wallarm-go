@@ -22,7 +22,7 @@ A Go library for interacting with
 * Manage triggers
 * Manage users
 * Manage the denylist
-* Switch the WAF/Scanner/Active Threat Verification modes
+* Switch the WAF/Active Threat Verification modes
 * Inquire found vulnerabilities
 
 ## Install

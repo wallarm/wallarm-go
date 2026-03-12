@@ -22,8 +22,10 @@ type (
 	}
 
 	RuleSettingsParams struct {
-		MinLomFormat            *int    `json:"min_lom_format,omitempty"`
-		MaxLomFormat            *int    `json:"max_lom_format,omitempty"`
+		// MinLomFormat and MaxLomFormat intentionally lack omitempty so that
+		// nil → JSON null (clears to server default) instead of being omitted.
+		MinLomFormat *int `json:"min_lom_format"`
+		MaxLomFormat *int `json:"max_lom_format"`
 		MaxLomSize              *int    `json:"max_lom_size,omitempty"`
 		LomDisabled             *bool   `json:"lom_disabled,omitempty"`
 		LomCompilationDelay     *int    `json:"lom_compilation_delay,omitempty"`

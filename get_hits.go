@@ -36,7 +36,6 @@ type (
 		SecurityIssueID   *int            `json:"security_issue_id"`
 		NotExperimental   bool            `json:"!experimental"`
 		NotAasmEvent      bool            `json:"!aasm_event"`
-		NotWallarmScanner bool            `json:"!wallarm_scanner"`
 	}
 
 	// Hit represents a single detection event within a request.

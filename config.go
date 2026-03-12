@@ -48,6 +48,7 @@ type (
 		Trigger
 		User
 		WallarmMode
+		OverlimitResSettings
 		RuleSettings
 		ApiSpec
 		SecurityIssues

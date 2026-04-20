@@ -17,6 +17,10 @@ type (
 	}
 
 	RulesSettingsResponseBody struct {
+		// TODO: rename ClientId → ClientID for consistency with the initialism
+		// sweep applied elsewhere (get_security_issues.go: Id→ID, Url→URL, etc.).
+		// Keep the JSON tag `clientid` unchanged. Also update rule_settings_test.go
+		// references. Deferred from PR #38 to keep that PR's rename scope narrow.
 		ClientId int `json:"clientid"`
 		*RuleSettingsParams
 	}

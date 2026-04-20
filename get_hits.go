@@ -30,6 +30,7 @@ type (
 		RequestID         string          `json:"request_id,omitempty"`
 		ID                []string        `json:"id,omitempty"`
 		AttackID          [][]string      `json:"attackid,omitempty"`
+		BlockStatus       []string        `json:"block_status,omitempty"`
 		Type              []string        `json:"type,omitempty"`
 		State             *string         `json:"state"`
 		NotType           []string        `json:"!type,omitempty"`

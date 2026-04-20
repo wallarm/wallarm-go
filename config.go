@@ -31,6 +31,7 @@ type (
 	API interface {
 		Action
 		Application
+		Attack
 		IPList
 		Allowlist
 		Graylist
@@ -47,6 +48,7 @@ type (
 		CredentialStuffingConfigs
 		SecurityIssues
 		Hits
+		ActivityLog
 	}
 
 	api struct {

@@ -156,9 +156,10 @@ func (api *api) IPListReadByRuleType(listType IPListType, clientID int, ruleType
 func (api *api) IPListSearch(listType IPListType, clientID int, ruleType string, query string) ([]IPRule, error) {
 	uri := fmt.Sprintf("/v1/blocklist/clients/%d/groups", clientID)
 
-	filter := fmt.Sprintf(`{"rule_type":[%q],"list":%q,"query":%q}`, ruleType, string(listType), query)
 	q := url.Values{}
-	q.Set("filter", filter)
+	q.Add("filter[rule_type][]", ruleType)
+	q.Set("filter[list]", string(listType))
+	q.Set("filter[query]", query)
 	q.Set("limit", "1")
 	q.Set("offset", "0")
 

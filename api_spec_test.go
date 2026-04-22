@@ -112,9 +112,13 @@ func TestAPISpecUpdate(t *testing.T) {
 		body, _ := io.ReadAll(r.Body)
 		var req APISpecUpdate
 		assert.NoError(t, json.Unmarshal(body, &req))
-		assert.Equal(t, "UPDATED_SPEC", req.Title)
-		assert.Equal(t, "updated description", req.Description)
-		assert.Empty(t, req.FileRemoteURL)
+		if assert.NotNil(t, req.Title) {
+			assert.Equal(t, "UPDATED_SPEC", *req.Title)
+		}
+		if assert.NotNil(t, req.Description) {
+			assert.Equal(t, "updated description", *req.Description)
+		}
+		assert.Nil(t, req.FileRemoteURL)
 		assert.Nil(t, req.RegularFileUpdate)
 		assert.Nil(t, req.APIDetection)
 		w.Header().Set("content-type", "application/json")
@@ -130,9 +134,11 @@ func TestAPISpecUpdate(t *testing.T) {
 		}`)
 	})
 
+	title := "UPDATED_SPEC"
+	description := "updated description"
 	res, err := client.APISpecUpdate(8649, 111680, &APISpecUpdate{
-		Title:       "UPDATED_SPEC",
-		Description: "updated description",
+		Title:       &title,
+		Description: &description,
 	})
 	assert.NoError(t, err)
 	assert.Equal(t, 200, res.Status)

@@ -31,9 +31,9 @@ type (
 	}
 
 	APISpecUpdate struct {
-		Title             string              `json:"title,omitempty"`
-		Description       string              `json:"description,omitempty"`
-		FileRemoteURL     string              `json:"file_remote_url,omitempty"`
+		Title             *string             `json:"title,omitempty"`
+		Description       *string             `json:"description,omitempty"`
+		FileRemoteURL     *string             `json:"file_remote_url,omitempty"`
 		RegularFileUpdate *bool               `json:"regular_file_update,omitempty"`
 		APIDetection      *bool               `json:"api_detection,omitempty"`
 		Instances         []interface{}       `json:"instances,omitempty"`

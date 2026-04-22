@@ -10,9 +10,11 @@ import (
 type (
 	// APISpec contains operations available on APISpec resource
 	APISpec interface {
-		APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error)
-		APISpecDelete(clientID int, apiSpecID int) error
-		APISpecRead(clientID int, id int) (APISpecBody, error)
+		APISpecCreate(body *APISpecCreate) (APISpecCreateResp, error)
+		APISpecReadByID(clientID, specID int) (APISpecBody, error)
+		APISpecUpdate(clientID, specID int, body *APISpecUpdate) (APISpecCreateResp, error)
+		APISpecList(clientID int, page, perPage int) (APISpecListResp, error)
+		APISpecDelete(clientID, specID int) error
 	}
 
 	APISpecCreate struct {
@@ -24,6 +26,17 @@ type (
 		ClientID          int           `json:"-"`
 		Instances         []interface{} `json:"instances"`
 		Domains           []interface{} `json:"domains"`
+	}
+
+	APISpecUpdate struct {
+		Title             string              `json:"title,omitempty"`
+		Description       string              `json:"description,omitempty"`
+		FileRemoteURL     string              `json:"file_remote_url,omitempty"`
+		RegularFileUpdate *bool               `json:"regular_file_update,omitempty"`
+		APIDetection      *bool               `json:"api_detection,omitempty"`
+		Instances         []interface{}       `json:"instances,omitempty"`
+		Domains           []interface{}       `json:"domains,omitempty"`
+		AuthHeaders       []APISpecAuthHeader `json:"auth_headers,omitempty"`
 	}
 
 	APISpecCreateResp struct {
@@ -95,7 +108,7 @@ type (
 		Version   int    `json:"version"`
 	}
 
-	APISpecRead struct {
+	APISpecListResp struct {
 		Items       []APISpecBody `json:"items"`
 		CurrentPage int           `json:"current_page"`
 		PerPage     int           `json:"per_page"`
@@ -106,25 +119,20 @@ type (
 
 var ErrNotFound = errors.New("APISpec not found")
 
-func (api *api) APISpecRead(clientID int, id int) (APISpecBody, error) {
-
-	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", clientID)
-	var apiSpecBody APISpecBody
+func (api *api) APISpecReadByID(clientID, specID int) (APISpecBody, error) {
+	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, specID)
 	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
 	if err != nil {
-		return apiSpecBody, fmt.Errorf("APISpecRead: failed to make request - %w", err)
+		return APISpecBody{}, fmt.Errorf("APISpecReadByID: failed to make request - %w", err)
 	}
-	var readResult APISpecRead
-	if err = json.Unmarshal(respBody, &readResult); err != nil {
-		return apiSpecBody, fmt.Errorf("APISpecRead: failed to parse response - %w", err)
+	var resp APISpecCreateResp
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return APISpecBody{}, fmt.Errorf("APISpecReadByID: failed to parse response - %w", err)
 	}
-	for _, obj := range readResult.Items {
-		if obj.ID == id {
-			return obj, nil
-		}
+	if resp.Body == nil {
+		return APISpecBody{}, fmt.Errorf("APISpecReadByID: %w", ErrNotFound)
 	}
-
-	return apiSpecBody, fmt.Errorf("APISpecRead: %w - body: %s", ErrNotFound, string(respBody))
+	return *resp.Body, nil
 }
 
 func (api *api) APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error) {
@@ -142,7 +150,33 @@ func (api *api) APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, er
 	return a, nil
 }
 
-func (api *api) APISpecDelete(clientID int, apiSpecID int) error {
+func (api *api) APISpecUpdate(clientID, specID int, body *APISpecUpdate) (APISpecCreateResp, error) {
+	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, specID)
+	respBody, err := api.makeRequest("PUT", uri, "api_spec", body, nil)
+	var resp APISpecCreateResp
+	if err != nil {
+		return resp, fmt.Errorf("APISpecUpdate: failed to make request - %w", err)
+	}
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return resp, fmt.Errorf("APISpecUpdate: failed to parse response - %w", err)
+	}
+	return resp, nil
+}
+
+func (api *api) APISpecList(clientID, page, perPage int) (APISpecListResp, error) {
+	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs?page=%d&per_page=%d", clientID, page, perPage)
+	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
+	if err != nil {
+		return APISpecListResp{}, fmt.Errorf("APISpecList: failed to make request - %w", err)
+	}
+	var resp APISpecListResp
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return APISpecListResp{}, fmt.Errorf("APISpecList: failed to parse response - %w", err)
+	}
+	return resp, nil
+}
+
+func (api *api) APISpecDelete(clientID, apiSpecID int) error {
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, apiSpecID)
 
 	_, err := api.makeRequest("DELETE", uri, "api_spec", nil, nil)

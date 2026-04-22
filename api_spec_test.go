@@ -47,28 +47,25 @@ func TestAPISpecCreate(t *testing.T) {
 	assert.Equal(t, "TEST_SPEC", res.Body.Title)
 }
 
-func TestAPISpecRead(t *testing.T) {
+func TestAPISpecReadByID(t *testing.T) {
 	setup()
 	defer teardown()
 
-	mux.HandleFunc("/v4/clients/8649/rules/api-specs", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v4/clients/8649/rules/api-specs/111680", func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "GET", r.Method)
 		w.Header().Set("content-type", "application/json")
 		fmt.Fprint(w, `{
-			"items": [{
+			"status": 200,
+			"body": {
 				"id": 111680,
 				"client_id": 8649,
 				"title": "TEST_SPEC",
 				"status": "ready"
-			}],
-			"current_page": 1,
-			"per_page": 20,
-			"total_pages": 1,
-			"total_count": 1
+			}
 		}`)
 	})
 
-	res, err := client.APISpecRead(8649, 111680)
+	res, err := client.APISpecReadByID(8649, 111680)
 	assert.NoError(t, err)
 	assert.Equal(t, 111680, res.ID)
 }

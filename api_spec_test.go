@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestApiSpecCreate(t *testing.T) {
+func TestAPISpecCreate(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -47,7 +47,7 @@ func TestApiSpecCreate(t *testing.T) {
 	assert.Equal(t, "TEST_SPEC", res.Body.Title)
 }
 
-func TestApiSpecRead(t *testing.T) {
+func TestAPISpecRead(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -73,7 +73,7 @@ func TestApiSpecRead(t *testing.T) {
 	assert.Equal(t, 111680, res.ID)
 }
 
-func TestApiSpecDelete(t *testing.T) {
+func TestAPISpecDelete(t *testing.T) {
 	setup()
 	defer teardown()
 

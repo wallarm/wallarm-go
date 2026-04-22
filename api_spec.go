@@ -8,7 +8,7 @@ import (
 )
 
 type (
-	// ApiSpec contains operations available on ApiSpec resource
+	// APISpec contains operations available on APISpec resource
 	APISpec interface {
 		APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error)
 		APISpecDelete(clientID int, apiSpecID int) error
@@ -72,7 +72,7 @@ type (
 	}
 )
 
-var ErrNotFound = errors.New("ApiSpec not found")
+var ErrNotFound = errors.New("APISpec not found")
 
 func (api *api) APISpecRead(clientID int, id int) (APISpecBody, error) {
 
@@ -80,11 +80,11 @@ func (api *api) APISpecRead(clientID int, id int) (APISpecBody, error) {
 	var apiSpecBody APISpecBody
 	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
 	if err != nil {
-		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to make request - %w", err)
+		return apiSpecBody, fmt.Errorf("APISpecRead: failed to make request - %w", err)
 	}
 	var readResult APISpecRead
 	if err = json.Unmarshal(respBody, &readResult); err != nil {
-		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to parse response - %w", err)
+		return apiSpecBody, fmt.Errorf("APISpecRead: failed to parse response - %w", err)
 	}
 	for _, obj := range readResult.Items {
 		if obj.ID == id {
@@ -92,7 +92,7 @@ func (api *api) APISpecRead(clientID int, id int) (APISpecBody, error) {
 		}
 	}
 
-	return apiSpecBody, fmt.Errorf("ApiSpecRead: %w - body: %s", ErrNotFound, string(respBody))
+	return apiSpecBody, fmt.Errorf("APISpecRead: %w - body: %s", ErrNotFound, string(respBody))
 }
 
 func (api *api) APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error) {
@@ -101,11 +101,11 @@ func (api *api) APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, er
 	respBody, err := api.makeRequest("POST", uri, "api_spec", apiSpecBody, nil)
 	var a APISpecCreateResp
 	if err != nil {
-		return a, fmt.Errorf("ApiSpecCreate: failed to make request - %w", err)
+		return a, fmt.Errorf("APISpecCreate: failed to make request - %w", err)
 	}
 
 	if err = json.Unmarshal(respBody, &a); err != nil {
-		return a, fmt.Errorf("ApiSpecCreate: failed to parse response - %w", err)
+		return a, fmt.Errorf("APISpecCreate: failed to parse response - %w", err)
 	}
 	return a, nil
 }
@@ -115,7 +115,7 @@ func (api *api) APISpecDelete(clientID int, apiSpecID int) error {
 
 	_, err := api.makeRequest("DELETE", uri, "api_spec", nil, nil)
 	if err != nil {
-		return fmt.Errorf("ApiSpecDelete: failed to make request - %w", err)
+		return fmt.Errorf("APISpecDelete: failed to make request - %w", err)
 	}
 	return nil
 }

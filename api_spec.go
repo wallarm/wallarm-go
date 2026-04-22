@@ -19,14 +19,15 @@ type (
 	}
 
 	APISpecCreate struct {
-		Title             string        `json:"title"`
-		Description       string        `json:"description"`
-		FileRemoteURL     string        `json:"file_remote_url"`
-		RegularFileUpdate bool          `json:"regular_file_update"`
-		APIDetection      bool          `json:"api_detection"`
-		ClientID          int           `json:"-"`
-		Instances         []interface{} `json:"instances"`
-		Domains           []interface{} `json:"domains"`
+		Title             string              `json:"title"`
+		Description       string              `json:"description"`
+		FileRemoteURL     string              `json:"file_remote_url"`
+		RegularFileUpdate bool                `json:"regular_file_update"`
+		APIDetection      bool                `json:"api_detection"`
+		ClientID          int                 `json:"-"`
+		Instances         []interface{}       `json:"instances"`
+		Domains           []interface{}       `json:"domains"`
+		AuthHeaders       []APISpecAuthHeader `json:"auth_headers,omitempty"`
 	}
 
 	APISpecUpdate struct {

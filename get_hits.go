@@ -80,8 +80,8 @@ type (
 		CompromisedLogins []string      `json:"compromised_logins"`
 		Ebpf              *bool         `json:"ebpf"`
 		AasmEvent         bool          `json:"aasm_event"`
-		ApiSpecViolation  *string       `json:"api_spec_violation"`
-		ApiSpecID         *string       `json:"api_spec_id"`
+		APISpecViolation  *string       `json:"api_spec_violation"`
+		APISpecID         *string       `json:"api_spec_id"`
 	}
 
 	// hitReadRawResponse wraps the API response envelope for hits.

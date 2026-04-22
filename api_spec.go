@@ -15,6 +15,7 @@ type (
 		APISpecUpdate(clientID, specID int, body *APISpecUpdate) (APISpecCreateResp, error)
 		APISpecList(clientID int, page, perPage int) (APISpecListResp, error)
 		APISpecDelete(clientID, specID int) error
+		APISpecPolicyPut(clientID, specID int, body *APISpecPolicy) (APISpecPolicyResp, error)
 	}
 
 	APISpecCreate struct {
@@ -42,6 +43,11 @@ type (
 	APISpecCreateResp struct {
 		Status int          `json:"status"`
 		Body   *APISpecBody `json:"body"`
+	}
+
+	APISpecPolicyResp struct {
+		Status int            `json:"status"`
+		Body   *APISpecPolicy `json:"body"`
 	}
 
 	APISpecBody struct {
@@ -184,4 +190,17 @@ func (api *api) APISpecDelete(clientID, apiSpecID int) error {
 		return fmt.Errorf("APISpecDelete: failed to make request - %w", err)
 	}
 	return nil
+}
+
+func (api *api) APISpecPolicyPut(clientID, specID int, body *APISpecPolicy) (APISpecPolicyResp, error) {
+	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d/policy", clientID, specID)
+	respBody, err := api.makeRequest("PUT", uri, "api_spec_policy", body, nil)
+	var resp APISpecPolicyResp
+	if err != nil {
+		return resp, fmt.Errorf("APISpecPolicyPut: failed to make request - %w", err)
+	}
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return resp, fmt.Errorf("APISpecPolicyPut: failed to parse response - %w", err)
+	}
+	return resp, nil
 }

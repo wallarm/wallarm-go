@@ -32,35 +32,67 @@ type (
 	}
 
 	APISpecBody struct {
-		ID                   int           `json:"id"`
-		ClientID             int           `json:"client_id"`
-		Title                string        `json:"title"`
-		Description          string        `json:"description"`
-		Status               string        `json:"status"`
-		Instances            []interface{} `json:"instances"`
-		Domains              []interface{} `json:"domains"`
-		RegularFileUpdate    bool          `json:"regular_file_update"`
-		APIDetection         bool          `json:"api_detection"`
-		SpecVersion          string        `json:"spec_version"`
-		Version              int           `json:"version"`
-		EndpointsCount       int           `json:"endpoints_count"`
-		ShadowEndpointsCount int           `json:"shadow_endpoints_count"`
-		OrphanEndpointsCount int           `json:"orphan_endpoints_count"`
-		ZombieEndpointsCount int           `json:"zombie_endpoints_count"`
-		OpenAPIVersion       string        `json:"openapi_version"`
-		LastSyncedAt         string        `json:"last_synced_at"`
-		LastComparedAt       string        `json:"last_compared_at"`
-		UpdatedAt            string        `json:"updated_at"`
-		CreatedAt            string        `json:"created_at"`
-		NodeSyncVersion      int           `json:"node_sync_version"`
-		FileRemoteURL        string        `json:"file_remote_url"`
-		File                 struct {
-			Name      string `json:"name"`
-			SignedURL string `json:"signed_url"`
-			Checksum  string `json:"checksum"`
-			MimeType  string `json:"mime_type"`
-			Version   int    `json:"version"`
-		} `json:"file"`
+		ID                   int                 `json:"id"`
+		ClientID             int                 `json:"client_id"`
+		Title                string              `json:"title"`
+		Description          string              `json:"description"`
+		Status               string              `json:"status"`
+		Instances            []interface{}       `json:"instances"`
+		Domains              []interface{}       `json:"domains"`
+		RegularFileUpdate    bool                `json:"regular_file_update"`
+		APIDetection         bool                `json:"api_detection"`
+		SpecVersion          string              `json:"spec_version"`
+		Version              int                 `json:"version"`
+		EndpointsCount       int                 `json:"endpoints_count"`
+		ShadowEndpointsCount int                 `json:"shadow_endpoints_count"`
+		OrphanEndpointsCount int                 `json:"orphan_endpoints_count"`
+		ZombieEndpointsCount int                 `json:"zombie_endpoints_count"`
+		OpenAPIVersion       string              `json:"openapi_version"`
+		LastSyncedAt         string              `json:"last_synced_at"`
+		LastComparedAt       string              `json:"last_compared_at"`
+		UpdatedAt            string              `json:"updated_at"`
+		CreatedAt            string              `json:"created_at"`
+		NodeSyncVersion      int                 `json:"node_sync_version"`
+		FileRemoteURL        string              `json:"file_remote_url"`
+		File                 *APISpecFile        `json:"file,omitempty"`
+		Policy               *APISpecPolicy      `json:"policy,omitempty"`
+		AuthHeaders          []APISpecAuthHeader `json:"auth_headers,omitempty"`
+		FileChangedAt        string              `json:"file_changed_at,omitempty"`
+		Format               int                 `json:"format,omitempty"`
+	}
+
+	APISpecPolicyCondition struct {
+		Type  string        `json:"type"`
+		Value interface{}   `json:"value"`
+		Point []interface{} `json:"point"`
+	}
+
+	APISpecPolicy struct {
+		Enabled                   bool                     `json:"enabled"`
+		Conditions                []APISpecPolicyCondition `json:"conditions,omitempty"`
+		UndefinedEndpointMode     string                   `json:"undefined_endpoint_mode,omitempty"`
+		UndefinedParameterMode    string                   `json:"undefined_parameter_mode,omitempty"`
+		MissingParameterMode      string                   `json:"missing_parameter_mode,omitempty"`
+		InvalidParameterValueMode string                   `json:"invalid_parameter_value_mode,omitempty"`
+		MissingAuthMode           string                   `json:"missing_auth_mode,omitempty"`
+		InvalidRequestMode        string                   `json:"invalid_request_mode,omitempty"`
+		TimeoutMode               string                   `json:"timeout_mode,omitempty"`
+		MaxRequestSizeMode        string                   `json:"max_request_size_mode,omitempty"`
+		Timeout                   int                      `json:"timeout,omitempty"`
+		MaxRequestSize            int                      `json:"max_request_size,omitempty"`
+	}
+
+	APISpecAuthHeader struct {
+		Key   string `json:"key"`
+		Value string `json:"value"`
+	}
+
+	APISpecFile struct {
+		Name      string `json:"name"`
+		SignedURL string `json:"signed_url"`
+		Checksum  string `json:"checksum"`
+		MimeType  string `json:"mime_type"`
+		Version   int    `json:"version"`
 	}
 
 	APISpecRead struct {

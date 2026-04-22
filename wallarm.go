@@ -268,4 +268,3 @@ func (api *api) request(ctx context.Context, method, uri, reqType string, reqBod
 
 	return resp, nil
 }
-

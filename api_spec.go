@@ -9,29 +9,29 @@ import (
 
 type (
 	// ApiSpec contains operations available on ApiSpec resource
-	ApiSpec interface {
-		ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, error)
-		ApiSpecDelete(clientID int, apiSpecID int) error
-		ApiSpecRead(clientID int, id int) (ApiSpecBody, error)
+	APISpec interface {
+		APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error)
+		APISpecDelete(clientID int, apiSpecID int) error
+		APISpecRead(clientID int, id int) (APISpecBody, error)
 	}
 
-	ApiSpecCreate struct {
+	APISpecCreate struct {
 		Title             string        `json:"title"`
 		Description       string        `json:"description"`
 		FileRemoteURL     string        `json:"file_remote_url"`
 		RegularFileUpdate bool          `json:"regular_file_update"`
-		ApiDetection      bool          `json:"api_detection"`
+		APIDetection      bool          `json:"api_detection"`
 		ClientID          int           `json:"-"`
 		Instances         []interface{} `json:"instances"`
 		Domains           []interface{} `json:"domains"`
 	}
 
-	ApiSpecCreateResp struct {
+	APISpecCreateResp struct {
 		Status int          `json:"status"`
-		Body   *ApiSpecBody `json:"body"`
+		Body   *APISpecBody `json:"body"`
 	}
 
-	ApiSpecBody struct {
+	APISpecBody struct {
 		ID                   int           `json:"id"`
 		ClientID             int           `json:"client_id"`
 		Title                string        `json:"title"`
@@ -40,7 +40,7 @@ type (
 		Instances            []interface{} `json:"instances"`
 		Domains              []interface{} `json:"domains"`
 		RegularFileUpdate    bool          `json:"regular_file_update"`
-		ApiDetection         bool          `json:"api_detection"`
+		APIDetection         bool          `json:"api_detection"`
 		SpecVersion          string        `json:"spec_version"`
 		Version              int           `json:"version"`
 		EndpointsCount       int           `json:"endpoints_count"`
@@ -63,8 +63,8 @@ type (
 		} `json:"file"`
 	}
 
-	ApiSpecRead struct {
-		Items       []ApiSpecBody `json:"items"`
+	APISpecRead struct {
+		Items       []APISpecBody `json:"items"`
 		CurrentPage int           `json:"current_page"`
 		PerPage     int           `json:"per_page"`
 		TotalPages  int           `json:"total_pages"`
@@ -74,15 +74,15 @@ type (
 
 var ErrNotFound = errors.New("ApiSpec not found")
 
-func (api *api) ApiSpecRead(clientID int, id int) (ApiSpecBody, error) {
+func (api *api) APISpecRead(clientID int, id int) (APISpecBody, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", clientID)
-	var apiSpecBody ApiSpecBody
+	var apiSpecBody APISpecBody
 	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
 	if err != nil {
 		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to make request - %w", err)
 	}
-	var readResult ApiSpecRead
+	var readResult APISpecRead
 	if err = json.Unmarshal(respBody, &readResult); err != nil {
 		return apiSpecBody, fmt.Errorf("ApiSpecRead: failed to parse response - %w", err)
 	}
@@ -95,11 +95,11 @@ func (api *api) ApiSpecRead(clientID int, id int) (ApiSpecBody, error) {
 	return apiSpecBody, fmt.Errorf("ApiSpecRead: %w - body: %s", ErrNotFound, string(respBody))
 }
 
-func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, error) {
+func (api *api) APISpecCreate(apiSpecBody *APISpecCreate) (APISpecCreateResp, error) {
 
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs", apiSpecBody.ClientID)
 	respBody, err := api.makeRequest("POST", uri, "api_spec", apiSpecBody, nil)
-	var a ApiSpecCreateResp
+	var a APISpecCreateResp
 	if err != nil {
 		return a, fmt.Errorf("ApiSpecCreate: failed to make request - %w", err)
 	}
@@ -110,7 +110,7 @@ func (api *api) ApiSpecCreate(apiSpecBody *ApiSpecCreate) (ApiSpecCreateResp, er
 	return a, nil
 }
 
-func (api *api) ApiSpecDelete(clientID int, apiSpecID int) error {
+func (api *api) APISpecDelete(clientID int, apiSpecID int) error {
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, apiSpecID)
 
 	_, err := api.makeRequest("DELETE", uri, "api_spec", nil, nil)

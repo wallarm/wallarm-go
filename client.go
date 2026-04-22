@@ -133,17 +133,17 @@ type (
 			} `json:"scope"`
 		} `json:"notifications"`
 		LastScan            interface{} `json:"last_scan"`
-		Language            string `json:"language"`
-		AttackRecheckerMode string `json:"attack_rechecker_mode"`
-		VulnRecheckerMode   string `json:"vuln_rechecker_mode"`
-		Validated           bool   `json:"validated"`
-		Enabled             bool   `json:"enabled"`
-		CreateAt            int    `json:"create_at"`
-		Partnerid           int    `json:"partnerid"`
-		PartnerUUID         string `json:"partner_uuid"`
-		CanEnableBlacklist  bool   `json:"can_enable_blacklist"`
-		BlacklistDisabledAt int    `json:"blacklist_disabled_at"`
-		HiddenVulns         bool   `json:"hidden_vulns"`
+		Language            string      `json:"language"`
+		AttackRecheckerMode string      `json:"attack_rechecker_mode"`
+		VulnRecheckerMode   string      `json:"vuln_rechecker_mode"`
+		Validated           bool        `json:"validated"`
+		Enabled             bool        `json:"enabled"`
+		CreateAt            int         `json:"create_at"`
+		Partnerid           int         `json:"partnerid"`
+		PartnerUUID         string      `json:"partner_uuid"`
+		CanEnableBlacklist  bool        `json:"can_enable_blacklist"`
+		BlacklistDisabledAt int         `json:"blacklist_disabled_at"`
+		HiddenVulns         bool        `json:"hidden_vulns"`
 	}
 )
 

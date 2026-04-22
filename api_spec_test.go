@@ -35,7 +35,7 @@ func TestApiSpecCreate(t *testing.T) {
 		}`)
 	})
 
-	res, err := client.ApiSpecCreate(&ApiSpecCreate{
+	res, err := client.APISpecCreate(&APISpecCreate{
 		Title:             "TEST_SPEC",
 		Description:       "test",
 		FileRemoteURL:     "https://example.com/spec.yaml",
@@ -68,7 +68,7 @@ func TestApiSpecRead(t *testing.T) {
 		}`)
 	})
 
-	res, err := client.ApiSpecRead(8649, 111680)
+	res, err := client.APISpecRead(8649, 111680)
 	assert.NoError(t, err)
 	assert.Equal(t, 111680, res.ID)
 }
@@ -83,6 +83,6 @@ func TestApiSpecDelete(t *testing.T) {
 		fmt.Fprint(w, `{"status": 200}`)
 	})
 
-	err := client.ApiSpecDelete(8649, 111680)
+	err := client.APISpecDelete(8649, 111680)
 	assert.NoError(t, err)
 }

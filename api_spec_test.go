@@ -271,6 +271,57 @@ func TestAPISpecPolicyPut(t *testing.T) {
 	assert.Len(t, res.Body.Conditions, 1)
 }
 
+func TestAPISpecUpdate_HTTP404(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v4/clients/8649/rules/api-specs/111961", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodPut, r.Method)
+		assert.Equal(t, "/v4/clients/8649/rules/api-specs/111961", r.RequestURI)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, `{"status":404,"body":"Api spec with ID:111961 not found"}`)
+	})
+
+	title := "UPDATED_SPEC"
+	_, err := client.APISpecUpdate(8649, 111961, &APISpecUpdate{Title: &title})
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, ErrNotFound), "expected ErrNotFound, got %v", err)
+}
+
+func TestAPISpecPolicyPut_HTTP404(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v4/clients/8649/rules/api-specs/111961/policy", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodPut, r.Method)
+		assert.Equal(t, "/v4/clients/8649/rules/api-specs/111961/policy", r.RequestURI)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, `{"status":404,"body":"Api spec with ID:111961 not found"}`)
+	})
+
+	_, err := client.APISpecPolicyPut(8649, 111961, &APISpecPolicy{Enabled: true})
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, ErrNotFound), "expected ErrNotFound, got %v", err)
+}
+
+func TestAPISpecDelete_HTTP404(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v4/clients/8649/rules/api-specs/111961", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, http.MethodDelete, r.Method)
+		assert.Equal(t, "/v4/clients/8649/rules/api-specs/111961", r.RequestURI)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, `{"status":404,"body":"Api spec with ID:111961 not found"}`)
+	})
+
+	err := client.APISpecDelete(8649, 111961)
+	assert.NoError(t, err)
+}
+
 func TestAPISpecPolicyPut_Disable(t *testing.T) {
 	setup()
 	defer teardown()

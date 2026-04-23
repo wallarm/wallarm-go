@@ -19,10 +19,17 @@
 * **New API spec endpoints** — `APISpecReadByID` (GET by id), `APISpecUpdate` (PUT), and `APISpecList` (paginated list) replace the old list-and-filter read flow. `82303f7`
 * **API spec policy endpoint** — `APISpecPolicyPut` for managing API spec policies, with new `APISpecPolicy`, `APISpecPolicyCondition`, and `APISpecPolicyResp` types. `a1c7df2`
 * **Extended `APISpecBody`** — added `policy`, `auth_headers`, `file`, and `format` fields, plus supporting types `APISpecAuthHeader`, `APISpecFile`, `APISpecUpdate`, and `APISpecListResp`. `a427ad9`
+* **`APISpecCreate.AuthHeaders`** — auth headers for URL-based spec fetch are now settable on create, matching the update/read surface. `55e328f`
+
+### Bug Fixes
+
+* **`APISpecReadByID` treats HTTP 404 as `ErrNotFound`** — callers can detect deleted specs via `errors.Is(err, ErrNotFound)`. `1493674`
+* **`APISpecUpdate` and `APISpecPolicyPut` treat HTTP 404 as `ErrNotFound`; `APISpecDelete` treats 404 as idempotent success** — consistent not-found semantics across the api_spec surface.
+* **`APISpecUpdate` field types switched to pointers** — `Title`, `Description`, `FileRemoteURL` are now `*string` and `AuthHeaders` is `*[]APISpecAuthHeader`. `omitempty` on plain types silently dropped empty-string/empty-slice values, preventing callers from clearing fields via PUT. Pointer semantics let callers distinguish "unset" from "clear". `0c1f482`, `56d5e12`
 
 ### Other Changes
 
-* **Unit tests** for `APISpecReadByID`, `APISpecUpdate`, `APISpecList`, and `APISpecPolicyPut`. `6ffe6a8`
+* **Unit tests** for `APISpecReadByID`, `APISpecUpdate`, `APISpecList`, and `APISpecPolicyPut`, plus HTTP 404 coverage for `APISpecReadByID`, `APISpecUpdate`, `APISpecPolicyPut`, and `APISpecDelete`. `6ffe6a8`
 * **Test alignment** — api_spec test function names and error strings updated to match the `APISpec*` rename. `a803a40`
 
 ## v0.10.0

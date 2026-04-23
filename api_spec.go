@@ -168,6 +168,10 @@ func (api *api) APISpecUpdate(clientID, specID int, body *APISpecUpdate) (APISpe
 	respBody, err := api.makeRequest("PUT", uri, "api_spec", body, nil)
 	var resp APISpecCreateResp
 	if err != nil {
+		var apiErr *APIError
+		if stderrors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			return resp, fmt.Errorf("APISpecUpdate: %w", ErrNotFound)
+		}
 		return resp, fmt.Errorf("APISpecUpdate: failed to make request - %w", err)
 	}
 	if err := json.Unmarshal(respBody, &resp); err != nil {
@@ -194,6 +198,10 @@ func (api *api) APISpecDelete(clientID, apiSpecID int) error {
 
 	_, err := api.makeRequest("DELETE", uri, "api_spec", nil, nil)
 	if err != nil {
+		var apiErr *APIError
+		if stderrors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			return nil
+		}
 		return fmt.Errorf("APISpecDelete: failed to make request - %w", err)
 	}
 	return nil
@@ -204,6 +212,10 @@ func (api *api) APISpecPolicyPut(clientID, specID int, body *APISpecPolicy) (API
 	respBody, err := api.makeRequest("PUT", uri, "api_spec_policy", body, nil)
 	var resp APISpecPolicyResp
 	if err != nil {
+		var apiErr *APIError
+		if stderrors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			return resp, fmt.Errorf("APISpecPolicyPut: %w", ErrNotFound)
+		}
 		return resp, fmt.Errorf("APISpecPolicyPut: failed to make request - %w", err)
 	}
 	if err := json.Unmarshal(respBody, &resp); err != nil {

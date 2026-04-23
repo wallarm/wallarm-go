@@ -26,6 +26,7 @@
 * **`APISpecReadByID` treats HTTP 404 as `ErrNotFound`** — callers can detect deleted specs via `errors.Is(err, ErrNotFound)`. `1493674`
 * **`APISpecUpdate` and `APISpecPolicyPut` treat HTTP 404 as `ErrNotFound`; `APISpecDelete` treats 404 as idempotent success** — consistent not-found semantics across the api_spec surface.
 * **`APISpecUpdate` field types switched to pointers** — `Title`, `Description`, `FileRemoteURL` are now `*string` and `AuthHeaders` is `*[]APISpecAuthHeader`. `omitempty` on plain types silently dropped empty-string/empty-slice values, preventing callers from clearing fields via PUT. Pointer semantics let callers distinguish "unset" from "clear". `0c1f482`, `56d5e12`
+* **`fix(api_spec_policy)`: `APISpecPolicy.Conditions` no longer has `omitempty`** — API requires the field to always be present in PUT body (empty array is valid).
 
 ### Other Changes
 

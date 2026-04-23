@@ -91,7 +91,7 @@ type (
 
 	APISpecPolicy struct {
 		Enabled                   bool                     `json:"enabled"`
-		Conditions                []APISpecPolicyCondition `json:"conditions,omitempty"`
+		Conditions                []APISpecPolicyCondition `json:"conditions"`
 		UndefinedEndpointMode     string                   `json:"undefined_endpoint_mode,omitempty"`
 		UndefinedParameterMode    string                   `json:"undefined_parameter_mode,omitempty"`
 		MissingParameterMode      string                   `json:"missing_parameter_mode,omitempty"`

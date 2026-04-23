@@ -102,6 +102,22 @@ func TestAPISpecReadByID_NotFound(t *testing.T) {
 	assert.True(t, errors.Is(err, ErrNotFound), "expected ErrNotFound, got %v", err)
 }
 
+func TestAPISpecReadByID_HTTP404(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v4/clients/8649/rules/api-specs/111961", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "GET", r.Method)
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, `{"status":404,"body":"Api spec with ID:111961 not found"}`)
+	})
+
+	_, err := client.APISpecReadByID(8649, 111961)
+	assert.Error(t, err)
+	assert.True(t, errors.Is(err, ErrNotFound), "expected ErrNotFound, got %v", err)
+}
+
 func TestAPISpecUpdate(t *testing.T) {
 	setup()
 	defer teardown()

@@ -2,7 +2,9 @@ package wallarm
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
+	"net/http"
 
 	"github.com/pkg/errors"
 )
@@ -130,6 +132,10 @@ func (api *api) APISpecReadByID(clientID, specID int) (APISpecBody, error) {
 	uri := fmt.Sprintf("/v4/clients/%d/rules/api-specs/%d", clientID, specID)
 	respBody, err := api.makeRequest("GET", uri, "api_spec", nil, nil)
 	if err != nil {
+		var apiErr *APIError
+		if stderrors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
+			return APISpecBody{}, fmt.Errorf("APISpecReadByID: %w", ErrNotFound)
+		}
 		return APISpecBody{}, fmt.Errorf("APISpecReadByID: failed to make request - %w", err)
 	}
 	var resp APISpecCreateResp

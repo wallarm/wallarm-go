@@ -44,7 +44,7 @@ type (
 		WallarmMode
 		OverlimitResSettings
 		RuleSettings
-		ApiSpec
+		APISpec
 		CredentialStuffingConfigs
 		SecurityIssues
 		Hits

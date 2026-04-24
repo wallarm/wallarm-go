@@ -66,7 +66,7 @@ func TestRuleSettingsRead(t *testing.T) {
 	expected := RulesSettingsResponse{
 		Status: 200,
 		Body: &RulesSettingsResponseBody{
-			ClientId: 123,
+			ClientID: 123,
 			RuleSettingsParams: &RuleSettingsParams{
 				MinLomFormat:            &minLomFormat,
 				MaxLomFormat:            &maxLomFormat,
@@ -158,7 +158,7 @@ func TestRuleSettingsUpdate(t *testing.T) {
 	expected := RulesSettingsResponse{
 		Status: 200,
 		Body: &RulesSettingsResponseBody{
-			ClientId: 123,
+			ClientID: 123,
 			RuleSettingsParams: &RuleSettingsParams{
 				MinLomFormat:            &minLomFormat,
 				MaxLomFormat:            &maxLomFormat,

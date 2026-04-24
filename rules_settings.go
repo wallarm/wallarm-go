@@ -17,19 +17,15 @@ type (
 	}
 
 	RulesSettingsResponseBody struct {
-		// TODO: rename ClientId → ClientID for consistency with the initialism
-		// sweep applied elsewhere (get_security_issues.go: Id→ID, Url→URL, etc.).
-		// Keep the JSON tag `clientid` unchanged. Also update rule_settings_test.go
-		// references. Deferred from PR #38 to keep that PR's rename scope narrow.
-		ClientId int `json:"clientid"`
+		ClientID int `json:"clientid"`
 		*RuleSettingsParams
 	}
 
 	RuleSettingsParams struct {
 		// MinLomFormat and MaxLomFormat intentionally lack omitempty so that
 		// nil → JSON null (clears to server default) instead of being omitted.
-		MinLomFormat *int `json:"min_lom_format"`
-		MaxLomFormat *int `json:"max_lom_format"`
+		MinLomFormat            *int    `json:"min_lom_format"`
+		MaxLomFormat            *int    `json:"max_lom_format"`
 		MaxLomSize              *int    `json:"max_lom_size,omitempty"`
 		LomDisabled             *bool   `json:"lom_disabled,omitempty"`
 		LomCompilationDelay     *int    `json:"lom_compilation_delay,omitempty"`

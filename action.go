@@ -20,9 +20,73 @@ type (
 	}
 
 	// HintUpdateV3Params is used for updating a hint via v3 API.
+	// HintUpdateV3Params is the body sent to PUT /v3/hint/{rule_id}. Pointer
+	// types + omitempty let callers send only the fields they want to update;
+	// nil fields are dropped from the wire payload.
 	HintUpdateV3Params struct {
+		// Common to every rule type.
 		VariativityDisabled *bool   `json:"variativity_disabled,omitempty"`
 		Comment             *string `json:"comment,omitempty"`
+		Title               *string `json:"title,omitempty"`
+		Active              *bool   `json:"active,omitempty"`
+		Set                 *string `json:"set,omitempty"`
+
+		// Mode is mutable for wallarm_mode, api_abuse_mode, graphql_detection,
+		// file_upload_size_limit, overlimit_res_settings, set_response_header.
+		Mode *string `json:"mode,omitempty"`
+
+		// vpatch / disable_attack_type.
+		AttackType *string `json:"attack_type,omitempty"`
+
+		// disable_stamp.
+		Stamp *int `json:"stamp,omitempty"`
+
+		// regex.
+		Regex *string `json:"regex,omitempty"`
+
+		// credentials_regex.
+		LoginRegex    *string `json:"login_regex,omitempty"`
+		CaseSensitive *bool   `json:"case_sensitive,omitempty"`
+
+		// credentials_regex / credentials_point.
+		CredStuffType *string `json:"cred_stuff_type,omitempty"`
+
+		// file_upload_size_limit.
+		Size *int `json:"size,omitempty"`
+
+		// graphql_detection.
+		MaxDepth       *int  `json:"max_depth,omitempty"`
+		MaxValueSizeKb *int  `json:"max_value_size_kb,omitempty"`
+		MaxDocSizeKb   *int  `json:"max_doc_size_kb,omitempty"`
+		MaxDocPerBatch *int  `json:"max_doc_per_batch,omitempty"`
+		Introspection  *bool `json:"introspection,omitempty"`
+		DebugEnabled   *bool `json:"debug_enabled,omitempty"`
+
+		// overlimit_res_settings.
+		OverlimitTime *int `json:"overlimit_time,omitempty"`
+
+		// parser_state.
+		Parser *string `json:"parser,omitempty"`
+		State  *string `json:"state,omitempty"`
+
+		// rate_limit.
+		Delay     *int    `json:"delay,omitempty"`
+		Burst     *int    `json:"burst,omitempty"`
+		Rate      *int    `json:"rate,omitempty"`
+		RspStatus *int    `json:"rsp_status,omitempty"`
+		TimeUnit  *string `json:"time_unit,omitempty"`
+
+		// set_response_header.
+		Name   *string   `json:"name,omitempty"`
+		Values *[]string `json:"values,omitempty"`
+
+		// uploads.
+		FileType *string `json:"file_type,omitempty"`
+
+		// Mitigation controls (bola, brute, enum, forced_browsing, rate_limit_enum).
+		Threshold            *Threshold            `json:"threshold,omitempty"`
+		Reaction             *Reaction             `json:"reaction,omitempty"`
+		EnumeratedParameters *EnumeratedParameters `json:"enumerated_parameters,omitempty"`
 	}
 
 	// ActionDetails defines the Action of how to parse the request.

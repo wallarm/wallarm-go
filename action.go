@@ -16,7 +16,7 @@ type (
 		ActionReadByHitID(hitID []string) (*ActionByHitResponse, error)
 		HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error)
 		HintUpdateV3(ruleID int, hintBody *HintUpdateV3Params) (*ActionCreateResp, error)
-		HintDelete(hintbody *HintDelete) error
+		HintDelete(hintbody *HintDelete) (*HintDeleteResp, error)
 	}
 
 	// HintUpdateV3Params is used for updating a hint via v3 API.
@@ -289,6 +289,13 @@ type (
 		Clientid []int `json:"clientid"`
 		ID       []int `json:"id"`
 	}
+
+	// HintDeleteResp is the response of a hint delete request. Body is empty
+	// on the no-op path; see HintDelete.
+	HintDeleteResp struct {
+		Status int          `json:"status"`
+		Body   []ActionBody `json:"body"`
+	}
 )
 
 // HintRead reads the Rules defined by Action ID.
@@ -377,14 +384,24 @@ func (api *api) HintCreate(ruleBody *ActionCreate) (*ActionCreateResp, error) {
 }
 
 // HintDelete deletes the Rule defined by the unique Hint ID.
+//
+// The Wallarm API returns HTTP 200 in all cases, even when nothing was
+// deleted (rule already absent, never existed, or delete blocked server-side
+// for counter hints). Callers should inspect the returned Body to detect the
+// no-op case (len(Body) == 0).
+//
 // API reference: https://apiconsole.eu1.wallarm.com
-func (api *api) HintDelete(hintbody *HintDelete) error {
+func (api *api) HintDelete(hintbody *HintDelete) (*HintDeleteResp, error) {
 	uri := "/v1/objects/hint/delete"
-	_, err := api.makeRequest(http.MethodPost, uri, "hint", hintbody, nil)
+	respBody, err := api.makeRequest(http.MethodPost, uri, "hint", hintbody, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	var resp HintDeleteResp
+	if err := json.Unmarshal(respBody, &resp); err != nil {
+		return nil, err
+	}
+	return &resp, nil
 }
 
 // HintUpdateV3 updates a hint by rule ID via v3 API.

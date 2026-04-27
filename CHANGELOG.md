@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] - v0.12.0
+
+### Upgrade Steps
+
+* [ACTION REQUIRED] `HintDelete` signature changed from `(*HintDelete) error` to `(*HintDelete) (*HintDeleteResp, error)`. Downstream code using `_, err := api.HintDelete(...)` keeps compiling; call sites that stored the function reference or used named returns must update.
+
+### Breaking Changes
+
+* **`HintDelete` returns `(*HintDeleteResp, error)`** — the new `HintDeleteResp{Status int, Body []ActionBody}` exposes the API response. Inspect `len(resp.Body) == 0` to detect the no-op path: the Wallarm API returns HTTP 200 in all cases (rule already absent, never existed, or delete blocked server-side as for counter hints), and the body is the only signal of whether anything was actually deleted.
+
 ## [v0.11.0] - 2026-04-22
 
 > API spec client expansion with new endpoints and payload fields, plus Go-idiomatic initialism renames across the API spec and rules settings types.

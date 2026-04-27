@@ -72,16 +72,42 @@ func TestHintDelete(t *testing.T) {
 	mux.HandleFunc("/v1/objects/hint/delete", func(w http.ResponseWriter, r *http.Request) {
 		assert.Equal(t, "POST", r.Method)
 		w.Header().Set("content-type", "application/json")
-		fmt.Fprint(w, `{"status": 200, "body": null}`)
+		fmt.Fprint(w, `{"status": 200, "body": [{"id": 500, "actionid": 300, "type": "wallarm_mode"}]}`)
 	})
 
-	err := client.HintDelete(&HintDelete{
+	resp, err := client.HintDelete(&HintDelete{
 		Filter: &HintDeleteFilter{
 			Clientid: []int{8649},
 			ID:       []int{500},
 		},
 	})
 	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, 200, resp.Status)
+	assert.Len(t, resp.Body, 1)
+	assert.Equal(t, 500, resp.Body[0].ID)
+}
+
+// Verifies the no-op contract documented on HintDelete.
+func TestHintDelete_NoOpReturnsEmptyBody(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/v1/objects/hint/delete", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{"status": 200, "body": []}`)
+	})
+
+	resp, err := client.HintDelete(&HintDelete{
+		Filter: &HintDeleteFilter{
+			Clientid: []int{8649},
+			ID:       []int{999},
+		},
+	})
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Equal(t, 200, resp.Status)
+	assert.Empty(t, resp.Body)
 }
 
 func TestActionReadByID(t *testing.T) {

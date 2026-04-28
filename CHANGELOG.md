@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.12.0] - 2026-04-28
+
+### Upgrade Steps
+
+* [ACTION REQUIRED] `HintDelete` signature changed from `(*HintDelete) error` to `(*HintDelete) (*HintDeleteResp, error)`. Downstream code using `_, err := api.HintDelete(...)` keeps compiling; call sites that stored the function reference or used named returns must update.
+
+### Breaking Changes
+
+* **`HintDelete` returns `(*HintDeleteResp, error)`** — the new `HintDeleteResp{Status int, Body []ActionBody}` exposes the API response. Inspect `len(resp.Body) == 0` to detect the no-op path: the Wallarm API returns HTTP 200 in all cases (rule already absent, never existed, or delete blocked server-side as for counter hints), and the body is the only signal of whether anything was actually deleted.
+
+### New Features
+
+* **`HintUpdateV3Params` extended with the full mutable-field surface** — adds 30+ new fields (all pointer types with `omitempty`) covering common attributes (`Title`, `Active`, `Set`), per-rule mutable fields (`Mode`, `AttackType`, `Stamp`, `Regex`, `LoginRegex`, `CaseSensitive`, `CredStuffType`, `Size`, GraphQL limits, `OverlimitTime`, `Parser`, `State`, rate-limit knobs, response-header `Name`/`Values`, `FileType`), and mitigation-control nested structs (`Threshold`, `Reaction`, `EnumeratedParameters`). Existing `Comment` and `VariativityDisabled` are unchanged. Pointer + `omitempty` semantics let callers send only the fields they want to update; nil fields stay out of the wire payload.
+
 ## [v0.11.0] - 2026-04-22
 
 > API spec client expansion with new endpoints and payload fields, plus Go-idiomatic initialism renames across the API spec and rules settings types.

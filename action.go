@@ -126,12 +126,18 @@ type (
 		CredStuffMode        string                  `json:"cred_stuff_mode,omitempty"`
 		CaseSensitive        *bool                   `json:"case_sensitive,omitempty"`
 		LoginPoint           TwoDimensionalSlice     `json:"login_point,omitempty"`
-		Delay                int                     `json:"delay,omitempty"`
-		Burst                int                     `json:"burst,omitempty"`
-		Rate                 int                     `json:"rate,omitempty"`
+		// Delay/Burst/Rate/OverlimitTime are *int with omitempty so callers
+		// can transmit a literal 0 (a valid value per the API range
+		// constraints). With non-pointer int+omitempty, encoding/json drops
+		// the zero value silently and the API rejects with "can't be blank".
+		// RspStatus stays a plain int because its valid range (400..599) does
+		// not include 0; omitempty correctly drops absent.
+		Delay                *int                    `json:"delay,omitempty"`
+		Burst                *int                    `json:"burst,omitempty"`
+		Rate                 *int                    `json:"rate,omitempty"`
 		RspStatus            int                     `json:"rsp_status,omitempty"`
 		TimeUnit             string                  `json:"time_unit,omitempty"`
-		OverlimitTime        int                     `json:"overlimit_time,omitempty"`
+		OverlimitTime        *int                    `json:"overlimit_time,omitempty"`
 		Suffix               string                  `json:"suffix,omitempty"`
 		MaxDepth             int                     `json:"max_depth,omitempty"`
 		MaxValueSizeKb       int                     `json:"max_value_size_kb,omitempty"`

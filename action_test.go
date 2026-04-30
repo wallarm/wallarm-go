@@ -1,8 +1,10 @@
 package wallarm
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -202,4 +204,41 @@ func TestActionList(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, res.Body, 1)
 	assert.Equal(t, 1, res.Body[0].ID)
+}
+
+// TestActionCreate_RateLimitFieldsAcceptZero is a regression test for the
+// silent-zero-drop bug fixed in v0.12.1. With non-pointer int + omitempty,
+// json.Marshal would drop a literal zero from the wire, which the API then
+// rejected as "can't be blank". Switching to *int allows callers to send 0.
+func TestActionCreate_RateLimitFieldsAcceptZero(t *testing.T) {
+	zero := 0
+	body := ActionCreate{
+		Type:          "rate_limit",
+		Rate:          &zero,
+		Burst:         &zero,
+		Delay:         &zero,
+		OverlimitTime: &zero,
+	}
+	out, err := json.Marshal(body)
+	assert.NoError(t, err)
+	got := string(out)
+	for _, want := range []string{`"rate":0`, `"burst":0`, `"delay":0`, `"overlimit_time":0`} {
+		if !strings.Contains(got, want) {
+			t.Errorf("expected JSON to contain %q, got %s", want, got)
+		}
+	}
+}
+
+// TestActionCreate_RateLimitFieldsOmitNil verifies that nil pointers continue
+// to be omitted from the wire payload, so callers can opt out cleanly.
+func TestActionCreate_RateLimitFieldsOmitNil(t *testing.T) {
+	body := ActionCreate{Type: "rate_limit"}
+	out, err := json.Marshal(body)
+	assert.NoError(t, err)
+	got := string(out)
+	for _, unwanted := range []string{`"rate"`, `"burst"`, `"delay"`, `"overlimit_time"`} {
+		if strings.Contains(got, unwanted) {
+			t.Errorf("expected JSON to omit %q for nil pointer, got %s", unwanted, got)
+		}
+	}
 }

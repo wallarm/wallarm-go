@@ -100,32 +100,32 @@ type (
 
 	// ActionCreate is a creation skeleton for the Rule.
 	ActionCreate struct {
-		Type                 string                  `json:"type"`
-		Action               *[]ActionDetails        `json:"action,omitempty"`
-		Clientid             int                     `json:"clientid,omitempty"`
-		Validated            bool                    `json:"validated"`
-		Point                TwoDimensionalSlice     `json:"point,omitempty"`
-		Rules                []string                `json:"rules,omitempty"`
-		AttackType           string                  `json:"attack_type,omitempty"`
-		Stamp                int                     `json:"stamp,omitempty"`
-		Mode                 string                  `json:"mode,omitempty"`
-		Counter              string                  `json:"counter,omitempty"`
-		Regex                string                  `json:"regex,omitempty"`
-		RegexID              int                     `json:"regex_id,omitempty"`
-		Enabled              *bool                   `json:"enabled,omitempty"`
-		Name                 string                  `json:"name,omitempty"`
-		Values               []string                `json:"values,omitempty"`
-		Comment              string                  `json:"comment,omitempty"`
-		FileType             string                  `json:"file_type,omitempty"`
-		Parser               string                  `json:"parser,omitempty"`
-		State                string                  `json:"state,omitempty"`
-		VarType              string                  `json:"var_type,omitempty"`
-		VariativityDisabled  bool                    `json:"variativity_disabled,omitempty"`
-		LoginRegex           string                  `json:"login_regex,omitempty"`
-		CredStuffType        string                  `json:"cred_stuff_type,omitempty"`
-		CredStuffMode        string                  `json:"cred_stuff_mode,omitempty"`
-		CaseSensitive        *bool                   `json:"case_sensitive,omitempty"`
-		LoginPoint           TwoDimensionalSlice     `json:"login_point,omitempty"`
+		Type                string              `json:"type"`
+		Action              *[]ActionDetails    `json:"action,omitempty"`
+		Clientid            int                 `json:"clientid,omitempty"`
+		Validated           bool                `json:"validated"`
+		Point               TwoDimensionalSlice `json:"point,omitempty"`
+		Rules               []string            `json:"rules,omitempty"`
+		AttackType          string              `json:"attack_type,omitempty"`
+		Stamp               int                 `json:"stamp,omitempty"`
+		Mode                string              `json:"mode,omitempty"`
+		Counter             string              `json:"counter,omitempty"`
+		Regex               string              `json:"regex,omitempty"`
+		RegexID             int                 `json:"regex_id,omitempty"`
+		Enabled             *bool               `json:"enabled,omitempty"`
+		Name                string              `json:"name,omitempty"`
+		Values              []string            `json:"values,omitempty"`
+		Comment             string              `json:"comment,omitempty"`
+		FileType            string              `json:"file_type,omitempty"`
+		Parser              string              `json:"parser,omitempty"`
+		State               string              `json:"state,omitempty"`
+		VarType             string              `json:"var_type,omitempty"`
+		VariativityDisabled bool                `json:"variativity_disabled,omitempty"`
+		LoginRegex          string              `json:"login_regex,omitempty"`
+		CredStuffType       string              `json:"cred_stuff_type,omitempty"`
+		CredStuffMode       string              `json:"cred_stuff_mode,omitempty"`
+		CaseSensitive       *bool               `json:"case_sensitive,omitempty"`
+		LoginPoint          TwoDimensionalSlice `json:"login_point,omitempty"`
 		// Delay/Burst/Rate/OverlimitTime are *int with omitempty so callers
 		// can transmit a literal 0 (a valid value per the API range
 		// constraints). With non-pointer int+omitempty, encoding/json drops
@@ -142,7 +142,7 @@ type (
 		MaxDepth             int                     `json:"max_depth,omitempty"`
 		MaxValueSizeKb       int                     `json:"max_value_size_kb,omitempty"`
 		MaxDocSizeKb         int                     `json:"max_doc_size_kb,omitempty"`
-		MaxAliases     int                     `json:"max_aliases,omitempty"`
+		MaxAliases           int                     `json:"max_aliases,omitempty"`
 		MaxDocPerBatch       int                     `json:"max_doc_per_batch,omitempty"`
 		Introspection        *bool                   `json:"introspection,omitempty"`
 		DebugEnabled         *bool                   `json:"debug_enabled,omitempty"`
@@ -292,7 +292,7 @@ type (
 		MaxDepth             int                      `json:"max_depth,omitempty"`
 		MaxValueSizeKb       int                      `json:"max_value_size_kb,omitempty"`
 		MaxDocSizeKb         int                      `json:"max_doc_size_kb,omitempty"`
-		MaxAliases     int                      `json:"max_aliases,omitempty"`
+		MaxAliases           int                      `json:"max_aliases,omitempty"`
 		MaxDocPerBatch       int                      `json:"max_doc_per_batch,omitempty"`
 		Introspection        *bool                    `json:"introspection,omitempty"`
 		DebugEnabled         *bool                    `json:"debug_enabled,omitempty"`

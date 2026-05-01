@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.12.2] - 2026-05-01
+
+### Upgrade Steps
+
+* [ACTION REQUIRED] Direct callers of `ActionCreate` / `ActionBody` must rename `MaxAliasesSizeKb` → `MaxAliases`. JSON tag (`max_aliases`) is unchanged, so wire compatibility is preserved.
+
+### Breaking Changes
+
+* **`ActionCreate.MaxAliasesSizeKb` and `ActionBody.MaxAliasesSizeKb` renamed to `MaxAliases`** — the field is a count (number of GraphQL aliases), not a size in kilobytes. Old name was misleading. JSON tag stays `max_aliases`.
+
 ## [v0.12.1] - 2026-05-01
 
 ### Upgrade Steps

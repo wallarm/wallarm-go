@@ -142,7 +142,7 @@ type (
 		MaxDepth             int                     `json:"max_depth,omitempty"`
 		MaxValueSizeKb       int                     `json:"max_value_size_kb,omitempty"`
 		MaxDocSizeKb         int                     `json:"max_doc_size_kb,omitempty"`
-		MaxAliasesSizeKb     int                     `json:"max_aliases,omitempty"`
+		MaxAliases     int                     `json:"max_aliases,omitempty"`
 		MaxDocPerBatch       int                     `json:"max_doc_per_batch,omitempty"`
 		Introspection        *bool                   `json:"introspection,omitempty"`
 		DebugEnabled         *bool                   `json:"debug_enabled,omitempty"`
@@ -292,7 +292,7 @@ type (
 		MaxDepth             int                      `json:"max_depth,omitempty"`
 		MaxValueSizeKb       int                      `json:"max_value_size_kb,omitempty"`
 		MaxDocSizeKb         int                      `json:"max_doc_size_kb,omitempty"`
-		MaxAliasesSizeKb     int                      `json:"max_aliases,omitempty"`
+		MaxAliases     int                      `json:"max_aliases,omitempty"`
 		MaxDocPerBatch       int                      `json:"max_doc_per_batch,omitempty"`
 		Introspection        *bool                    `json:"introspection,omitempty"`
 		DebugEnabled         *bool                    `json:"debug_enabled,omitempty"`

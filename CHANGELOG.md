@@ -1,5 +1,15 @@
 # Changelog
 
+## [v0.12.1] - 2026-05-01
+
+### Upgrade Steps
+
+* [ACTION REQUIRED] Direct callers of `ActionCreate` must wrap rate-limit zero values in pointers: `Rate: lo.ToPtr(0)`, `Burst: lo.ToPtr(0)`, `Delay: lo.ToPtr(0)`, `OverlimitTime: lo.ToPtr(0)`. Non-pointer assignments (`Rate: someInt`) no longer compile.
+
+### Breaking Changes
+
+* **`ActionCreate.Rate`, `.Burst`, `.Delay`, `.OverlimitTime` changed from `int` to `*int`** — Go's `encoding/json` drops a literal zero from `int+omitempty`, so callers wanting to send `Rate: 0` (a value the API range `0..1000` accepts) had no way to do it; the API rejected with `can't be blank`. The pointer form lets callers transmit a literal zero. `RspStatus` keeps `int` because its valid range starts at 400 (zero is never a valid value, so `omitempty` correctly drops absent). The corresponding fields on `HintUpdateV3Params` and `ActionBody` are unchanged.
+
 ## [v0.12.0] - 2026-04-28
 
 ### Upgrade Steps

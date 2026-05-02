@@ -1,14 +1,18 @@
 # Changelog
 
-## [v0.12.2] - 2026-05-01
+## [v0.12.2] - 2026-05-04
 
 ### Upgrade Steps
 
-* [ACTION REQUIRED] Direct callers of `ActionCreate` / `ActionBody` must rename `MaxAliasesSizeKb` → `MaxAliases`. JSON tag (`max_aliases`) is unchanged, so wire compatibility is preserved.
+* [ACTION REQUIRED] Direct callers of `ActionCreate` / `ActionBody` must rename `MaxAliasesSizeKb` → `MaxAliases`. JSON tag (`max_aliases`) is unchanged.
 
 ### Breaking Changes
 
-* **`ActionCreate.MaxAliasesSizeKb` and `ActionBody.MaxAliasesSizeKb` renamed to `MaxAliases`** — the field is a count (number of GraphQL aliases), not a size in kilobytes. Old name was misleading. JSON tag stays `max_aliases`.
+* **`ActionCreate.MaxAliasesSizeKb` and `ActionBody.MaxAliasesSizeKb` renamed to `MaxAliases`** — count (number of GraphQL aliases), not kilobytes.
+
+### New Features
+
+* **`HintUpdateV3Params.MaxAliases *int`** — adds the missing GraphQL-detection alias-count field to the Update payload. Probe-confirmed the API accepts in-place mutation on PUT.
 
 ## [v0.12.1] - 2026-05-01
 

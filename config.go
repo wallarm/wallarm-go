@@ -45,6 +45,7 @@ type (
 		OverlimitResSettings
 		RuleSettings
 		APISpec
+		APIDiscovery
 		CredentialStuffingConfigs
 		SecurityIssues
 		Hits

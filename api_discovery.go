@@ -11,6 +11,7 @@ type (
 	// no Create/Delete; only Read and Update.
 	APIDiscovery interface {
 		APIDiscoveryConfigRead(clientID int) (*APIDiscoveryConfig, error)
+		APIDiscoveryConfigUpdate(clientID int, cfg *APIDiscoveryConfig) error
 	}
 
 	// APIDiscoveryConfig mirrors the API Discovery config body returned by
@@ -91,4 +92,16 @@ func (api *api) APIDiscoveryConfigRead(clientID int) (*APIDiscoveryConfig, error
 		return nil, fmt.Errorf("APIDiscoveryConfigRead: failed to parse response - %w", err)
 	}
 	return resp.Body, nil
+}
+
+// APIDiscoveryConfigUpdate writes the full API Discovery configuration.
+// The endpoint is an upsert — the singleton record always exists, so this
+// is the only way to mutate any field. The cfg.ClientID JSON tag (`clientid`)
+// is sent in the body alongside the path parameter.
+func (api *api) APIDiscoveryConfigUpdate(clientID int, cfg *APIDiscoveryConfig) error {
+	uri := fmt.Sprintf("/v1/clients/%d/apid/config", clientID)
+	if _, err := api.makeRequest("POST", uri, "api_discovery", cfg, nil); err != nil {
+		return fmt.Errorf("APIDiscoveryConfigUpdate: %w", err)
+	}
+	return nil
 }

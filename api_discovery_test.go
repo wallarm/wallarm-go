@@ -1,7 +1,9 @@
 package wallarm
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"testing"
 
@@ -74,4 +76,62 @@ func TestAPIDiscoveryConfigRead(t *testing.T) {
 	assert.Equal(t, []string{"text/xml", "application/%json"}, cfg.AllowedContentTypesPatterns)
 	assert.True(t, cfg.ExtensionsWhitelist.Enabled)
 	assert.Equal(t, []string{"", "do", "action"}, cfg.ExtensionsWhitelist.Extensions)
+}
+
+func TestAPIDiscoveryConfigUpdate(t *testing.T) {
+	setup()
+	defer teardown()
+
+	var capturedBody []byte
+	handler := func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "POST", r.Method, "Expected method 'POST', got %s", r.Method)
+		body, err := io.ReadAll(r.Body)
+		assert.NoError(t, err)
+		capturedBody = body
+		w.Header().Set("content-type", "application/json")
+		fmt.Fprint(w, `{"status":200,"body":"OK"}`)
+	}
+
+	mux.HandleFunc("/v1/clients/22510/apid/config", handler)
+
+	input := &APIDiscoveryConfig{
+		ClientID: 22510,
+		Enabled:  true,
+		Protocols: APIDiscoveryProtocols{
+			REST: true, GraphQL: true, SOAP: false, GRPC: true, MCP: false,
+		},
+		ApplyExtendedFilter:    true,
+		TypeDetectionThreshold: 0.5,
+		PIIDetectionThreshold:  0.1,
+		CallPointsStorageLimit: 50000,
+		SensitiveSamples: APIDiscoverySensitiveSamples{
+			Enabled: false, MinMasked: 20, MaxMasked: 80, MaskSymbols: false,
+		},
+		DisabledApps: []int{42},
+		EndpointStability: APIDiscoveryEndpointStability{
+			MinCount: 2, MinTime: 300,
+		},
+		GroupSOAP:                   false,
+		ServerVariability:           APIDiscoveryServerVariability{Enabled: false},
+		AllowedContentTypesPatterns: []string{"text/xml"},
+		ExtensionsWhitelist:         APIDiscoveryExtensionsWhitelist{Enabled: true, Extensions: []string{"do"}},
+	}
+
+	err := client.APIDiscoveryConfigUpdate(22510, input)
+	assert.NoError(t, err)
+
+	// Round-trip the captured body to verify every field, including explicit false values, was sent.
+	var sent APIDiscoveryConfig
+	err = json.Unmarshal(capturedBody, &sent)
+	assert.NoError(t, err)
+	assert.Equal(t, 22510, sent.ClientID)
+	assert.True(t, sent.Enabled)
+	assert.True(t, sent.Protocols.REST)
+	assert.False(t, sent.Protocols.SOAP)
+	assert.True(t, sent.Protocols.GRPC)
+	assert.False(t, sent.Protocols.MCP)
+	assert.True(t, sent.ApplyExtendedFilter)
+	assert.Equal(t, []int{42}, sent.DisabledApps)
+	assert.Equal(t, 300, sent.EndpointStability.MinTime)
+	assert.Equal(t, []string{"text/xml"}, sent.AllowedContentTypesPatterns)
 }

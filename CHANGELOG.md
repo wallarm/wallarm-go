@@ -4,7 +4,7 @@
 
 ### New Features
 
-* **`APIDiscoveryConfigRead(clientID int)`** — new method + `APIDiscoveryConfig` struct (with sub-structs `APIDiscoveryProtocols`, `APIDiscoverySensitiveSamples`, `APIDiscoveryEndpointStability`, `APIDiscoveryServerVariability`, `APIDiscoveryServerVariabilityByCustomPaths`, `APIDiscoveryExtensionsWhitelist`). Reads the singleton API Discovery configuration at `GET /v1/clients/{client_id}/apid/config`. The new `APIDiscovery` interface is composed into the aggregate `API` interface.
+* **`APIDiscovery` interface** — new aggregate-composed interface with `APIDiscoveryConfigRead(clientID int) (*APIDiscoveryConfig, error)` and `APIDiscoveryConfigUpdate(clientID int, cfg *APIDiscoveryConfig) error`. Reads/upserts the singleton API Discovery configuration at `/v1/clients/{client_id}/apid/config` (GET / POST). Body structs: `APIDiscoveryConfig` + `APIDiscoveryProtocols`, `APIDiscoverySensitiveSamples`, `APIDiscoveryEndpointStability`, `APIDiscoveryServerVariability`, `APIDiscoveryServerVariabilityByCustomPaths`, `APIDiscoveryExtensionsWhitelist`.
 
 ## [v0.12.2] - 2026-05-04
 

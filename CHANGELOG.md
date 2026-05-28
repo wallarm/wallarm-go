@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.13.0] - 2026-05-28
+
+### New Features
+
+* **`APIDiscovery` interface** — new aggregate-composed interface with `APIDiscoveryConfigRead(clientID int) (*APIDiscoveryConfig, error)` and `APIDiscoveryConfigUpdate(clientID int, cfg *APIDiscoveryConfig) error`. Reads/upserts the singleton API Discovery configuration at `/v1/clients/{client_id}/apid/config` (GET / POST). Body structs: `APIDiscoveryConfig` + `APIDiscoveryProtocols`, `APIDiscoverySensitiveSamples`, `APIDiscoveryEndpointStability`, `APIDiscoveryServerVariability`, `APIDiscoveryServerVariabilityByCustomPaths`, `APIDiscoveryExtensionsWhitelist`.
+
 ## [v0.12.2] - 2026-05-04
 
 ### Upgrade Steps

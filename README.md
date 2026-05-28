@@ -22,6 +22,7 @@ A Go client library for the [Wallarm API](https://docs.wallarm.com/api/overview/
 * Activity log — audit-log access with object-type filtering
 * Security issues — detected vulnerabilities and attack-surface issues grouped by type and severity
 * API specs — specification CRUD (`APISpecCreate`, `APISpecReadByID`, `APISpecUpdate`, `APISpecList` with pagination, `APISpecDelete`), auth headers for URL-based fetch, and per-spec enforcement policies via `APISpecPolicyPut` with per-violation action modes
+* API Discovery — per-tenant singleton configuration (`APIDiscoveryConfigRead`, `APIDiscoveryConfigUpdate`): enabled flag, protocols, content-type filter, endpoint-stability thresholds, parameter-type and PII detection thresholds, disabled-apps list
 * Credential stuffing — credential stuffing detection configs
 * Global mode — filtration mode (monitoring/blocking) management
 

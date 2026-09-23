@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.14.0] - 2026-09-23
+
+### New Features
+
+* **`AttackVectors` interface** — new aggregate-composed interface with `AttackVectorsByRequest(clientID int, params *AttackVectorsByRequestParams) (*AttackVectorsByRequestResp, error)`. Reads one page of a request's attack vectors at `/v1/client/{client_id}/attack-vectors/by-request` (POST). A zero `Limit` is sent as `AttackVectorsDefaultLimit` (100); `HasMore` and `Cursor` are returned but not followed. Body structs: `AttackVectorsByRequestParams`, `AttackVectorsByRequestResp`, `AttackVector` (`Point` is the API's JSON-encoded string), `AttackVectorCondition`.
+
 ## [v0.13.0] - 2026-05-28
 
 ### New Features

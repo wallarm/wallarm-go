@@ -32,6 +32,7 @@ type (
 		Action
 		Application
 		Attack
+		AttackVectors
 		IPList
 		Allowlist
 		Graylist
